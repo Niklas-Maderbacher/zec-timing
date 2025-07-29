@@ -1,0 +1,11 @@
+services:
+  pseudo-timing:
+    image: eclipse-mosquitto
+    ports:
+      - 1883:1883
+      - 8080:8080
+    volumes:
+      - ./config:/mosquitto/config
+      - ./data:/mosquitto/data
+      - ./log:/mosquitto/log
+
