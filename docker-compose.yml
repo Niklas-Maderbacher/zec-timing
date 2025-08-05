@@ -1,0 +1,26 @@
+services:
+  backend:
+    container_name: desktop-app-backend
+    build:
+      context: ./backend
+    restart: always
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    environment:
+      - RASPI_IP=${RASPI_IP}
+      - RASPI_PORT=${RASPI_PORT}
+      - MQTT_TOPIC=${MQTT_TOPIC}
+      - FRONTEND_HOST=${FRONTEND_HOST}
+      - CORS=${CORS}
+  
+  frontend:
+    container_name: desktop-app-frontend
+    build:
+      context: ./frontend
+    restart: always
+    ports:
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    depends_on:
+      backend:
+        condition: service_healthy
+        restart: true
