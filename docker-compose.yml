@@ -4,6 +4,8 @@ services:
     build:
       context: ./backend
     restart: always
+    env_file:
+      - .env
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     environment:
@@ -12,12 +14,29 @@ services:
       - MQTT_TOPIC=${MQTT_TOPIC}
       - FRONTEND_HOST=${FRONTEND_HOST}
       - CORS=${CORS}
+
+  mqtt-worker:
+    container_name: desktop-app-mqtt-worker
+    build:
+      context: ./mqtt-worker
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${MQTT_WORKER_PORT}:${BACKEND_PORT}
+    environment:
+      - MQTT_IP=${MQTT_IP}
+      - MQTT_PORT=${MQTT_PORT}
+      - MQTT_TOPIC=${MQTT_TOPIC}
+      - BACKEND_HOST=http://backend:${BACKEND_PORT}
   
   frontend:
     container_name: desktop-app-frontend
     build:
       context: ./frontend
     restart: always
+    env_file:
+      - .env
     ports:
       - ${FRONTEND_PORT}:${FRONTEND_PORT}
     depends_on:
