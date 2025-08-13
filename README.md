@@ -1,11 +1,11 @@
 # Pseudo MQTT Client to send timestamps
 
-This Docker Container + Shell Script aims to send the current timestamp into the topic **"time"** to simulate a light barrier
+This Docker Container + Shell Script aims to send the current timestamp into the topic **"esp32/timestamp"** to simulate a light barrier
 
 ## Needed Modules
 
 - Docker
-- Mosquitto
+- firewall-cmd
 
 ## How to run
 
@@ -20,8 +20,9 @@ This Docker Container + Shell Script aims to send the current timestamp into the
 To verify, that the setup works, you need to have the following things installed:
 
 - Mosquitto
+- jq [```sudo apt install jq```]
 
-Once mosquitto is installed, you can subscribe the the topic using ```mosquitto_sub -h <ip-address-of-broker> -t time``` and when the **send-time.sh** script is executed, you can see the current time in the shell
+Once mosquitto is installed, you can subscribe the the topic using ```mosquitto_sub -h <ip-address-of-broker> -t esp32/timestamp``` and when the **send-time.sh** script is executed, you can see the mac-address + current time in json format inside the shell
 
 ## Used Links
 

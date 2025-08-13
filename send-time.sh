@@ -2,10 +2,16 @@
 
 BROKER="192.168.1.111"
 PORT="1883"
-TOPIC="time"
+TOPIC="esp32/timestamp"
 CLIENT_ID="raspi"
 
-CURRENT_DATE=$(date +"%H:%M:%S.%6N")
+ESP_ID="ESP32-$(cat /sys/class/net/eth0/address)"
+TIMESTAMP=$(date +"%Y-%m-%dT%H:%M:%S.%6N")
 
-mosquitto_pub -h "$BROKER" -p "$PORT" -t "$TOPIC" -i "$CLIENT_ID" -m "$CURRENT_DATE"
+# JSON-Payload erzeugen
+PAYLOAD=$(jq -n \
+  --arg esp_id "$ESP_ID" \
+  --arg timestamp "$TIMESTAMP" \
+  '{esp_id: $esp_id, timestamp: $timestamp}')
 
+mosquitto_pub -h "$BROKER" -p "$PORT" -t "$TOPIC" -i "$CLIENT_ID" -m "$PAYLOAD"
