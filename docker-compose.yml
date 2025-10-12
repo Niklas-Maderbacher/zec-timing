@@ -1,7 +1,6 @@
 services:
-  mqtt-worker:
-    container_name: mqtt-worker
-    hostname: 
+  zec-mqtt-worker:
+    container_name: zec-mqtt-worker
     build:
       context: ./mqtt-worker
     restart: always
@@ -13,9 +12,27 @@ services:
       - MQTT_IP=${MQTT_IP}
       - MQTT_PORT=${MQTT_PORT}
       - MQTT_TOPIC=${MQTT_TOPIC}
-  redis-db:
-    container_name: redis-db
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+
+  zec-mqtt-broker:
+    container_name: zec-mqtt-broker
+    image: eclipse-mosquitto
+    env_file:
+      - .env
+    ports:
+      - ${MQTT_PORT}:${MQTT_PORT}
+      - 8080:8080
+    volumes:
+      - ./config:/mosquitto/config
+      - ./data:/mosquitto/data
+      - ./log:/mosquitto/log
+
+  zec-redis-db:
+    container_name: zec-redis-db
     image: redis:alpine
+    env_file:
+      - .env
     # --save = redis will not save data to disk
     # --appendonly no = disables Append-Only files, no saves are persistant
     command: [ "redis-server", "--save", "", "--appendonly", "no" ]

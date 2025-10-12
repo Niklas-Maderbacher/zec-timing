@@ -31,18 +31,10 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     API_V1_STR: str = "/api/v1"
-    FRONTEND_HOST: str
 
     BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
         []
     )
-
-    @computed_field  # type: ignore[prop-decorator]
-    @property
-    def all_cors_origins(self) -> list[str]:
-        return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS] + [
-            self.FRONTEND_HOST
-        ]
 
     PROJECT_NAME: str
 
@@ -50,6 +42,8 @@ class Settings(BaseSettings):
     MQTT_PORT: int
     MQTT_TOPIC: str
 
+    REDIS_HOST: str
+    REDIS_PORT: int
 
 
 settings = Settings()  # type: ignore

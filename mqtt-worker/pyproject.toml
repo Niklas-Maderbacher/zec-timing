@@ -18,6 +18,7 @@ dependencies = [
     # https://pypi.org/project/sentry-sdk
     "sentry-sdk==2.19.2",
     "requests<3.0.0,>=2.31.0",
+    "redis==6.4.0",
 ]
 
 [tool.uv]

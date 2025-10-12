@@ -3,25 +3,23 @@ import sys
 
 import paho.mqtt.client as mqtt
 import json
+import redis
 
 from app.config.config import settings
+from app.redis.redis import redis_connection, redis_lock
 
-messages = {
-    "test": ["14:23:45.678901"]
-}
 
 def extract_payload(payload):
     mac_address = payload.get("esp_id")
     timestamp = payload.get("timestamp")
 
+    # Clean values
     mac_address = mac_address.split("-", 1)[1]
     timestamp = timestamp.split("T", 1)[1]
 
-    # Append or create entry in messages
-    if mac_address in messages:
-        messages[mac_address].append(timestamp)
-    else:
-        messages[mac_address] = [timestamp]
+    with redis_lock:
+        # Store data in Redis list
+        redis_connection.rpush(mac_address, timestamp)
 
     return mac_address, timestamp
 

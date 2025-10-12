@@ -1,11 +1,11 @@
 #!/bin/bash
 
-BROKER="192.168.1.111"
+BROKER="192.168.1.102"
 PORT="1883"
 TOPIC="esp32/timestamp"
 CLIENT_ID="raspi"
 
-ESP_ID="ESP32-$(cat /sys/class/net/eth0/address)"
+ESP_ID="ESP32-$(cat /sys/class/net/wlo1/address)"
 TIMESTAMP=$(date +"%Y-%m-%dT%H:%M:%S.%6N")
 
 # JSON-Payload erzeugen
