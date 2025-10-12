@@ -1,0 +1,3 @@
+allow_anonymous true
+log_dest file /mosquitto/log/mosquitto.log
+
