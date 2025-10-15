@@ -1,20 +1,19 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, status, HTTPException
 
 from app.schemas.timestamp import Timestamp
-from app.redis.redis import redis_connection, redis_lock
+from app.crud.timestamps import get_timestamps, delete_timestamps
+from app.exceptions.mac_not_found import MacNotFound
 
 
 router = APIRouter(prefix="/timestamps", tags=["Timestamps"])
 
-@router.get("/{esp_mac}", response_model=Timestamp)
+@router.get("/{esp_mac}", response_model=Timestamp, status_code=status.HTTP_200_OK)
 def get_timestamp_from_esp(esp_mac: str):
     clean_mac = esp_mac.replace("-", ":")
-
-    with redis_lock:
-
-        # Check if the key exists in Redis
-        if not redis_connection.exists(clean_mac):
-            raise HTTPException(
+    try:
+        timestamps = get_timestamps(clean_mac)
+    except MacNotFound as e:
+        raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=(
                     "No ESP with this MAC address exists or no timestamps yet exist. "
@@ -22,29 +21,13 @@ def get_timestamp_from_esp(esp_mac: str):
                 )
             )
 
-        # Only get newest timestamp
-        timestamps = redis_connection.lrange(clean_mac, -1, -1)
-
     return Timestamp(timestamp=timestamps)
 
 
-@router.delete("/{esp_mac}")
+@router.delete("/{esp_mac}", response_model=Timestamp, status_code=status.HTTP_202_ACCEPTED)
 def reset_esp_timestamps(esp_mac: str):
-    # Normalize MAC (AA-BB-CC → AA:BB:CC)
     clean_mac = esp_mac.replace("-", ":")
 
-    with redis_lock:
-        # Check if the key exists
-        if not redis_connection.exists(clean_mac):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=(
-                    "No ESP with this MAC address exists or no timestamps yet exist. "
-                    "If you think an ESP with this MAC does exist, please send new data via MQTT."
-                )
-            )
+    timestamps = delete_timestamps(clean_mac)
 
-        # Delete all timestamps for this MAC
-        redis_connection.ltrim(clean_mac, 1, 0)
-
-    return {"message": f"All timestamps deleted for {clean_mac}"}
+    return Timestamp(timestamp=timestamps)

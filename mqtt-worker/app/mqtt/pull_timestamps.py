@@ -6,7 +6,7 @@ import json
 import redis
 
 from app.config.config import settings
-from app.redis.redis import redis_connection, redis_lock
+from app.crud.timestamps import add_timestamp
 
 
 def extract_payload(payload):
@@ -17,9 +17,7 @@ def extract_payload(payload):
     mac_address = mac_address.split("-", 1)[1]
     timestamp = timestamp.split("T", 1)[1]
 
-    with redis_lock:
-        # Store data in Redis list
-        redis_connection.rpush(mac_address, timestamp)
+    add_timestamp(mac_address, timestamp)
 
     return mac_address, timestamp
 

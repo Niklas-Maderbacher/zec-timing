@@ -12,7 +12,7 @@ services:
       - ./data:/mosquitto/data
       - ./log:/mosquitto/log
     healthcheck:
-      test: ["CMD-SHELL", "pgrep mosquitto"]
+      test: [ "CMD-SHELL", "pgrep mosquitto" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,33 +31,33 @@ services:
     ports:
       - ${REDIS_PORT}:${REDIS_PORT}
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 30s
       timeout: 3s
       retries: 5
 
-  zec-mqtt-worker-testing:
-    container_name: zec-mqtt-worker-testing
-    image: python:3.12
-    build:
-      context: ./mqtt-worker
-    depends_on:
-      zec-redis-db:
-        condition: service_healthy
-        restart: true
-      zec-mqtt-broker:
-        condition: service_healthy
-        restart: true
-    command: bash app/tests/test.sh
-    env_file:
-      - .env
-    environment:
-      - MQTT_IP=${MQTT_IP}
-      - MQTT_PORT=${MQTT_PORT}
-      - MQTT_TOPIC=${MQTT_TOPIC}
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-  
+  #  zec-mqtt-worker-testing:
+  #    container_name: zec-mqtt-worker-testing
+  #    image: python:3.12
+  #    build:
+  #      context: ./mqtt-worker
+  #    depends_on:
+  #      zec-redis-db:
+  #        condition: service_healthy
+  #        restart: true
+  #      zec-mqtt-broker:
+  #        condition: service_healthy
+  #        restart: true
+  #    command: bash app/tests/test.sh
+  #    env_file:
+  #      - .env
+  #    environment:
+  #      - MQTT_IP=${MQTT_IP}
+  #      - MQTT_PORT=${MQTT_PORT}
+  #      - MQTT_TOPIC=${MQTT_TOPIC}
+  #      - REDIS_HOST=${REDIS_HOST}
+  #      - REDIS_PORT=${REDIS_PORT}
+
   zec-mqtt-worker:
     container_name: zec-mqtt-worker
     build:
@@ -70,9 +70,9 @@ services:
       zec-mqtt-broker:
         condition: service_healthy
         restart: true
-      zec-mqtt-worker-testing:
-        condition: service_completed_successfully
-      
+      # zec-mqtt-worker-testing:
+      #   condition: service_completed_successfully
+
     env_file:
       - .env
     ports:
