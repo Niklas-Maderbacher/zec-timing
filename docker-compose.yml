@@ -76,7 +76,7 @@ services:
     env_file:
       - .env
     ports:
-      - ${MQTT_WORKER_PORT}:${MQTT_WORKER_PORT}
+      - ${MQTT_WORKER_PORT}:8000
     environment:
       - MQTT_IP=${MQTT_IP}
       - MQTT_PORT=${MQTT_PORT}
