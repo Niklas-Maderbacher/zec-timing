@@ -4,10 +4,6 @@ ist halt alles funktionell aber schön halt nicht
 commit ich jetzt weil halt bisher nix da ist und ich nicht nochmal mein backend deleten will
 
 Updaten von dem ganzen outdated stuff (models, diagramme, konzept)
-machen das dat ding mehr tut als sich selber hassen 
-login stuff sollte nicht in api sein
-ruff hasst mich
-haufen an zeug den ich nicht brauch
 das fixen dann das da unten
 ↓
 schema nächste woche
