@@ -1,11 +1,17 @@
-from fastapi import APIRouter, Depends
-from app.services.keycloak import decode_keycloak_token
+from fastapi import APIRouter
+from app.database.dependency import SessionDep, CurrentUser
 
 router = APIRouter()
 
 """Protected route that requires Keycloak token authentication
     For testing purposes only.
 """
-@router.get("/protected")
-async def protected_route(user_data = Depends(decode_keycloak_token)):
-    return {"message": "This is a protected route", "user": user_data}
+@router.get("/public")
+def public_route(db: SessionDep):
+    return {"message": "das geht immer"}
+
+@router.get("/protected")  
+def protected_route(db: SessionDep, current_user: CurrentUser):
+    return {
+        "message": f"{current_user['preferred_username']}",
+    }
