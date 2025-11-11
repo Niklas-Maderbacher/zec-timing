@@ -4,10 +4,10 @@ from fastapi.security import HTTPBearer
 import requests
 from app.core.config import settings
 
-KC_URL = f"{settings.KEYCLOAK_URL}/realms/{settings.KEYCLOAK_REALM}"   
+KC_URL = settings.KEYCLOAK_URL
 KC_CLIENT_ID = settings.KEYCLOAK_CLIENT_ID
 KC_CLIENT_SECRET = settings.KEYCLOAK_CLIENT_SECRET
-KC_TOKEN_URL = f"{KC_URL}/protocol/openid-connect/token"
+KC_TOKEN_URL = settings.KEYCLOAK_TOKEN_URL
 
 security = HTTPBearer(auto_error=False) 
 

@@ -32,11 +32,12 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER: str
     FIRST_SUPERUSER_PASSWORD: str
 
-    KEYCLOAK_URL: str = "http://localhost:8090"
-    KEYCLOAK_REALM: str = "myapp"
-    KEYCLOAK_CLIENT_ID: str  
+    KEYCLOAK_URL: str = ""
+    KEYCLOAK_REALM: str = ""
+    KEYCLOAK_CLIENT_ID: str = ""
     KEYCLOAK_CLIENT_SECRET: str = ""
-    KEYCLOAK_REDIRECT_URI: str = "http://127.0.0.1:8000/docs/oauth2-redirect"
+    KEYCLOAK_REDIRECT_URI: str = ""
+    KEYCLOAK_TOKEN_URL: str = ""
 
     @computed_field  
     @property
