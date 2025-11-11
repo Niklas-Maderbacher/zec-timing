@@ -2,7 +2,7 @@ from sqlalchemy import (
     Column, Integer, String, Float, DateTime, Boolean,
     Enum as SQLEnum, ForeignKey,
 )
-from app.database.session import Base
+from backend.app.database.session import Base
 from datetime import datetime, timezone
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
