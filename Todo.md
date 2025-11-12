@@ -1,8 +1,3 @@
-Login geht protected routes gehen 
-gehen jetzt weil ich einfach token selber übergebe und der decode jetzt gefixt ist 
-ist halt alles funktionell aber schön halt nicht
-commit ich jetzt weil halt bisher nix da ist und ich nicht nochmal mein backend deleten will
-
 Updaten von dem ganzen outdated stuff (models, diagramme, konzept)
 das fixen dann das da unten
 ↓
@@ -17,3 +12,5 @@ ob ich HTTP exceptions in nem service (keycloak) schmeißen darf oder das wie cr
 User Creation auf keycloak seite aufsetzen/möglich machen (gibt api endpoint dafür)
 
 Frontend zugänglich machen (nix zuhause auf PC lassen) und halt sinnvoll machen aka nicht nur html page
+maybe irgentwann mal refresh tokens blacklisten aber das ist nix für jetzt
+limiter angucken
