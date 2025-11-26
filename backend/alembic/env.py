@@ -7,7 +7,7 @@ from sqlalchemy import engine_from_config, pool
 from app.database.session import Base  # SQLAlchemy Base
 from app.core.config import settings
 
-from app.models import attempt, challenge, driver, leaderboard, score, team, user
+from app.models import attempt, challenge, driver, leaderboard, score, team, user, penalty  
 
 config = context.config
 fileConfig(config.config_file_name)

@@ -11,7 +11,7 @@ class Leaderboard(Base):
     id = Column(Integer, primary_key=True)
     team_id = Column(Integer, ForeignKey('teams.id'))
     challenge_id = Column(Integer, ForeignKey('challenges.id'))
-    total_points = Column(Float)
+    best_score = Column(Float)
     updated_at = Column(DateTime, default=datetime.utcnow)
     
     team = relationship("Team", back_populates="leaderboards")
