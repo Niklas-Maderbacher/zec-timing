@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, Float, DateTime, String
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database.session import Base
+from app.models.driver import Driver  # noqa: F401 need for mapper
 
 class Team(Base):
     __tablename__ = 'teams'

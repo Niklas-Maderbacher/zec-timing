@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, DateTime, ForeignKey, String
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database.session import Base
+from app.models.attempt import Attempt  # noqa: F401 need for mapper
 
 class Driver(Base):
     __tablename__ = 'drivers'

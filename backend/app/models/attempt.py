@@ -2,6 +2,10 @@ from sqlalchemy import Column, Integer, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.database.session import Base
+from app.models.challenge import Challenge  # noqa: F401 need for mapper
+from app.models.score import Score  # noqa: F401 need for mapper
+from app.models.penalty import Penalty  # noqa: F401 need for mapper
+
 class Attempt(Base):
     __tablename__ = 'attempts'
     
