@@ -6,8 +6,8 @@ from pydantic import (
     model_validator,
 )
 from typing_extensions import Self
-from pydantic import EmailStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_core import MultiHostUrl
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file="../.env",
@@ -27,10 +27,6 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
 
-    FIRST_SUPERUSER_EMAIL: EmailStr = "admin@admin.com"
-    FIRST_SUPERUSER: str
-    FIRST_SUPERUSER_PASSWORD: str
-
     KEYCLOAK_URL: str = ""
     KEYCLOAK_REALM: str = ""
     KEYCLOAK_CLIENT_ID: str = ""
@@ -38,6 +34,20 @@ class Settings(BaseSettings):
     KEYCLOAK_REDIRECT_URI: str = ""
     KEYCLOAK_TOKEN_URL: str = ""
     KEYCLOAK_JWKS_URL: str = ""
+
+    @computed_field  
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        return str(
+            MultiHostUrl.build(
+                scheme="postgresql+psycopg",
+                username=self.POSTGRES_USER,
+                password=self.POSTGRES_PASSWORD,
+                host=self.POSTGRES_SERVER,
+                port=self.POSTGRES_PORT,
+                path=self.POSTGRES_DB,
+            )
+        )
     
     @computed_field
     @property
