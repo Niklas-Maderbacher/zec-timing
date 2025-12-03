@@ -9,7 +9,6 @@ class Team(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     vehicle_weight = Column(Float)
-    # RFID identifier column (named per schema)
     rfid_identifier = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     

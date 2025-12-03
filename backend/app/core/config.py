@@ -6,7 +6,6 @@ from pydantic import (
     model_validator,
 )
 from typing_extensions import Self
-from pydantic_core import MultiHostUrl
 from pydantic import EmailStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
@@ -39,18 +38,6 @@ class Settings(BaseSettings):
     KEYCLOAK_REDIRECT_URI: str = ""
     KEYCLOAK_TOKEN_URL: str = ""
     KEYCLOAK_JWKS_URL: str = ""
-
-    @computed_field  
-    @property
-    def SQLALCHEMY_DATABASE_URI(self) -> MultiHostUrl:
-        return MultiHostUrl.build(
-            scheme="postgresql+psycopg",
-            username=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.POSTGRES_SERVER,
-            port=self.POSTGRES_PORT,
-            path=self.POSTGRES_DB,
-        )
     
     @computed_field
     @property
