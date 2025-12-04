@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class DriverBase(BaseModel):
@@ -10,7 +10,7 @@ class DriverBase(BaseModel):
 
 
 class DriverCreate(DriverBase):
-    pass
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class DriverUpdate(BaseModel):
