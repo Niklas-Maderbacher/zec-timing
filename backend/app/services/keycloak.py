@@ -12,22 +12,7 @@ KC_JWKS_URL = settings.KEYCLOAK_JWKS_URL
 
 security = HTTPBearer(auto_error=False) 
 
-#Schmeißen alle http exceptions muss ich wahrscheinlich ändern
-
 def get_keycloak_public_key():
-    """ 
-    Fetch Keycloak's public keys for JWT token verification.
-    Theese are needed to validate the token signature so they cant be faked.
-
-    Args:
-        credentials: HTTPBearer credentials
-
-    Raises:
-        HTTPException: 503 if unable to fetch keys
-
-    Returns:
-        dict: JWKS with public keys
-    """
     response = requests.get(KC_JWKS_URL)
     if response.status_code != 200:
         raise HTTPException(
@@ -37,19 +22,6 @@ def get_keycloak_public_key():
     return response.json()
 
 def decode_keycloak_token(credentials = Depends(security)):
-    """ 
-    Validate and decode JWT token from Authorization header.
-    Use this as a dependency in protected routes.
-
-    Args:
-        credentials: HTTPBearer credentials
-
-    Raises:
-        HTTPException: 401 if token is invalid, expired, or malformed
-
-    Returns:
-        dict: decoded token payload
-    """
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -111,19 +83,6 @@ def decode_keycloak_token(credentials = Depends(security)):
     return payload
 
 def keycloak_login(username: str, password: str):
-    """
-    Authenticate user with Keycloak 
-
-    Args:
-        username: User's username
-        password: User's password
-
-    Raises:
-        HTTPException: 401 if authentication fails
-
-    Returns:
-        dict: Token response from Keycloak
-    """
     payload = {
         "grant_type": "password",
         "client_id": KC_CLIENT_ID,
@@ -150,18 +109,6 @@ def keycloak_login(username: str, password: str):
     return response.json()
 
 def keycloak_refresh(refresh_token: str):
-    """
-    Refresh access token using refresh token
-
-    Args:
-        refresh_token: Valid refresh token from previous authentication
-
-    Raises:
-        HTTPException: 401 if refresh token is invalid
-
-    Returns:
-        dict: new Token response from Keycloak
-    """
     payload = {
         "grant_type": "refresh_token",
         "client_id": KC_CLIENT_ID,
@@ -177,3 +124,20 @@ def keycloak_refresh(refresh_token: str):
         )
 
     return response.json()
+
+def extract_roles_from_payload(payload: dict) -> list[str]:
+    roles = []   
+    if "resource_access" in payload and KC_CLIENT_ID in payload["resource_access"]:
+        client_roles = payload["resource_access"][KC_CLIENT_ID].get("roles", [])
+        roles.extend(client_roles)
+    return roles
+
+def get_current_user(payload: dict = Depends(decode_keycloak_token)):
+    roles = extract_roles_from_payload(payload)
+    return {
+        "sub": payload.get("sub"),
+        "email": payload.get("email"),
+        "username": payload.get("preferred_username"),
+        "roles": roles,
+        "token_payload": payload
+    }
