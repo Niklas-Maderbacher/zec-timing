@@ -6,8 +6,11 @@ from app.database.session import engine
 from app.services.keycloak import decode_keycloak_token
 
 def get_db() -> Generator[Session, None, None]:
-    with Session(engine) as session:
-        yield session
+    db = Session(bind=engine)
+    try:
+        yield db
+    finally:
+        db.close()
 
 SessionDep = Annotated[Session, Depends(get_db)]
 CurrentUser = Annotated[dict, Depends(decode_keycloak_token)]

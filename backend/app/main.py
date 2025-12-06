@@ -3,6 +3,9 @@ from fastapi.routing import APIRoute
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.main import api_router
 from app.core.config import settings
+from app.database.seed import seed_challenges
+from sqlalchemy.orm import Session
+from app.database.session import engine
 
 def cstm_generate_unique_id(route: APIRoute) -> str:
     if route.tags and len(route.tags) > 0:
@@ -25,3 +28,9 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=settings.API_STR)
+
+@app.on_event("startup")
+def startup_event():
+    db = Session(bind=engine)
+    seed_challenges(db)
+    db.commit()
