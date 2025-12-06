@@ -3,12 +3,15 @@ from sqlalchemy.orm import Session
 from app.models.teams import Team as model_team
 from app.schemas.teams import Team as schema_team
 
-def get_drivers(db: Session) -> schema_driv:
-    teams = db.query(model_team).all()
+def get_teams(db: Session) -> list[schema_team]:
+    teams_db = db.query(model_team).all()
 
-    team_names = []
+    teams = []
 
-    for team in teams:
-        team_names.append(team.name)
+    for team in teams_db:
+        teams.append(schema_team(
+            id=team.id,
+            name=team.name,
+        ))
 
-    return schema_team(name=team_names)
+    return teams

@@ -30,11 +30,28 @@ class Settings(BaseSettings):
         env_ignore_empty=True,
         extra="ignore",
     )
-    API_V1_STR: str = "/api/v1"
+    API_V1_STR: str = "/api"
 
-    BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
+    all_cors_origins: list[str] = ["http://localhost:3000", "http://localhost:3002"]
+
+    BACKEND_CORS_ORIGINS_DESKTOP_APP: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
         []
     )
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> str:
+        return str(
+            MultiHostUrl.build(
+                scheme="postgresql+psycopg2",
+                username=self.POSTGRES_USER,
+                password=self.POSTGRES_PASSWORD,
+                host=self.POSTGRES_SERVER,
+                port=self.POSTGRES_PORT,
+                path=self.POSTGRES_DB,
+            )
+        )
+
 
     PROJECT_NAME: str
 
@@ -43,6 +60,8 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
+
+    DESKTOP_APP_STANDALONE: bool
 
 
 settings = Settings()  # type: ignore

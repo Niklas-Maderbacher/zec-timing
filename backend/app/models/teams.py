@@ -1,16 +1,18 @@
-# tba
-from sqlalchemy import (
-    Column, Integer, String, Float, DateTime, Boolean,
-    Enum as SQLEnum, ForeignKey,
-)
-from datetime import datetime, timezone
+from sqlalchemy import Column, Integer, Float, DateTime, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID
-import uuid
-
+from datetime import datetime
 from app.db.session import Base
+from app.models.drivers import Driver  # noqa: F401 need for mapper
 
 class Team(Base):
-    __tablename__ = "teams"
-
-    pass
+    __tablename__ = 'teams'
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    vehicle_weight = Column(Float)
+    rfid_identifier = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    drivers = relationship("Driver", back_populates="team")
+    attempts = relationship("Attempt", back_populates="team")
+    leaderboards = relationship("Leaderboard", back_populates="team")

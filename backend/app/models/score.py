@@ -3,19 +3,12 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.db.session import Base
 
-from enum import Enum
-from sqlalchemy import Enum as SQLEnum
-
-class PenaltyType(Enum):
-    Strecke_Verlassen = "Strecke_Verlassen"
-
-class Penalty(Base):
-    __tablename__ = 'penalties'
-
+class Score(Base):
+    __tablename__ = 'scores'
+    
     id = Column(Integer, primary_key=True)
     attempt_id = Column(Integer, ForeignKey('attempts.id'))
-    penalty_amount = Column(Float)
-    type = Column(SQLEnum(PenaltyType))
+    value = Column(Float)
     created_at = Column(DateTime, default=datetime.utcnow)
-
-    attempt = relationship("Attempt", back_populates="penalties")
+    
+    attempt = relationship("Attempt", back_populates="scores")

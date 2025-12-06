@@ -1,7 +1,9 @@
 from typing import List, Optional
-
 from pydantic import BaseModel
 
+from app.models.penalties import PenaltyType
+
 class Penalty(BaseModel):
-    category: str
-    value: float
+    id: int
+    penalty_amount: float
+    type: PenaltyType
