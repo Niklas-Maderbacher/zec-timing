@@ -12,7 +12,7 @@ def create_team(*, db: SessionDep, team: TeamCreate):
 
 def update_team(*, db: SessionDep, team_update: TeamUpdate):
     team_id = team_update.id
-    db_team = get_team(db, team_id)
+    db_team = get_team(db=db, team_id=team_id)
     update_data = team_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_team, field, value)
@@ -21,7 +21,7 @@ def update_team(*, db: SessionDep, team_update: TeamUpdate):
     return db_team
 
 def delete_team(*, db: SessionDep, team_id: int):
-    db_team = get_team(db, team_id)
+    db_team = get_team(db=db, team_id=team_id)
     db.delete(db_team)
     db.commit()
     return db_team

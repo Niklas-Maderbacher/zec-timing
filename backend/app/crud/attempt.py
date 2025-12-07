@@ -12,7 +12,7 @@ def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
 
 def update_attempt(*, db: SessionDep, attempt_update: AttemptUpdate):
     attempt_id = attempt_update.id
-    db_attempt = get_attempt(db, attempt_id)
+    db_attempt = get_attempt(db=db, attempt_id=attempt_id)
     update_data = attempt_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_attempt, field, value)
@@ -21,7 +21,7 @@ def update_attempt(*, db: SessionDep, attempt_update: AttemptUpdate):
     return db_attempt
 
 def delete_attempt(*, db: SessionDep, attempt_id: int):
-    db_attempt = get_attempt(db, attempt_id)
+    db_attempt = get_attempt(db=db, attempt_id=attempt_id)
     db.delete(db_attempt)
     db.commit()
     return db_attempt

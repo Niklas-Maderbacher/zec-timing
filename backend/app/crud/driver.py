@@ -12,7 +12,7 @@ def create_driver(*, db: SessionDep, driver: DriverCreate):
 
 def update_driver(*, db: SessionDep, driver_update: DriverUpdate):
     driver_id = driver_update.id
-    db_driver = get_driver(db, driver_id)
+    db_driver = get_driver(db=db, driver_id=driver_id)
     update_data = driver_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_driver, field, value)
@@ -21,7 +21,7 @@ def update_driver(*, db: SessionDep, driver_update: DriverUpdate):
     return db_driver
 
 def delete_driver(*, db: SessionDep, driver_id: int):
-    db_driver = get_driver(db, driver_id)
+    db_driver = get_driver(db=db, driver_id=driver_id)
     db.delete(db_driver)
     db.commit()
     return db_driver
