@@ -74,7 +74,7 @@ services:
         condition: service_healthy
         restart: true
     environment:
-      - ${DESKTOP_APP_API_URL}=${DESKTOP_APP_API_URL}
+      - ${NEXT_PUBLIC_DESKTOP_APP_API_URL}:${NEXT_PUBLIC_DESKTOP_APP_API_URL}
 
 volumes:
   zec-db-data:
