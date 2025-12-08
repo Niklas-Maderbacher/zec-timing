@@ -12,6 +12,8 @@ import {
   DropdownMenuRadioGroup,
 } from "@/components/ui/dropdown-menu";
 
+import { API_URL } from "@/next.config";
+
 interface Team {
   id: number;
   name: string;
@@ -26,6 +28,16 @@ interface Challenge {
   esp_mac_finish2: string;
 }
 
+interface Pentalty {
+  id: number
+  amount: number;
+  type: String | null;
+}
+
+interface ConnectionStatus {
+  is_active: boolean;
+}
+
 export default function Page() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -38,11 +50,18 @@ export default function Page() {
   const [espFinish1Input, setEspFinish1Input] = useState("");
   const [espFinish2Input, setEspFinish2Input] = useState("");
 
+  const [penalties, setPenalties] = useState<Pentalty[]>([]);
+  const [selectedPenalty, setSelectedPenalty] = useState<Pentalty | null>(null);
+
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
+    is_active: false,
+  });
+
 
   // Fetch Teams
   const fetchTeams = async () => {
     try {
-      const response = await axios.get("http://localhost:8002/api/teams/");
+      const response = await axios.get(`${API_URL}/teams/`);
       setTeams(response.data);
 
       if (response.data.length > 0) {
@@ -56,7 +75,7 @@ export default function Page() {
   // Fetch Challenges
   const fetchChallenges = async () => {
     try {
-      const response = await axios.get("http://localhost:8002/api/challenges/");
+      const response = await axios.get(`${API_URL}/challenges/`);
       setChallenges(response.data);
 
       if (response.data.length > 0) {
@@ -67,10 +86,24 @@ export default function Page() {
     }
   };
 
+  const fetchPenalties = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/penalties/`);
+      setPenalties(response.data);
+
+      if (response.data.length > 0) {
+        setSelectedPenalty(response.data[0]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch penalties", error);
+    }
+  }
+
   // Fetch both on mount
   useEffect(() => {
     fetchTeams();
     fetchChallenges();
+    fetchPenalties();
   }, []);
 
   return (
@@ -87,69 +120,136 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Challenge Selection */}
       <div className="flex justify-between">
+        {/* Challenge Penalty */}
         <div className="mb-6">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-black mb-2">
-            Challenge
-          </h2>
-          <div className="flex justify-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  {selectedChallenge ? selectedChallenge.name : "Select Challenge"}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuRadioGroup
-                  value={selectedChallenge?.id.toString() || ""}
-                  onValueChange={(value) => {
-                    const challenge = challenges.find((c) => c.id.toString() === value) || null;
-                    setSelectedChallenge(challenge);
-                  }}
-                >
-                  {challenges.map((challenge) => (
-                    <DropdownMenuRadioItem
-                      key={challenge.id}
-                      value={challenge.id.toString()}
-                    >
-                      {challenge.name}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {/* Challenge */}
+          <div className="justify-center">
+            <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-black mb-2 justify-center">
+              Challenge
+            </h2>
+            <div className="flex justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    {selectedChallenge ? selectedChallenge.name : "Select Challenge"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuRadioGroup
+                    value={selectedChallenge?.id.toString() || ""}
+                    onValueChange={(value) => {
+                      const challenge = challenges.find((c) => c.id.toString() === value) || null;
+                      setSelectedChallenge(challenge);
+                    }}
+                  >
+                    {challenges.map((challenge) => (
+                      <DropdownMenuRadioItem
+                        key={challenge.id}
+                        value={challenge.id.toString()}
+                      >
+                        {challenge.name}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+          {/* Penalty */}
+          <div className="">
+            <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-black mb-2 justify-center">
+              Time Penalty
+            </h2>
+            <div className="flex justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    {selectedPenalty ? selectedPenalty.type : "Select Penalty"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuRadioGroup
+                    value={selectedPenalty?.id.toString() || ""}
+                    onValueChange={(value) => {
+                      const penalty = penalties.find((p) => p.id.toString() === value) || null;
+                      setSelectedPenalty(penalty);
+                    }}
+                  >
+                    {penalties.map((penalty) => (
+                      <DropdownMenuRadioItem key={penalty.id} value={penalty.id.toString()}>
+                        {penalty.type}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
 
-        {/* Team Selection */}
         <div className="mb-6">
-          <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-black mb-2 justify-center">
-            Team
-          </h2>
-          <div className="flex justify-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  {selectedTeam ? selectedTeam.name : "Select Team"}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuRadioGroup
-                  value={selectedTeam?.id.toString() || ""}
-                  onValueChange={(value) => {
-                    const team = teams.find((t) => t.id.toString() === value) || null;
-                    setSelectedTeam(team);
-                  }}
-                >
-                  {teams.map((team) => (
-                    <DropdownMenuRadioItem key={team.id} value={team.id.toString()}>
-                      {team.name}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          {/* Team Selection */}
+          <div>
+            <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-black mb-2 justify-center">
+              Team
+            </h2>
+            <div className="flex justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    {selectedTeam ? selectedTeam.name : "Select Team"}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuRadioGroup
+                    value={selectedTeam?.id.toString() || ""}
+                    onValueChange={(value) => {
+                      const team = teams.find((t) => t.id.toString() === value) || null;
+                      setSelectedTeam(team);
+                    }}
+                  >
+                    {teams.map((team) => (
+                      <DropdownMenuRadioItem key={team.id} value={team.id.toString()}>
+                        {team.name}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          {/* Status */}
+          <div className="flex flex-col gap-6">
+
+            {/* Status Row */}
+            <div className="flex items-center gap-4">
+              <p className="text-3xl font-semibold">Status:</p>
+              <p
+                className={`text-3xl font-bold ${connectionStatus.is_active ? "text-green-600" : "text-red-600"
+                  }`}
+              >
+                {connectionStatus.is_active ? "ACTIVE" : "INACTIVE"}
+              </p>
+            </div>
+
+            {/* Buttons Row */}
+            <div className="flex gap-6">
+              <Button
+                onClick={() => setConnectionStatus({ is_active: true })}
+                className="bg-green-600 hover:bg-green-700 text-white text-2xl px-6 py-3"
+              >
+                Activate
+              </Button>
+
+              <Button
+                onClick={() => setConnectionStatus({ is_active: false })}
+                className="bg-red-600 hover:bg-red-700 text-white text-2xl px-6 py-3"
+              >
+                Deactivate
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -246,6 +346,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
