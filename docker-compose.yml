@@ -38,11 +38,6 @@ services:
     restart: always
     ports:
       - ${BACKEND_PORT_DESKTOP_APP}:${FAST_API_PORT}
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8002/api/utils/health_check" ]
-      interval: 60s
-      timeout: 5s
-      retries: 5
     depends_on:
       zec-db:
         condition: service_healthy
@@ -58,6 +53,12 @@ services:
       - POSTGRES_USER=${POSTGRES_USER?Variable not set}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - DESKTOP_APP_STANDALONE=${DESKTOP_APP_STANDALONE?Variable not set}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/api/utils/health_check" ]
+      interval: 60s
+      start_period: 5s
+      timeout: 5s
+      retries: 5
 
   zec-desktop-app-frontend:
     container_name: zec-desktop-app-frontend
