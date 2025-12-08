@@ -6,4 +6,4 @@ from app.models.penalties import PenaltyType
 class Penalty(BaseModel):
     id: int
     penalty_amount: float
-    type: PenaltyType
+    type: PenaltyType | None = None
