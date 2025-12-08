@@ -38,6 +38,11 @@ services:
     restart: always
     ports:
       - ${BACKEND_PORT_DESKTOP_APP}:${FAST_API_PORT}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8002/api/utils/health_check" ]
+      interval: 60s
+      timeout: 5s
+      retries: 5
     depends_on:
       zec-db:
         condition: service_healthy
@@ -54,19 +59,19 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
       - DESKTOP_APP_STANDALONE=${DESKTOP_APP_STANDALONE?Variable not set}
 
-# zec-desktop-app-frontend:
-#   container_name: zec-desktop-app-frontend
-#   build:
-#     context: ./frontend
-#   restart: always
-#   env_file:
-#     - .env
-#   ports:
-#     - ${FRONTEND_PORT}:${FRONTEND_PORT}
-#   depends_on:
-#     zec-desktop-app-backend:
-#       condition: service_healthy
-#       restart: true
+  zec-desktop-app-frontend:
+    container_name: zec-desktop-app-frontend
+    build:
+      context: ./frontend
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${FRONTEND_PORT_DESKTOP_APP}:${NEXT_JS_PORT}
+    depends_on:
+      zec-desktop-app-backend:
+        condition: service_healthy
+        restart: true
 
 volumes:
   zec-db-data:
