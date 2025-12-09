@@ -14,9 +14,5 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     kc_id = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
-    #kc fields might be worth removing in the future
-    email = Column(String, unique=True, nullable=False)
-    first_name = Column(String)
-    last_name = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     
