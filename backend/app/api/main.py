@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.routes import auth, protected, team, driver, attempt, challenge, user
+from app.api.routes import auth, protected, team, driver, attempt, challenge, user, score
 
 api_router = APIRouter()
 
@@ -10,3 +10,4 @@ api_router.include_router(team.router, prefix="/teams", tags=["team"])
 api_router.include_router(driver.router, prefix="/drivers", tags=["driver"])
 api_router.include_router(attempt.router, prefix="/attempts", tags=["attempt"])
 api_router.include_router(challenge.router, prefix="/challenges", tags=["challenges"])
+api_router.include_router(score.router, prefix="/scores", tags=["scores"])

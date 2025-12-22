@@ -30,3 +30,13 @@ def get_attempt(db: SessionDep, attempt_id: int):
 def list_attempts(db: SessionDep):
     attempts = crud.get_attempts(db=db)
     return attempts
+
+@router.get("/fast/", response_model=AttemptResponse)
+def fastest_attempt(db: SessionDep, challenge_id: int):
+    attempts = crud.get_fastest_attempt(db=db, challenge_id=challenge_id)
+    return attempts
+
+@router.get("/fast/per-team/", response_model=AttemptResponse)
+def fastest_attempts_per_team(db: SessionDep, challenge_id: int, team_id: int):
+    attempts = crud.get_fastest_attempt_for_team(db=db, challenge_id=challenge_id, team_id=team_id)
+    return attempts

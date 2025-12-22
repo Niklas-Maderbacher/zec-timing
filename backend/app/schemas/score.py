@@ -13,6 +13,7 @@ class ScoreCreate(ScoreBase):
 
 
 class ScoreUpdate(BaseModel):
+    id: int
     attempt_id: Optional[int] = None
     value: Optional[float] = None
 

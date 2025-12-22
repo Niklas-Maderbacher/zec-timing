@@ -31,3 +31,33 @@ def get_attempt(*, db: SessionDep, attempt_id: int):
 
 def get_attempts(*, db: SessionDep):
     return db.query(Attempt).all()
+
+def get_fastest_attempt(*, db: SessionDep, challenge_id: int):
+    return (db.query(Attempt)
+              .filter(Attempt.challenge_id == challenge_id)
+              .order_by(Attempt.end_time - Attempt.start_time)
+              .first())
+
+def get_fastest_attempt_for_team(*, db: SessionDep, team_id: int, challenge_id: int):
+    return (db.query(Attempt)
+              .filter(
+                  Attempt.team_id == team_id,
+                  Attempt.challenge_id == challenge_id
+              )
+              .order_by(Attempt.end_time - Attempt.start_time)
+              .first())
+
+def get_least_energy_attempt(*, db: SessionDep, challenge_id: int):
+    return (db.query(Attempt)
+              .filter(Attempt.challenge_id == challenge_id)
+              .order_by(Attempt.energy_used)
+              .first())
+
+def get_least_energy_attempt_for_team(*, db: SessionDep, team_id: int, challenge_id: int):
+    return (db.query(Attempt)
+              .filter(
+                  Attempt.team_id == team_id,
+                  Attempt.challenge_id == challenge_id
+              )
+              .order_by(Attempt.energy_used)
+              .first())

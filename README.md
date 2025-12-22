@@ -26,3 +26,4 @@ Web-App branch by Darnhofer
 - Frontend is just a html page atm 
 - refrsh tocken blacklisting could be cool
 - limiter for login to "limit" :) spamming 
+- check if using crud in other crud limits the microservices in the future

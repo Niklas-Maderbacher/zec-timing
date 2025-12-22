@@ -10,7 +10,7 @@ from app.database.dependency import SessionDep
 KC_TOKEN_URL = settings.KEYCLOAK_TOKEN_URL
 KC_USER_URL = settings.KEYCLOAK_USER_URL
 KC_CLIENT_ID = "admin-cli"
-KC_CLIENT_SECRET = "9BbafD8aoDywvuBPk0XBwjaOodfJblWM"
+KC_CLIENT_SECRET = "iLNBNaJwfV2paV8jCtneGF2tM3IKH4Fj"
 
 def get_token():
     response = requests.post(
