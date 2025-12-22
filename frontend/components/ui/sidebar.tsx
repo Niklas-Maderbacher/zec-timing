@@ -501,12 +501,16 @@ function SidebarMenuButton({
   variant = "default",
   size = "default",
   tooltip,
+  icon,
+  children,
   className,
   ...props
 }: React.ComponentProps<"button"> & {
   asChild?: boolean
   isActive?: boolean
   tooltip?: string | React.ComponentProps<typeof TooltipContent>
+  icon?: React.ReactNode
+  children?: React.ReactNode
 } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const Comp = asChild ? Slot : "button"
   const { isMobile, state } = useSidebar()
@@ -519,7 +523,12 @@ function SidebarMenuButton({
       data-active={isActive}
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
       {...props}
-    />
+    >
+      {icon && (
+        <span className="size-4 shrink-0">{icon}</span>
+      )}
+      {children}
+    </Comp>
   )
 
   if (!tooltip) {
