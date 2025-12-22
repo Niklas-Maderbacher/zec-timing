@@ -16,7 +16,6 @@ import { Users, UserCog, Flag, Settings, Download, Trophy } from "lucide-react"
 import DriversTab from "@/components/tabs/DriversTab"
 import TeamsTab from "@/components/tabs/TeamsTab"
 import UsersTab from "@/components/tabs/UsersTab"
-import ConfigTab from "@/components/tabs/ConfigTab"
 import ExportTab from "@/components/tabs/ExportTab"
 import LeaderboardTab from "@/components/tabs/LeaderboardTab"
 
@@ -75,13 +74,14 @@ export default function AdminPage() {
         <Sidebar className="w-64 border-r">
           <SidebarHeader className="px-4 py-3 text-xl font-semibold">ZEC-Timing</SidebarHeader>
           <SidebarMenu>
+
             <SidebarMenuItem>
               <SidebarMenuButton
-                isActive={activeTab === "drivers"}
-                onClick={() => setActiveTab("drivers")}
-                icon={<UserCog className="h-4 w-4" />}
+                isActive={activeTab === "leaderboard"}
+                onClick={() => setActiveTab("leaderboard")}
+                icon={<Trophy className="h-4 w-4" />}
               >
-                Drivers
+                Leaderboard
               </SidebarMenuButton>
             </SidebarMenuItem>
 
@@ -97,31 +97,21 @@ export default function AdminPage() {
 
             <SidebarMenuItem>
               <SidebarMenuButton
+                isActive={activeTab === "drivers"}
+                onClick={() => setActiveTab("drivers")}
+                icon={<UserCog className="h-4 w-4" />}
+              >
+                Drivers
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton
                 isActive={activeTab === "users"}
                 onClick={() => setActiveTab("users")}
                 icon={<Users className="h-4 w-4" />}
               >
                 Users
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                isActive={activeTab === "leaderboard"}
-                onClick={() => setActiveTab("leaderboard")}
-                icon={<Trophy className="h-4 w-4" />}
-              >
-                Leaderboard
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                isActive={activeTab === "config"}
-                onClick={() => setActiveTab("config")}
-                icon={<Settings className="h-4 w-4" />}
-              >
-                Config
               </SidebarMenuButton>
             </SidebarMenuItem>
 
@@ -177,7 +167,6 @@ export default function AdminPage() {
               getTeamName={getTeamName}
             />
           )}
-          {activeTab === "config" && <ConfigTab handleSaveConfig={handleSaveConfig} />}
           {activeTab === "export" && (
             <ExportTab
               exportFormat={exportFormat}
