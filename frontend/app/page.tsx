@@ -11,7 +11,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-import { User, Users, UserCog, Flag, Download, Trophy } from "lucide-react"
+import { User, Users, UserCog, Download, Trophy } from "lucide-react"
 
 import DriversTab from "@/components/tabs/DriversTab"
 import TeamsTab from "@/components/tabs/TeamsTab"
@@ -56,7 +56,6 @@ export default function AdminPage() {
   }
 
   const handleDeleteTeam = (id: string | number) => {}
-  const handleSaveConfig = () => {}
   const handleExport = () => {}
   const toggleUserStatus = (id: string | number) => {}
   const handleEditUser = (user: any) => {
