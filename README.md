@@ -7,8 +7,7 @@ Web-App branch by Darnhofer
 |-----------------------|----------------|
 | User service          | needs cleanup  |
 | Attempt service       | done           |
-| Leaderboard service   |                |
-| Score service         |                |
+| Score service         | logic done needs event based running          |
 | Challenge service     | done           |
 | Team/Driver service   | done           |
 | Auth service          | needs clean up works tho |
@@ -16,7 +15,6 @@ Web-App branch by Darnhofer
 ## Todo list
 - user service clean up 
 - auth service clean up (Bearer, remove error handling for now)
-- Leaderboard service
 - score service
 - basic tests for all the services
 - create a proper keycloak realm import file

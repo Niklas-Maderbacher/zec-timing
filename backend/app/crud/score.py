@@ -9,6 +9,11 @@ import app.crud.driver as driver_crud
 score_processors = {}
 
 def calculate_f_pm(db, db_attempt):
+    fastest_attempt = attempt_crud.get_fastest_attempt(db=db, challenge_id=db_attempt.challenge_id)
+    db_team = team_crud.get_team(db=db, team_id=fastest_attempt.team_id)
+    db_driver = driver_crud.get_driver(db=db, driver_id=fastest_attempt.driver_id)
+    f_pm = (db_team.vehicle_weight + db_driver.weight) / fastest_attempt.average_power
+    return f_pm
 
 def register_score_processor(challenge_name):
     def decorator(func):
@@ -17,7 +22,7 @@ def register_score_processor(challenge_name):
     return decorator
 
 @register_score_processor("Skidpad")
-def handle_skidpad(score, db_attempt, db):
+def handle_skidpad(db_attempt, db):
     fastest_attempt = attempt_crud.get_fastest_attempt(db=db, challenge_id=db_attempt.challenge_id)
     t_min = fastest_attempt.end_time - fastest_attempt.start_time
     fastest_attempt_team = attempt_crud.get_fastest_attempt_for_team(db=db, team_id=db_attempt.team_id, challenge_id=db_attempt.challenge_id)
@@ -25,24 +30,20 @@ def handle_skidpad(score, db_attempt, db):
     return 100 * t_min / t_team
 
 @register_score_processor("Acceleration")
-def handle_acceleration(score, db_attempt, db):
-    #calculate f_pm and f_pm based on who leads the race
-    fastest_attempt = attempt_crud.get_fastest_attempt(db=db, challenge_id=db_attempt.challenge_id)
-    db_team = team_crud.get_team(db=db, team_id=fastest_attempt.team_id)
-    db_driver = driver_crud.get_driver(db=db, driver_id=db_team.driver_id)
-    f_pm = (db_team.vehicle_weight + db_driver.weight) / fastest_attempt.average_power
-    f_points = 50 - f_pm / 20
-    #normal score calculation
+def handle_acceleration(db_attempt, db):
+    f_pm_best_team = calculate_f_pm(db, db_attempt)
+    f_points = 50 - f_pm_best_team / 20
     fastest_attempt = attempt_crud.get_fastest_attempt(db=db, challenge_id=db_attempt.challenge_id)
     t_min = fastest_attempt.end_time - fastest_attempt.start_time
     fastest_attempt_team = attempt_crud.get_fastest_attempt_for_team(db=db, team_id=db_attempt.team_id, challenge_id=db_attempt.challenge_id)
     t_team = fastest_attempt_team.end_time-fastest_attempt_team.start_time
-    score = f_points * t_min / t_team + 
-    #nochmal fpm für das team /20 fpm ding ist da oben
+    f_pm = calculate_f_pm(db, db_attempt)
+    score = f_points * t_min / t_team + f_pm / 20
+    return score
 
 
 @register_score_processor("Slalom")
-def handle_slalom(score, db_attempt, db):
+def handle_slalom(db_attempt, db):
     fastest_attempt = attempt_crud.get_fastest_attempt(db=db, challenge_id=db_attempt.challenge_id)
     t_min = fastest_attempt.end_time - fastest_attempt.start_time
     fastest_attempt_team = attempt_crud.get_fastest_attempt_for_team(db=db, team_id=db_attempt.team_id, challenge_id=db_attempt.challenge_id)
@@ -50,7 +51,7 @@ def handle_slalom(score, db_attempt, db):
     return 100 * t_min / t_team
 
 @register_score_processor("Endurance")
-def handle_endurance(score, db_attempt, db):
+def handle_endurance(db_attempt, db):
     #Time Score
     fastest_attempt = attempt_crud.get_fastest_attempt(db=db, challenge_id=db_attempt.challenge_id)
     t_min = fastest_attempt.end_time - fastest_attempt.start_time
@@ -70,7 +71,7 @@ def create_score(*, db: SessionDep, score: ScoreCreate):
     db_attempt  = attempt_crud.get_attempt(db=db, attempt_id=score.attempt_id)
     db_challenge = get_challenge(db=db, challenge_id=db_attempt.challenge_id)
     if processor := score_processors.get(db_challenge.name):
-        score_value = processor(score, db_attempt, db)
+        score_value = processor(db_attempt, db)
     
     db_score = Score(attempt_id=score.attempt_id, value=score_value)
     db.add(db_score)
