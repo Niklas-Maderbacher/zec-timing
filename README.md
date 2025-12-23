@@ -6,14 +6,14 @@ Web-App branch by Darnhofer
 | Service               | Status         |
 |-----------------------|----------------|
 | User service          | needs cleanup  |
-| Attempt service       | done           |
-| Score service         | logic done needs event based running          |
-| Challenge service     | done           |
-| Team/Driver service   | done           |
-| Auth service          | needs clean up works tho |
+| Attempt service       | Error handling           |
+| Score service         | logic done needs event based running & Error handling          |
+| Challenge service     | Error handling           |
+| Team/Driver service   | Error handling          |
+| Auth service          | Error handling |
 
 ## Todo list
-- auth service clean up (Bearer, remove error handling for now)
+- frontend pictures & challenge tab
 - user service clean up 
 - score service event based 
 - basic tests for all the services
