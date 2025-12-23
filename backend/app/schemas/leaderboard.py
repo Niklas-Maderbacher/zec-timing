@@ -1,27 +1,10 @@
 from pydantic import BaseModel
-from typing import Optional
-from datetime import datetime
+from app.schemas.score import ScoreResponse
+from app.schemas.team import TeamResponse
 
-
-class LeaderboardBase(BaseModel):
-    team_id: Optional[int] = None
-    challenge_id: Optional[int] = None
-    best_score: Optional[float] = None
-
-
-class LeaderboardCreate(LeaderboardBase):
-    pass
-
-
-class LeaderboardUpdate(BaseModel):
-    team_id: Optional[int] = None
-    challenge_id: Optional[int] = None
-    best_score: Optional[float] = None
-
-
-class LeaderboardResponse(LeaderboardBase):
-    id: int
-    updated_at: Optional[datetime] = None
+class LeaderboardResponse(BaseModel):
+    score: ScoreResponse
+    team: TeamResponse
 
     class Config:
-        from_attributes = True
+        orm_mode = True
