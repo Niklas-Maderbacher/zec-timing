@@ -13,9 +13,9 @@ Web-App branch by Darnhofer
 | Auth service          | needs clean up works tho |
 
 ## Todo list
-- user service clean up 
 - auth service clean up (Bearer, remove error handling for now)
-- score service
+- user service clean up 
+- score service event based 
 - basic tests for all the services
 - create a proper keycloak realm import file
 
