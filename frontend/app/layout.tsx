@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ZEC-Timing",
   icons: {
-    icon: "/ZEC-logo.png",
+    icon: "/ZEC-icon.png",
   },
 };
 
