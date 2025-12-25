@@ -5,12 +5,12 @@ ZEC-API branch by Darnhofer
 ## Services Status
 | Service               | Status         |
 |-----------------------|----------------|
-| User service          | needs cleanup  |
-| Attempt service       | Error handling           |
-| Score service         | logic done needs event based running & Error handling          |
-| Challenge service     | Error handling           |
-| Team/Driver service   | Error handling          |
-| Auth service          | Error handling |
+| User service          | Error Handling|
+| Attempt service       | Error handling|
+| Score service         | logic done needs event based running & Error handling|
+| Challenge service     | Error handling|
+| Team/Driver service   | Error handling|
+| Auth service          | Error handling|
 
 ## Todo list
 - Split into services
@@ -24,4 +24,4 @@ ZEC-API branch by Darnhofer
 - Frontend is just a html page atm 
 - refrsh tocken blacklisting could be cool
 - limiter for login to "limit" :) spamming 
-- check if using crud in other crud limits the microservices in the future
+- check if using crud in other crud limits the microservices in the future --> yes it does
