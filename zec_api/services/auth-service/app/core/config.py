@@ -21,6 +21,21 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
 
+    KEYCLOAK_URL: str = ""
+    KEYCLOAK_REALM: str = ""
+    KEYCLOAK_ADMIN_CLIENT_ID: str = ""
+    KEYCLOAK_ADMIN_CLIENT_SECRET: str = ""
+    KEYCLOAK_CLIENT_ID: str = ""
+    KEYCLOAK_CLIENT_SECRET: str = ""
+    KEYCLOAK_TOKEN_URL: str = ""
+    KEYCLOAK_JWKS_URL: str = ""
+    KEYCLOAK_USER_URL: str = ""
+
+    @computed_field
+    @property
+    def KEYCLOAK_REALM_URL(self) -> str:
+        return f"{self.KEYCLOAK_URL}/realms/{self.KEYCLOAK_REALM}"
+    
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> str:
         return str(
