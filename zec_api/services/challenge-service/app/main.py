@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
-from fastapi.middleware.cors import CORSMiddleware
 from app.api.main import api_router
 from app.core.config import settings
-#from app.database.seed import seed_challenges
+from app.database.seed import seed_challenges
 from sqlalchemy.orm import Session
 from app.database.session import engine, Base
 
@@ -25,5 +24,5 @@ Base.metadata.create_all(bind=engine)
 @app.on_event("startup")
 def startup_event():
     db = Session(bind=engine)
-    #seed_challenges(db)
+    seed_challenges(db)
     db.commit()
