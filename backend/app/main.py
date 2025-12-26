@@ -1,45 +1,62 @@
-from fastapi import FastAPI
-from fastapi.routing import APIRoute
-from starlette.middleware.cors import CORSMiddleware
+import flask
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+import datetime
 
+app = Flask(__name__)
+CORS(app)
 
-from app.api.main import api_router
+timestamps = {
+    "00-11-22-33-44-55": ["2024-01-01T10:00:00Z", "2024-01-01T10:02:00Z"],
+    "00-11-22-33-44-56": ["2024-01-01T10:05:00Z", "2024-01-01T10:07:00Z"],
+    "00-11-22-33-44-57": ["2024-01-01T10:10:00Z", "2024-01-01T10:12:00Z"],
+    "00-11-22-33-44-58": ["2024-01-01T10:15:00Z", "2024-01-01T10:17:00Z"],
+    "00-11-22-33-44-A5": ["2024-01-02T11:00:00Z", "2024-01-02T11:02:00Z"],
+    "00-11-22-33-44-A6": ["2024-01-02T11:05:00Z", "2024-01-02T11:07:00Z"],
+    "00-11-22-33-44-A7": ["2024-01-02T11:10:00Z", "2024-01-02T11:12:00Z"],
+    "00-11-22-33-44-A8": ["2024-01-02T11:15:00Z", "2024-01-02T11:17:00Z"],
+}
 
-from app.config.config import settings
+drivers = {
+    1: {"id": 1, "name": "Driver One"},
+    2: {"id": 2, "name": "Driver Two"},
+}
 
+@app.route('/api/teams/', methods=['GET'])
+def get_teams():
+    # Dummy data for teams
+    teams = [
+        {"id": 1, "name": "Team A"},
+        {"id": 2, "name": "Team B"},
+    ]
+    return jsonify(teams)
 
-def custom_generate_unique_id(route: APIRoute) -> str:
-    return f"{route.tags[0]}-{route.name}"
+@app.route("/api/challenges/", methods=["GET"])
+def get_challenges():
+    # Dummy data for challenges
+    challenges = [
+        {"id": 1, "name": "Challenge A", "esp_mac_start1": "00-11-22-33-44-55", "esp_mac_start2": "00-11-22-33-44-56", "esp_mac_finish1": "00-11-22-33-44-57", "esp_mac_finish2": "00-11-22-33-44-58"},
+        {"id": 2, "name": "Challenge B", "esp_mac_start1": "00-11-22-33-44-A5", "esp_mac_start2": "00-11-22-33-44-A6", "esp_mac_finish1": "00-11-22-33-44-A7", "esp_mac_finish2": "00-11-22-33-44-A8"},
+    ]
+    return jsonify(challenges)
 
+@app.route("/api/penalties/", methods=["GET"])
+def get_penalties():
+    # Dummy data for penalties
+    penalties = [
+        {"id": 1, "amount": 5, "type": "Strecke Verlassen"},
+        {"id": 2, "amount": 10, "type": "Hüterl nieder"},
+    ]
+    return jsonify(penalties)
 
-app = FastAPI(
-    title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    generate_unique_id_function=custom_generate_unique_id,
-)
+@app.route("/api/drivers/<team_id>", methods=["GET"])
+def get_drivers(team_id):
+    driver = drivers[int(team_id)]
+    
+    return jsonify(driver)
 
-if settings.all_cors_origins:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.all_cors_origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+@app.route("/api/timestamps/<mac_address>", methods=["GET"])
+def get_timestamps(mac_address):
+    timestamp = timestamps[mac_address]
 
-@app.on_event("startup")
-def startup_event():
-    if settings.DESKTOP_APP_STANDALONE:
-        from app.db.session import Base, engine
-        from app.models.attempt import Attempt
-        from app.models.challenges import Challenge
-        from app.models.drivers import Driver
-        from app.models.leaderboard import Leaderboard
-        from app.models.penalties import Penalty
-        from app.models.score import Score
-        from app.models.teams import Team
-        from app.models.user import User
-
-        Base.metadata.create_all(bind=engine)
-
-app.include_router(api_router, prefix=settings.API_V1_STR)
+    return jsonify({"timestamp": timestamp})
