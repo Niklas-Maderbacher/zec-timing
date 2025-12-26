@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-#from app.api.routes import team, driver
+from app.api.routes import attempt
 
 api_router = APIRouter()
 
-#api_router.include_router(team.router, prefix="/team", tags=["teams"])
+api_router.include_router(attempt.router, prefix="/attempts", tags=["attempt"])
