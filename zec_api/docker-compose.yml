@@ -17,6 +17,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: userdb
+      KEYCLOAK_USER_URL: http://keycloak:8080/admin/realms/zec-realm/users
+      AUTH_SERVICE_URL: http://auth-service:8000
 
   auth-service:
     build:
@@ -38,8 +40,8 @@ services:
       KEYCLOAK_REALM: zec-realm
       KEYCLOAK_CLIENT_ID: login-client
       KEYCLOAK_ADMIN_CLIENT_ID: user-admin-client
-      KEYCLOAK_ADMIN_CLIENT_SECRET: IPgaYDbEaiDcVLJPnUmvEAxC6kUQK59s
-      KEYCLOAK_CLIENT_SECRET: TiUFipwb384W5IvNFzCM8XHhEfd3U01U
+      KEYCLOAK_ADMIN_CLIENT_SECRET: FzF2Bqb7NnmXECNfkzaE3Bx6mc176Yen
+      KEYCLOAK_CLIENT_SECRET: ESW6xtI8MjLN7dW35ZKq7h1Ex2z9lgaF
       KEYCLOAK_TOKEN_URL: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/token
       KEYCLOAK_JWKS_URL: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/certs
       KEYCLOAK_USER_URL: http://keycloak:8080/admin/realms/zec-realm/users
