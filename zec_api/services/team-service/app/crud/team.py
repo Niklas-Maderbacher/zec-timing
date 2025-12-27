@@ -31,3 +31,6 @@ def get_team(*, db: SessionDep, team_id: int):
 
 def get_teams(*, db: SessionDep):
     return db.query(Team).all()
+
+def get_teams_by_ids(*, db: SessionDep, team_ids: set[int]):
+    return db.query(Team).filter(Team.id.in_(team_ids)).all()
