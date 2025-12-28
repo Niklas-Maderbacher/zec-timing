@@ -1,6 +1,10 @@
 from app.database.dependency import SessionDep
 from app.schemas.attempt import AttemptCreate, AttemptUpdate
 from app.models.attempt import Attempt
+from app.core.config import settings
+import requests
+
+SCORE_URL=settings.SCORE_SERVICE_URL
 
 def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
     attempt_data = attempt.model_dump(exclude_unset=True)
@@ -8,6 +12,10 @@ def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
     db.add(db_attempt)
     db.commit()
     db.refresh(db_attempt)
+    payload = {
+        "attempt_id": db_attempt.id
+    }
+    requests.post(f"{SCORE_URL}/api/scores/", json=payload)
     return db_attempt
 
 def update_attempt(*, db: SessionDep, attempt_update: AttemptUpdate):
