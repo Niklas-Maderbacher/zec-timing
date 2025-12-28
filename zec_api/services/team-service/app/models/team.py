@@ -9,7 +9,8 @@ class Team(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     vehicle_weight = Column(Float)
+    mean_power = Column(Float)
     rfid_identifier = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
     
     drivers = relationship("Driver", back_populates="team")

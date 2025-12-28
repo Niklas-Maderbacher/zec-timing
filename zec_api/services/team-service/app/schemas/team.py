@@ -1,28 +1,26 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime, timezone
-
+from datetime import datetime
 
 class TeamBase(BaseModel):
     name: str
-    vehicle_weight: Optional[float] = None
-    rfid_identifier: Optional[str] = None
-
+    mean_power: float
+    vehicle_weight: float
+    rfid_identifier: float
 
 class TeamCreate(TeamBase):
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
+    created_at: Optional[datetime] = datetime.datetime.utcnow()
 
 class TeamUpdate(BaseModel):
     id : int 
     name: Optional[str] = None
     vehicle_weight: Optional[float] = None
+    mean_power: Optional[float] = None
     rfid_identifier: Optional[str] = None
-
 
 class TeamResponse(TeamBase):
     id: int
-    created_at: Optional[datetime] = None
+    created_at: datetime
 
     class Config:
         from_attributes = True
