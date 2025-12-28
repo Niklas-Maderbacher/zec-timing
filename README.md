@@ -13,10 +13,10 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 | Auth service          | Error handling|
 
 ## Todo list
-- score service event based 
 - Api gateway
 - basic tests for all the services
-- attempt number berechnen
+- attempt number calculation
+- fix score calculation
 
 ## Notes and future
 - needs 80% Test converage
