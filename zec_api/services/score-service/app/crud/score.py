@@ -16,7 +16,7 @@ def calculate_f_pm(db_attempt):
     fastest_attempt = requests.get(f"{ATTEMPT_URL}/api/attempts/fast/", params={"challenge_id": db_attempt.challenge_id}).json()
     team = requests.get(f"{TEAM_URL}/api/teams/{fastest_attempt['team_id']}").json()
     driver = requests.get(f"{DRIVER_URL}/api/drivers/{fastest_attempt['driver_id']}").json()
-    f_pm = (team["vehicle_weight"] + driver["weight"]) / fastest_attempt["average_power"]
+    f_pm = (team["vehicle_weight"] + driver["weight"]) / team["mean_power"]
     return f_pm
 
 
