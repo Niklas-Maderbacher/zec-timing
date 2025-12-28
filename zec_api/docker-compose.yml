@@ -82,7 +82,7 @@ services:
 
   score-service:
     build:
-      context: ./services/score-services
+      context: ./services/score-service
       dockerfile: Dockerfile
     container_name: score-service
     ports:

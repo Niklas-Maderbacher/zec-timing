@@ -9,7 +9,7 @@ class TeamBase(BaseModel):
     rfid_identifier: float
 
 class TeamCreate(TeamBase):
-    created_at: Optional[datetime] = datetime.datetime.utcnow()
+    created_at: Optional[datetime]
 
 class TeamUpdate(BaseModel):
     id : int 
