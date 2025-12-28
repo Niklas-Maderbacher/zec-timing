@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
 
+    CHALLENGE_SERVICE_URL: str
+    ATTEMPT_SERVICE_URL: str
+    TEAM_SERVICE_URL: str
+    DRIVER_SERVICE_URL: str
+
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> str:
         return str(

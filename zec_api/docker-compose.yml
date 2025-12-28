@@ -96,6 +96,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: scoredb
+      CHALLENGE_SERVICE_URL: http://challenge-service:8000
+      ATTEMPT_SERVICE_URL: http://attempt-service:8000
+      TEAM_SERVICE_URL: http://team-service:8000
+      DRIVER_SERVICE_URL: http://driver-service:8000
 
   team-service:
     build:

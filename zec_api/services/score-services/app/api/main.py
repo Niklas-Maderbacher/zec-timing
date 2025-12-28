@@ -1,6 +1,7 @@
 from fastapi import APIRouter
-#from app.api.routes import auth, protected, team, driver, attempt, challenge, user, score, leaderboard
+from app.api.routes import score, leaderboard
 
 api_router = APIRouter()
 
-#api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(score.router, prefix="/scores", tags=["scores"])
+api_router.include_router(leaderboard.router, prefix="/leaderboard", tags=["leaderboard"])
