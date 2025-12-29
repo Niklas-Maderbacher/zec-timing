@@ -7,16 +7,16 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 |-----------------------|----------------|
 | User service          | Error Handling|
 | Attempt service       | Error handling|
-| Score service         | logic done needs event based running & Error handling|
+| Score service         | Error handling|
 | Challenge service     | Error handling|
 | Team/Driver service   | Error handling|
 | Auth service          | Error handling|
 
 ## Todo list
 - Api gateway
-- basic tests for all the services
 - attempt number calculation
 - fix score calculation
+- basic tests for all the services
 
 ## Notes and future
 - needs 80% Test converage
