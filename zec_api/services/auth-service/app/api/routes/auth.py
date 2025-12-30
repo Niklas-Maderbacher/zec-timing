@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Form, HTTPException, status
 from app.database.dependency import SessionDep
 import app.crud.auth as crud
+from fastapi import Depends
 
 router = APIRouter()
 
@@ -31,3 +32,19 @@ def refresh(refresh_token: str = Form(...)):
 def get_admin_token():
     access_token = crud.get_admin_token()
     return access_token
+
+@router.get("/verify", status_code=status.HTTP_200_OK)
+def verify_token(current_user: dict = Depends(crud.get_current_user)):
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or missing token"
+        )
+
+    return {
+        "active": True,
+        "sub": current_user["sub"],
+        "username": current_user["username"],
+        "email": current_user["email"],
+        "roles": current_user["roles"],
+    }

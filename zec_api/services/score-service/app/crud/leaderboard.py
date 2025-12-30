@@ -26,7 +26,7 @@ def get_leaderboard(db: SessionDep, challenge_id: int):
             best_score_by_team[team_id] = score
 
     team_ids = list(best_score_by_team.keys())
-    teams_resp = requests.get(f"{TEAM_URL}/api/teams/by-ids/",params=[("team_ids", tid) for tid in team_ids])
+    teams_resp = requests.get(f"{TEAM_URL}/api/teams/by-ids/", params={"team_ids": team_ids})
     teams_resp.raise_for_status()
     teams = teams_resp.json()
     team_by_id = {t["id"]: t for t in teams}
