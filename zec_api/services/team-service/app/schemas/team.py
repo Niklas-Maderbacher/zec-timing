@@ -6,7 +6,7 @@ class TeamBase(BaseModel):
     name: str
     mean_power: float
     vehicle_weight: float
-    rfid_identifier: float
+    rfid_identifier: str
 
 class TeamCreate(TeamBase):
     created_at: Optional[datetime]
