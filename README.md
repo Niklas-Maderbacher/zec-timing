@@ -13,7 +13,6 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 | Auth service          | Error handling|
 
 ## Todo list
-- Api gateway
 - attempt number calculation
 - fix score calculation
 - basic tests for all the services
