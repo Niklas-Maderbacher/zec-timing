@@ -17,6 +17,7 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 - attempt number calculation
 - fix score calculation
 - basic tests for all the services
+- change challenge get by name to use query
 
 ## Notes and future
 - internalise auth endpoints
