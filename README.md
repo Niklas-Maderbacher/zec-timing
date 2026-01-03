@@ -22,6 +22,5 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 ## Notes and future
 - internalise auth endpoints
 - needs 80% Test converage
-- Frontend is just a html page atm 
-- refrsh tocken blacklisting could be cool
+- refresh tocken blacklisting could be cool
 - limiter for login to "limit" :) spamming 
