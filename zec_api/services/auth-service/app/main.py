@@ -39,15 +39,14 @@ Base.metadata.create_all(bind=engine)
 def create_exception_handler(
     status_code: int, initial_detail: str
 ) -> Callable[[Request, AuthserviceApiError], JSONResponse]:
+    detail = {"message": initial_detail}
     async def exception_handler(_: Request, exc: AuthserviceApiError) -> JSONResponse:
-        message = initial_detail
         if exc.message:
-            message = exc.message
+            detail["message"] = exc.message
         if exc.name:
-            message = f"{message} [{exc.name}]"
+            detail["message"] = f"{detail['message']} [{exc.name}]"
         return JSONResponse(
-            status_code=status_code,
-            content={"detail": message},
+            status_code=status_code, content={"detail": detail["message"]}
         )
     return exception_handler
 
@@ -80,57 +79,57 @@ app.add_exception_handler(
 )
 
 app.add_exception_handler(
-    InvalidCredentials,
-    create_exception_handler(
+    exc_class_or_status_code=InvalidCredentials,
+    handler=create_exception_handler(
         status.HTTP_401_UNAUTHORIZED, "Invalid credentials provided."
     ),
 )
 
 app.add_exception_handler(
-    TokenRefreshFailed,
-    create_exception_handler(
+    exc_class_or_status_code=TokenRefreshFailed,
+    handler=create_exception_handler(
         status.HTTP_401_UNAUTHORIZED, "Token refresh failed."
     ),
 )
 
 app.add_exception_handler(
-    InsufficientPermissions,
-    create_exception_handler(
+    exc_class_or_status_code=InsufficientPermissions,
+    handler=create_exception_handler(
         status.HTTP_403_FORBIDDEN, "User lacks permissions."
     ),
 )
 
 app.add_exception_handler(
-    MissingRoles,
-    create_exception_handler(
+    exc_class_or_status_code=MissingRoles,
+    handler=create_exception_handler(
         status.HTTP_403_FORBIDDEN, "No roles assigned to user."
     ),
 )
 
 app.add_exception_handler(
-    PublicKeyNotFound,
-    create_exception_handler(
+    exc_class_or_status_code=PublicKeyNotFound,
+    handler=create_exception_handler(
         status.HTTP_500_INTERNAL_SERVER_ERROR, "Public key not found."
     ),
 )
 
 app.add_exception_handler(
-    InvalidPublicKey,
-    create_exception_handler(
+    exc_class_or_status_code=InvalidPublicKey,
+    handler=create_exception_handler(
         status.HTTP_500_INTERNAL_SERVER_ERROR, "Invalid public key."
     ),
 )
 
 app.add_exception_handler(
-    InvalidClaims,
-    create_exception_handler(
+    exc_class_or_status_code=InvalidClaims,
+    handler=create_exception_handler(
         status.HTTP_500_INTERNAL_SERVER_ERROR, "Invalid token claims."
     ),
 )
 
 app.add_exception_handler(
-    KeycloakUnavailable,
-    create_exception_handler(
+    exc_class_or_status_code=KeycloakUnavailable,
+    handler=create_exception_handler(
         status.HTTP_503_SERVICE_UNAVAILABLE, "Keycloak service unavailable."
     ),
 )
