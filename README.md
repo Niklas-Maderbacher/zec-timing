@@ -5,12 +5,12 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 ## Services Status
 | Service               | Status         |
 |-----------------------|----------------|
-| User service          | Error Handling|
-| Attempt service       | Error handling|
-| Score service         | Error handling|
-| Challenge service     | Error handling|
-| Team/Driver service   | Error handling|
-| Auth service          | slight auth hardening|
+| User service          |Error Handling|
+| Attempt service       |Error handling|
+| Score service         |Error handling|
+| Challenge service     |Error handling|
+| Team/Driver service   |done|
+| Auth service          |slight auth hardening|
 
 ## Todo list for before 07.01
 - api endpoint documentation (user and leaderboard missing)

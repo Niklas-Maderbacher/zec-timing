@@ -7,11 +7,12 @@ from app.database.session import engine, Base
 from typing import Callable
 from app.exceptions.exceptions import (
     AuthenticationFailed,
-    AttemptserviceApiError,
+    TeamserviceApiError,
     EntityDoesNotExistError,
     InvalidOperationError,
     InvalidTokenError,
     ServiceError,
+    EntityAlreadyExistsError,
 )
 
 def cstm_generate_unique_id(route: APIRoute) -> str:
@@ -31,9 +32,9 @@ Base.metadata.create_all(bind=engine)
 
 def create_exception_handler(
     status_code: int, initial_detail: str
-) -> Callable[[Request, AttemptserviceApiError], JSONResponse]:
+) -> Callable[[Request, TeamserviceApiError], JSONResponse]:
     detail = {"message": initial_detail}
-    async def exception_handler(_: Request, exc: AttemptserviceApiError) -> JSONResponse:
+    async def exception_handler(_: Request, exc: TeamserviceApiError) -> JSONResponse:
         if exc.message:
             detail["message"] = exc.message
         if exc.name:
@@ -60,8 +61,7 @@ app.add_exception_handler(
 app.add_exception_handler(
     exc_class_or_status_code=AuthenticationFailed,
     handler=create_exception_handler(
-        status.HTTP_401_UNAUTHORIZED,
-        "Authentication failed.",
+        status.HTTP_401_UNAUTHORIZED, "Authentication failed.",
     ),
 )
 
@@ -73,9 +73,15 @@ app.add_exception_handler(
 )
 
 app.add_exception_handler(
+    exc_class_or_status_code=EntityAlreadyExistsError,
+    handler=create_exception_handler(
+        status.HTTP_409_CONFLICT, "Entity already exists."
+    ),
+)
+
+app.add_exception_handler(
     exc_class_or_status_code=ServiceError,
     handler=create_exception_handler(
-        status.HTTP_500_INTERNAL_SERVER_ERROR,
-        "A service seems to be down, try again later.",
+        status.HTTP_500_INTERNAL_SERVER_ERROR, "A service seems to be down, try again later.",
     ),
 )
