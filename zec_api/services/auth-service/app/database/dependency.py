@@ -5,7 +5,7 @@ from fastapi import Depends
 from app.database.session import engine
 from app.crud.auth import get_current_user
 from app.models.user import UserRole
-from fastapi import HTTPException, status
+import app.exceptions.exceptions as exception
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -18,11 +18,7 @@ def get_db() -> Generator[Session, None, None]:
 def require_role(required_role: UserRole):
     def role_checker(user: CurrentUser):
         if required_role.value not in user["roles"]:
-            # Has to be changed (Error handling)
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Role '{required_role.value}' is required"
-            )
+            raise exception.InsufficientPermissions
         return user
     return role_checker
 
