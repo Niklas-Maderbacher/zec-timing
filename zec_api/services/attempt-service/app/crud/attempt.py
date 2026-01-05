@@ -5,8 +5,13 @@ from app.core.config import settings
 import requests
 
 SCORE_URL=settings.SCORE_SERVICE_URL
+TEAM_URL=settings.TEAM_SERVICE_URL
+CHALLENGE_URL=settings.CHALLENGE_SERVICE_URL
 
 def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
+    requests.get(f"{TEAM_URL}/api/teams/{attempt.team_id}")
+    requests.get(f"{TEAM_URL}/api/drivers/{attempt.driver_id}")
+    requests.get(f"{CHALLENGE_URL}/api/drivers/{attempt.challenge_id}")
     attempt_data = attempt.model_dump(exclude_unset=True)
     db_attempt = Attempt(**attempt_data)
     db.add(db_attempt)
@@ -21,7 +26,10 @@ def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
 def update_attempt(*, db: SessionDep, attempt_update: AttemptUpdate):
     attempt_id = attempt_update.id
     db_attempt = get_attempt(db=db, attempt_id=attempt_id)
-    update_data = attempt_update.model_dump(exclude_unset=True)
+    update_data = attempt_update.model_dump(
+        exclude_unset=True,
+        exclude={"id"}
+    )
     for field, value in update_data.items():
         setattr(db_attempt, field, value)
     db.commit()

@@ -92,6 +92,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: attemptdb
       SCORE_SERVICE_URL: http://score-service:8005
+      TEAM_SERVICE_URL: http://team-service:8006
+      CHALLENGE_SERVICE_URL: http://challenge-service:8003
 
   score-service:
     build:
