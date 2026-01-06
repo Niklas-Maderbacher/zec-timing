@@ -90,7 +90,7 @@ def extract_roles_from_payload(payload: dict) -> list[str]:
     resource_access = payload.get("resource_access")
     if not isinstance(resource_access, dict):
         return []
-    client_access = resource_access.get(KC_CLIENT_ID)
+    client_access = resource_access.get(KC_ADMIN_CLIENT_ID)
     if not isinstance(client_access, dict):
         return []
     roles = client_access.get("roles")

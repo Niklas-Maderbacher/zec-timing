@@ -7,40 +7,8 @@ from typing import Optional
 from app.database.dependency import SessionDep
 
 KC_USER_URL = settings.KEYCLOAK_USER_URL
-
-def get_admin_token() -> str:
-    access_token = requests.get(f"{settings.AUTH_SERVICE_URL}/api/auth/internal/get-admin-token").json()
-    return access_token
-
-def get_user_by_username(username: str) -> Optional[dict]:
-    access_token = get_admin_token()
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
-    }
-    search_url = f"{KC_USER_URL}?exact=true&username={username}"
-    response = requests.get(search_url, headers=headers)
-    users = response.json()
-    user = users[0]
-    return {
-        "id": user["id"],
-        "username": user["username"],
-    }
-
-def get_user_by_id(user_id: str) -> dict:
-    access_token = get_admin_token()
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
-    }
-    user_url = f"{KC_USER_URL}/{user_id}"
-    response = requests.get(user_url, headers=headers)
-    user = response.json()
-    return {
-        "id": user["id"],
-        "username": user["username"],
-    }
-
+KC_CLIENTS_URL = settings.KC_CLIENTS_URL
+KC_ADMIN_CLIENT_ID = settings.KC_ADMIN_CLIENT_ID
 
 def create_user(db: SessionDep, request: CreateUserKC):
     access_token = get_admin_token()
@@ -119,3 +87,96 @@ def delete_user(db: SessionDep, user_id: str) -> None:
     db.commit()
     user_url = f"{KC_USER_URL}/{user_id}"
     response = requests.delete(user_url, headers=headers)
+
+def add_roles_to_user(user_id: str, roles: list[str]) -> None:
+    access_token = get_admin_token()
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    }
+
+    client_search_url = f"{KC_CLIENTS_URL}?clientId={KC_ADMIN_CLIENT_ID}"
+    client_resp = requests.get(client_search_url, headers=headers)
+    client_resp.raise_for_status()
+    clients = client_resp.json()
+    client_uuid = clients[0]["id"]
+
+    role_representations = []
+    for role_name in roles:
+        role_url = f"{KC_CLIENTS_URL}/{client_uuid}/roles/{role_name}"
+        role_resp = requests.get(role_url, headers=headers)
+        role_resp.raise_for_status()
+        role_representations.append(role_resp.json())
+
+    role_mapping_url = (
+        f"{KC_USER_URL}/{user_id}/role-mappings/clients/{client_uuid}"
+    )
+    assign_resp = requests.post(
+        role_mapping_url,
+        json=role_representations,
+        headers=headers,
+    )
+    assign_resp.raise_for_status()
+
+def remove_roles_from_user(user_id: str, roles: list[str]) -> None:
+    access_token = get_admin_token()
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    }
+    client_search_url = f"{KC_CLIENTS_URL}?clientId={KC_ADMIN_CLIENT_ID}"
+    client_resp = requests.get(client_search_url, headers=headers)
+    client_resp.raise_for_status()
+
+    clients = client_resp.json()
+    client_uuid = clients[0]["id"]
+
+    role_representations = []
+    for role_name in roles:
+        role_url = f"{KC_CLIENTS_URL}/{client_uuid}/roles/{role_name}"
+        role_resp = requests.get(role_url, headers=headers)
+        role_resp.raise_for_status()
+        role_representations.append(role_resp.json())
+
+    role_mapping_url = (
+        f"{KC_USER_URL}/{user_id}/role-mappings/clients/{client_uuid}"
+    )
+    remove_resp = requests.delete(
+        role_mapping_url,
+        json=role_representations,
+        headers=headers,
+    )
+    remove_resp.raise_for_status()
+
+def get_admin_token() -> str:
+    access_token = requests.get(f"{settings.AUTH_SERVICE_URL}/api/auth/internal/get-admin-token").json()
+    return access_token
+
+def get_user_by_username(username: str) -> Optional[dict]:
+    access_token = get_admin_token()
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    }
+    search_url = f"{KC_USER_URL}?exact=true&username={username}"
+    response = requests.get(search_url, headers=headers)
+    users = response.json()
+    user = users[0]
+    return {
+        "id": user["id"],
+        "username": user["username"],
+    }
+
+def get_user_by_id(user_id: str) -> dict:
+    access_token = get_admin_token()
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    }
+    user_url = f"{KC_USER_URL}/{user_id}"
+    response = requests.get(user_url, headers=headers)
+    user = response.json()
+    return {
+        "id": user["id"],
+        "username": user["username"],
+    }

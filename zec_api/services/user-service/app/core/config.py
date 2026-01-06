@@ -23,6 +23,8 @@ class Settings(BaseSettings):
 
     KEYCLOAK_USER_URL: str = ""
     AUTH_SERVICE_URL: str = ""
+    KC_CLIENTS_URL: str = ""
+    KC_ADMIN_CLIENT_ID: str = ""
 
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> str:

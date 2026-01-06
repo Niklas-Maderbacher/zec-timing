@@ -28,3 +28,6 @@ class CreateUserKC(BaseModel):
 class UpdateUserKC(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
+
+class UserRolesRequest(BaseModel):
+    roles: list[str]

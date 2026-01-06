@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.schemas.user import CreateUserKC, UpdateUserKC
+from app.schemas.user import CreateUserKC, UpdateUserKC, UserRolesRequest
 from app.crud import user as crud
 from app.database.dependency import SessionDep
 
@@ -28,3 +28,21 @@ async def update_user_endpoint(db: SessionDep, user_id: str,request: UpdateUserK
 @router.delete("/{user_id}")
 def delete_user_endpoint(db: SessionDep, user_id: str):
     crud.delete_user(db=db, user_id=user_id)
+
+@router.post("/{user_id}/roles")
+def assign_client_roles_to_user(user_id: str, roles_request: UserRolesRequest):
+    crud.add_roles_to_user(user_id=user_id, roles=roles_request.roles)
+    return {
+        "message": "Roles assigned successfully",
+        "user_id": user_id,
+        "assigned_roles": roles_request.roles
+    }
+
+@router.delete("/{user_id}/roles")
+def remove_roles_from_user(user_id: str, roles_request: UserRolesRequest):
+    crud.remove_roles_from_user(user_id=user_id, roles=roles_request.roles)
+    return {
+        "message": "Roles remove successfully",
+        "user_id": user_id,
+        "assigned_roles": roles_request.roles
+    }

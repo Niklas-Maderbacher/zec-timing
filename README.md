@@ -13,13 +13,12 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 | Auth service          |slight auth hardening|
 
 ## Todo list for before 07.01
-- adding endpoint to add roles to user
-- attempt number calculation
 - error handling for all
 - basic tests for all the services
 
 ## Todo future
 - fix get stuff (url)
+- attempt number calculation
 - fix score calculation
 - internalise auth endpoints
 - rbac at gateway level (needs more verify endpoints (depends exists))
