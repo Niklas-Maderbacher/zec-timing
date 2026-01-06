@@ -43,6 +43,8 @@
   - 7.3 [Get User by ID](#get-user-by-id)
   - 7.4 [Update User](#update-user)
   - 7.5 [Delete User](#delete-user)
+  - 7.6 [Assign Roles](#assign-roles)
+  - 7.7 [Remove Roles](#remove-roles)
 ### Notes
 When talking about access_token in this document i am referring to the token gotten by [Login](#login)
 ### Attempt
@@ -444,3 +446,29 @@ Needs Bearer authorization header containing `access_token`
 http://hostname/users/{user_id}
 **Path Parameters**
 - `user_id` (string): Keycloak user ID
+#### Assign Roles
+Needs Bearer authorization header containing `access_token` 
+`POST`
+**URL**  
+http://hostname/users/{user_id}/roles
+**Path Parameters**
+- `user_id` (string): Keycloak user ID
+**Request Body Format**
+```json
+{
+    "roles": [list]
+}
+```
+#### Remove Roles
+Needs Bearer authorization header containing `access_token` 
+`DEL`
+**URL**  
+http://hostname/users/{user_id}/roles
+**Path Parameters**
+- `user_id` (string): Keycloak user ID
+**Request Body Format**
+```json
+{
+    "roles": [list]
+}
+```
