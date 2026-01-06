@@ -67,8 +67,7 @@ def update_user(db: SessionDep, user_id: str, request: UpdateUserKC) -> Optional
             "temporary": False
         }]
     response = requests.put(update_url, json=user_data, headers=headers)
-    #make own function
-    db_user = db.query(User).filter(User.kc_id == user_id).first()
+    db_user = get_user_by_id_db(db=db, user_id=user_id)
     if request.username is not None:
         db_user.username = request.username
         db.commit()
@@ -81,8 +80,7 @@ def delete_user(db: SessionDep, user_id: str) -> None:
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
-    #make own function
-    db_user = db.query(User).filter(User.kc_id == user_id).first()
+    db_user = get_user_by_id_db(db=db, user_id=user_id)
     db.delete(db_user)
     db.commit()
     user_url = f"{KC_USER_URL}/{user_id}"
@@ -147,6 +145,10 @@ def remove_roles_from_user(user_id: str, roles: list[str]) -> None:
         headers=headers,
     )
     remove_resp.raise_for_status()
+
+def get_user_by_id_db(db: SessionDep, user_id: str):
+    db_user = db.query(User).filter(User.kc_id == user_id).first()
+    return db_user
 
 def get_admin_token() -> str:
     access_token = requests.get(f"{settings.AUTH_SERVICE_URL}/api/auth/internal/get-admin-token").json()

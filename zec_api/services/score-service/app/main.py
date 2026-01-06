@@ -12,6 +12,7 @@ from app.exceptions.exceptions import (
     InvalidOperationError,
     InvalidTokenError,
     ServiceError,
+    EntityAlreadyExistsError,
 )
 
 def cstm_generate_unique_id(route: APIRoute) -> str:
@@ -70,6 +71,13 @@ app.add_exception_handler(
     exc_class_or_status_code=InvalidTokenError,
     handler=create_exception_handler(
         status.HTTP_401_UNAUTHORIZED, "Invalid token, please re-authenticate again."
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=EntityAlreadyExistsError,
+    handler=create_exception_handler(
+        status.HTTP_409_CONFLICT, "Entity already exists."
     ),
 )
 
