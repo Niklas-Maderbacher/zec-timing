@@ -22,7 +22,7 @@ def refresh(refresh_token: str = Form(...)):
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Failed to refresh token")
     return token_data
 
-@router.get("/get-admin-token")
+@router.get("/internal/get-admin-token")
 def get_admin_token():
     access_token = crud.get_admin_token()
     return access_token
