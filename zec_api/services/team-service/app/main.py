@@ -28,7 +28,8 @@ app = FastAPI(
 )
 
 app.include_router(api_router, prefix=settings.API_STR)
-Base.metadata.create_all(bind=engine)
+if settings.ENVIRONMENT != "testing":
+    Base.metadata.create_all(bind=engine)
 
 def create_exception_handler(
     status_code: int, initial_detail: str

@@ -22,5 +22,5 @@ class TeamResponse(TeamBase):
     id: int
     created_at: datetime
 
-    class Config:
+    class ConfigDict:
         from_attributes = True

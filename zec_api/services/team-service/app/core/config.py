@@ -11,18 +11,20 @@ class Settings(BaseSettings):
         env_ignore_empty=True,
         extra="ignore",
     )
-    ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+    ENVIRONMENT: Literal["local", "staging", "production", "testing"] = "local"
     PROJECT_NAME: str
     API_STR: str = "/api"
 
-    POSTGRES_SERVER: str
+    POSTGRES_SERVER: str = ""
     POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
+    POSTGRES_USER: str = ""
+    POSTGRES_PASSWORD: str = ""
+    POSTGRES_DB: str = ""
 
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> str:
+        if self.ENVIRONMENT == "testing":
+            return "sqlite:///./test_team.db"
         return str(
             MultiHostUrl.build(
                 scheme="postgresql+psycopg",
