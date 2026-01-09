@@ -345,12 +345,14 @@ Needs Bearer authorization header containing `access_token`
 **URL** http://hostname/users/username/{username}
 
 **Path Parameters**
+
 - `username` (string): Username of the user
 #### Get User by ID
 Needs Bearer authorization header containing `access_token`  
 `GET`
 
 **URL** http://hostname/users/id/{id}
+
 **Path Parameters**
 - `id` (string): Keycloak user ID
 #### Update User
@@ -361,6 +363,7 @@ Needs Bearer authorization header containing `access_token`
 
 **Path Parameters**
 - `user_id` (string): Keycloak user ID
+
 **Request Body Format**
 
 ```json
@@ -379,12 +382,14 @@ Needs Bearer authorization header containing `access_token`
 - `user_id` (string): Keycloak user ID
 #### Assign Roles
 Needs Bearer authorization header containing `access_token` 
+
 `POST`
  
 **URL** http://hostname/users/{user_id}/roles
 
 **Path Parameters**
 - `user_id` (string): Keycloak user ID
+
 **Request Body Format**
 ```json
 {
@@ -393,12 +398,14 @@ Needs Bearer authorization header containing `access_token`
 ```
 #### Remove Roles
 Needs Bearer authorization header containing `access_token` 
+
 `DEL`
 
 **URL** http://hostname/users/{user_id}/roles
 
 **Path Parameters**
 - `user_id` (string): Keycloak user ID
+
 **Request Body Format**
 ```json
 {
