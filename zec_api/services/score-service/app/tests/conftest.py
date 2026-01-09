@@ -5,6 +5,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from unittest.mock import patch
 
+os.environ.setdefault("ENVIRONMENT", "testing")
+os.environ.setdefault("PROJECT_NAME", "test")
+os.environ.setdefault("POSTGRES_SERVER", "localhost")
+os.environ.setdefault("POSTGRES_USER", "test")
+os.environ.setdefault("POSTGRES_PASSWORD", "test")
+os.environ.setdefault("POSTGRES_DB", "test")
 os.environ.setdefault("PROJECT_NAME", "test")
 os.environ.setdefault("ATTEMPT_SERVICE_URL", "http://attempt")
 os.environ.setdefault("TEAM_SERVICE_URL", "http://team")
