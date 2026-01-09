@@ -228,6 +228,7 @@ Needs Bearer authorization header containing acces_token
 `POST`
 
 **URL** http://hostname/teams/
+
 **Request Body Format**
 ```json
 {
@@ -242,6 +243,7 @@ Needs Bearer authorization header containing acces_token
 `PUT`
 
 **URL** http://hostname/teams/{team_id}
+
 **Request Body Format**
 
 Everything is optional depending on what needs to be updated
