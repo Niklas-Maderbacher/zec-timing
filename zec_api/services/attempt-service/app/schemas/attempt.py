@@ -15,7 +15,6 @@ class AttemptCreate(AttemptBase):
     pass
 
 class AttemptUpdate(BaseModel):
-    id : int
     team_id: Optional[int] = None
     driver_id: Optional[int] = None
     challenge_id: Optional[int] = None

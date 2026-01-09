@@ -1,4 +1,4 @@
-# API Table of Contents
+# ZEC-API Table of Contents
 ### [Notes](#notes)
 - ## 1. Attempts
   - 1.1 [Create Attempt](#create-attempt)
@@ -51,8 +51,10 @@ When talking about access_token in this document i am referring to the token got
 #### Create Attempt
 Needs Bearer authorization header containing `access_token`  
 `POST`
+
 **URL**  
 http://hostname/attempts/
+
 **Request Body Format**
 ```json
 {
@@ -68,13 +70,14 @@ http://hostname/attempts/
 #### Update Attempt
 Needs Bearer authorization header containing `access_token`  
 `PUT`
+
 **URL**  
 http://hostname/attempts/{attempt_id}
+
 **Request Body Format**  
-All fields except `id` are optional depending on what needs to be updated.
+All fields are optional depending on what needs to be updated.
 ```json
 {
-  "id": int,
   "team_id": int,
   "driver_id": int,
   "challenge_id": int,
@@ -87,54 +90,46 @@ All fields except `id` are optional depending on what needs to be updated.
 #### Delete Attempt
 Needs Bearer authorization header containing `access_token`  
 `DEL`
+
 **URL**  
 http://hostname/attempts/{attempt_id}
-**Request Body Format**
-```json
-{
-  "attempt_id": int
-}
-```
 #### Get Attempt
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL**  
 http://hostname/attempts/{attempt_id}
-
-**Request Body Format**
-```json
-{
-  "attempt_id": int
-}
-```
 #### Get Attempts (all)
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL**  
 http://hostname/attempts/
 #### Get Attempts per Challenge
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL**  
 http://hostname/attempts/challenges/{challenge_id}
 #### Get Fastest Attempt for a Challenge
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL**  
-http://hostname/attempts/fast/?challenge_id={challenge_id}
-**Query Parameters**
-- `challenge_id` (int): ID of the challenge
+http://hostname/attempts/fastest/{challenge_id}
 #### Get Fastest Attempt for a Team in a Challenge
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL**  
-http://hostname/attempts/fast/per-team/?challenge_id={challenge_id}&team_id={team_id}
+http://hostname/attempts/fastest/per-team/?challenge_id={challenge_id}&team_id={team_id}
 **Query Parameters**
 - `challenge_id` (int): ID of the challenge  
 - `team_id` (int): ID of the team
 ### Auth
 #### Login
 `POST`
+
 **URL**  
 http://hostname/auth/login
 **Request Body Format**  
@@ -142,44 +137,28 @@ Content-Type: `application/x-www-form-urlencoded`
 **Form Parameters**
 - `username` (string, required)
 - `password` (string, required)
-
-**Response Format**
-```json
-{
-  "access_token": string,
-  "refresh_token": string,
-  "expires_in": int,
-  "token_type": string
-}
-```
 #### Refresh Token
 `POST`
+
 **URL**  
 http://hostname/auth/refresh
 **Request Body Format**  
+
 Content-Type: `application/x-www-form-urlencoded`
 **Form Parameters**
 - `refresh_token` (string, required)
-**Response Format**
-```json
-{
-  "access_token": string,
-  "refresh_token": string,
-  "expires_in": int,
-  "token_type": string
-}
-```
 ### Challenge
 #### Update Challenge
 Needs Bearer authorization header containing `access_token`  
 `PUT`
+
 **URL**  
 http://hostname/challenges/{challenge_id}
 **Request Body Format**  
-All fields except `id` are optional depending on what needs to be updated.
+
+All fields are optional depending on what needs to be updated.
 ```json
 {
-  "id": int,
   "name": string,
   "max_attempts": int,
   "esp_mac_start1": string,
@@ -191,33 +170,29 @@ All fields except `id` are optional depending on what needs to be updated.
 #### Get Challenge by ID
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL**  
 http://hostname/challenges/{challenge_id}
-**Request Body Format**
-```json
-{
-  "challenge_id": int
-}
-```
 #### Get Challenge by Name
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL**  
 http://hostname/challenges/name/{challenge_name}
-
-**Path Parameters**
-- `challenge_name` (string): Name of the challenge
 #### Get Challenges (all)
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL**  
 http://hostname/challenges/
 ### Score
 #### Create Score
 Needs Bearer authorization header containing acces_token
 `POST`
+
 **URL**
 http://hostname/scores/
+
 **Request Body Format**
 ```json
 {
@@ -227,13 +202,13 @@ http://hostname/scores/
 #### Update Score
 Needs Bearer authorization header containing acces_token
 `PUT`
+
 **URL**
 http://hostname/scores/{score_id}
+
 **Request Body Format**
-Everything but id(of the to be updated team) is optional depending on what needs to be updated
 ```json
 {
-    "id": int,
     "value": float
 }
 ```
@@ -242,43 +217,29 @@ Needs Bearer authorization header containing acces_token
 `DEL`
 **URL**
 http://hostname/scores/{score_id}
-**Request Body Format**
-```json
-{
-    "id" : int,
-}
-```
 #### Get Score
 Needs Bearer authorization header containing acces_token
 `GET`
+
 **URL**
 http://hostname/scores/{score_id}
-**Request Body Format**
-```json
-{
-    "id" : int,
-}
-```
 #### Get Scores (all)
 Needs Bearer authorization header containing acces_token
 `GET`
+
 **URL**
 http://hostname/scores/
 #### Get leaderboard
 Needs Bearer authorization header containing acces_token
 `GET`
+
 **URL**
 http://hostname/leaderboard/{challenge_id}
-**Request Body Format**
-```json
-{
-    "id" : int,
-}
-```
 ### Team
 #### Create Team
 Needs Bearer authorization header containing acces_token
 `POST`
+
 **URL**
 http://hostname/teams/
 **Request Body Format**
@@ -288,19 +249,19 @@ http://hostname/teams/
   "mean_power": float,
   "vehicle_weight": float,
   "rfid_identifier": str,
-  "created_at": datetime
 }
 ```
 #### Update Team
 Needs Bearer authorization header containing acces_token
 `PUT`
+
 **URL**
 http://hostname/teams/{team_id}
 **Request Body Format**
-Everything but id(of the to be updated team) is optional depending on what needs to be updated
+
+Everything is optional depending on what needs to be updated
 ```json
 {
-    "id" : int,
     "name": string,
     "mean_power": float,
     "vehicle_weight": float,
@@ -310,33 +271,25 @@ Everything but id(of the to be updated team) is optional depending on what needs
 #### Delete Team
 Needs Bearer authorization header containing acces_token
 `DEL`
+
 **URL**
 http://hostname/teams/{team_id}
-**Request Body Format**
-```json
-{
-    "id" : int,
-}
-```
 #### Get Team
 Needs Bearer authorization header containing acces_token
 `GET`
+
 **URL**
 http://hostname/teams/{team_id}
-**Request Body Format**
-```json
-{
-    "id" : int,
-}
-```
 #### Get Teams (all)
 Needs Bearer authorization header containing acces_token
 `GET`
+
 **URL**
 http://hostname/teams/
 #### Get teams with ids
 Needs Bearer authorization header containing acces_token
 `GET`
+
 **URL**
 http://hostname/teams/by-ids/?team_ids=1&team_ids=2 etc..
 pass ids as parameters
@@ -344,6 +297,7 @@ pass ids as parameters
 #### Create Driver
 Needs Bearer authorization header containing acces_token
 `POST`
+
 **URL**
 http://hostname/drivers/
 **Request Body Format**
@@ -352,19 +306,19 @@ http://hostname/drivers/
   "name": string,
   "team_id": int,
   "weight": float,
-  "created_at": datetime
 }
 ```
 #### Update Driver
 Needs Bearer authorization header containing acces_token
 `PUT`
+
 **URL**
 http://hostname/teams/{driver_id}
 **Request Body Format**
-Everything but id(of the to be updated team) is optional depending on what needs to be updated
+
+Everything is optional depending on what needs to be updated
 ```json
 {
-    "id" : int,
     "name": string,
     "team_id": int,
     "weight": float,
@@ -374,37 +328,30 @@ Everything but id(of the to be updated team) is optional depending on what needs
 #### Delete Driver
 Needs Bearer authorization header containing acces_token
 `DEL`
+
 **URL**
 http://hostname/drivers/{driver_id}
-**Request Body Format**
-```json
-{
-    "id" : int,
-}
-```
 #### Get Driver
 Needs Bearer authorization header containing acces_token
 `GET`
+
 **URL**
 http://hostname/drivers/{driver_id}
-**Request Body Format**
-```json
-{
-    "id" : int,
-}
-```
 #### Get Drivers (all)
 Needs Bearer authorization header containing acces_token
 `GET`
+
 **URL**
 http://hostname/drivers/
 ### User
 #### Create User
 Needs Bearer authorization header containing `access_token`  
 `POST`
+
 **URL**  
 http://hostname/users/
 **Request Body Format**
+
 ```json
 {
   "username": string,
@@ -414,6 +361,7 @@ http://hostname/users/
 #### Get User by Username
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL**  
 http://hostname/users/username/{username}
 **Path Parameters**
@@ -421,6 +369,7 @@ http://hostname/users/username/{username}
 #### Get User by ID
 Needs Bearer authorization header containing `access_token`  
 `GET`
+
 **URL** 
 http://hostname/users/id/{id}
 **Path Parameters**
@@ -428,11 +377,13 @@ http://hostname/users/id/{id}
 #### Update User
 Needs Bearer authorization header containing `access_token`  
 `PUT`
+
 **URL**  
 http://hostname/users/{user_id}
 **Path Parameters**
 - `user_id` (string): Keycloak user ID
 **Request Body Format**
+
 ```json
 {
   "username": string,
@@ -442,6 +393,7 @@ http://hostname/users/{user_id}
 #### Delete User
 Needs Bearer authorization header containing `access_token`  
 `DEL`
+
 **URL**  
 http://hostname/users/{user_id}
 **Path Parameters**
@@ -449,6 +401,7 @@ http://hostname/users/{user_id}
 #### Assign Roles
 Needs Bearer authorization header containing `access_token` 
 `POST`
+
 **URL**  
 http://hostname/users/{user_id}/roles
 **Path Parameters**
@@ -462,6 +415,7 @@ http://hostname/users/{user_id}/roles
 #### Remove Roles
 Needs Bearer authorization header containing `access_token` 
 `DEL`
+
 **URL**  
 http://hostname/users/{user_id}/roles
 **Path Parameters**

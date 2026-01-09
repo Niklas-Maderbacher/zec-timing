@@ -12,8 +12,8 @@ def create_score(db: SessionDep, score: ScoreCreate):
     return score
 
 @router.put("/{score_id}", response_model=ScoreResponse)
-def update_score(db: SessionDep, score_update: ScoreUpdate):
-    score = crud.update_score(db=db, score_update=score_update)
+def update_score(db: SessionDep, score_id: int, score_update: ScoreUpdate):
+    score = crud.update_score(db=db, score_id=score_id, score_update=score_update)
     return score
 
 @router.delete("/{score_id}", response_model=ScoreResponse)

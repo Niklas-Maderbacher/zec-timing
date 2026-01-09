@@ -3,12 +3,12 @@ from app.schemas.challenge import ChallengeUpdate
 from app.models.challenge import Challenge
 from app.exceptions.exceptions import EntityDoesNotExistError, ServiceError
 
-def update_challenge(*, db: SessionDep, challenge_update: ChallengeUpdate):
+def update_challenge(*, db: SessionDep, challenge_id: int, challenge_update: ChallengeUpdate):
     try:
-        db_challenge = get_challenge(db=db, challenge_id=challenge_update.id)
+        db_challenge = get_challenge(db=db, challenge_id=challenge_id)
         if not db_challenge:
             raise EntityDoesNotExistError(
-                message=f"Challenge with id {challenge_update.id} does not exist"
+                message=f"Challenge with id {challenge_id} does not exist"
             )
         update_data = challenge_update.model_dump(
             exclude_unset=True,

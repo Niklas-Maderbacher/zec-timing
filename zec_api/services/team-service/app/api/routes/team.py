@@ -12,8 +12,8 @@ def create_team(db: SessionDep, team: TeamCreate):
     return team
 
 @router.put("/{team_id}", response_model=TeamResponse)
-def update_team(db: SessionDep, team_update: TeamUpdate):
-    team = crud.update_team(db=db, team_update=team_update)
+def update_team(db: SessionDep, team_id: int, team_update: TeamUpdate):
+    team = crud.update_team(db=db, team_id=team_id, team_update=team_update)
     return team
 
 @router.delete("/{team_id}", response_model=TeamResponse)

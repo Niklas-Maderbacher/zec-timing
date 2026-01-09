@@ -7,8 +7,8 @@ from app.crud import challenge as crud
 router = APIRouter()
 
 @router.put("/{challenge_id}", response_model=ChallengeResponse)
-def update_challenge(db: SessionDep, challenge_update: ChallengeUpdate):
-    challenge = crud.update_challenge(db=db, challenge_update=challenge_update)
+def update_challenge(db: SessionDep, challenge_id: int, challenge_update: ChallengeUpdate):
+    challenge = crud.update_challenge(db=db, challenge_id=challenge_id, challenge_update=challenge_update)
     return challenge
 
 @router.get("/{challenge_id}", response_model=ChallengeResponse)

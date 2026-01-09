@@ -8,10 +8,9 @@ class DriverBase(BaseModel):
     weight: float
 
 class DriverCreate(DriverBase):
-    created_at: datetime
+    created_at: Optional[datetime] = datetime.utcnow()
 
 class DriverUpdate(BaseModel):
-    id: int
     name: Optional[str] = None
     team_id: Optional[int] = None
     weight: Optional[float] = None

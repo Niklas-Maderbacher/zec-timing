@@ -12,8 +12,8 @@ def create_driver(db: SessionDep, driver: DriverCreate):
     return driver
 
 @router.put("/{driver_id}", response_model=DriverResponse)
-def update_driver(db: SessionDep, driver_update: DriverUpdate):
-    driver = crud.update_driver(db=db, driver_update=driver_update)
+def update_driver(db: SessionDep, driver_id: int, driver_update: DriverUpdate):
+    driver = crud.update_driver(db=db, driver_id=driver_id, driver_update=driver_update)
     return driver
 
 @router.delete("/{driver_id}", response_model=DriverResponse)

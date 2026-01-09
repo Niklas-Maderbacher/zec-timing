@@ -53,12 +53,12 @@ def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
     resp = requests.post(f"{SCORE_URL}/api/scores/", json=payload)
     if resp.status_code in (401, 403):
         raise AuthenticationFailed("Unauthorized to create score")
-    if resp.status_code != 201:
+    if resp.status_code != 200:
         raise ServiceError(f"Failed to create score for attempt {db_attempt.id}: {resp.text}")
     return db_attempt
 
-def update_attempt(*, db: SessionDep, attempt_update: AttemptUpdate):
-    db_attempt = get_attempt(db=db, attempt_id=attempt_update.id)
+def update_attempt(*, db: SessionDep, attempt_id: int, attempt_update: AttemptUpdate):
+    db_attempt = get_attempt(db=db, attempt_id=attempt_id)
     update_data = attempt_update.model_dump(exclude_unset=True, exclude={"id"})
     for field, value in update_data.items():
         setattr(db_attempt, field, value)

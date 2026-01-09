@@ -19,9 +19,9 @@ def create_team(*, db: SessionDep, team: TeamCreate):
         raise ServiceError() from exc
 
 
-def update_team(*, db: SessionDep, team_update: TeamUpdate):
+def update_team(*, db: SessionDep, team_id: int, team_update: TeamUpdate):
     try:
-        db_team = get_team(db=db, team_id=team_update.id)
+        db_team = get_team(db=db, team_id=team_id)
         update_data = team_update.model_dump(
             exclude_unset=True,
             exclude={"id"},

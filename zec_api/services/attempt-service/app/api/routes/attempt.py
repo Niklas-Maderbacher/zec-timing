@@ -12,8 +12,8 @@ def create_attempt(db: SessionDep, attempt: AttemptCreate):
     return attempt
 
 @router.put("/{attempt_id}", response_model=AttemptResponse)
-def update_attempt(db: SessionDep, attempt_update: AttemptUpdate):
-    attempt = crud.update_attempt(db=db, attempt_update=attempt_update)
+def update_attempt(db: SessionDep, attempt_id: int, attempt_update: AttemptUpdate):
+    attempt = crud.update_attempt(db=db, attempt_id=attempt_id, attempt_update=attempt_update)
     return attempt
 
 @router.delete("/{attempt_id}", response_model=AttemptResponse)
@@ -36,12 +36,12 @@ def get_attempts_per_challenge(db: SessionDep, challenge_id: int):
     attempts = crud.get_attempts_for_challenge(db=db, challenge_id=challenge_id)
     return attempts
 
-@router.get("/fast/", response_model=AttemptResponse)
+@router.get("/fastest/{challenge_id}", response_model=AttemptResponse)
 def fastest_attempt(db: SessionDep, challenge_id: int):
     attempts = crud.get_fastest_attempt(db=db, challenge_id=challenge_id)
     return attempts
 
-@router.get("/fast/per-team/", response_model=AttemptResponse)
+@router.get("/fastest/per-team/", response_model=AttemptResponse)
 def fastest_attempts_per_team(db: SessionDep, challenge_id: int, team_id: int):
     attempts = crud.get_fastest_attempt_for_team(db=db, challenge_id=challenge_id, team_id=team_id)
     return attempts

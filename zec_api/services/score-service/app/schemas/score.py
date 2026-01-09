@@ -11,7 +11,6 @@ class ScoreCreate(BaseModel):
     attempt_id: int
 
 class ScoreUpdate(BaseModel):
-    id: int
     value: float
 
 class ScoreResponse(ScoreBase):

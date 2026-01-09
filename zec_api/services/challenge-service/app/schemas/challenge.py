@@ -14,7 +14,6 @@ class ChallengeCreate(ChallengeBase):
     pass
 
 class ChallengeUpdate(BaseModel):
-    id: int
     name: Optional[str] = None
     max_attempts: Optional[int] = None
     esp_mac_start1: Optional[str] = None

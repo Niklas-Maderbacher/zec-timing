@@ -15,12 +15,12 @@ def create_driver(*, db: SessionDep, driver: DriverCreate):
         db.rollback()
         raise ServiceError() from exc
 
-def update_driver(*, db: SessionDep, driver_update: DriverUpdate):
+def update_driver(*, db: SessionDep, driver_id: int, driver_update: DriverUpdate):
     try:
-        db_driver = get_driver(db=db, driver_id=driver_update.id)
+        db_driver = get_driver(db=db, driver_id=driver_id)
         if not db_driver:
             raise EntityDoesNotExistError(
-                message=f"Driver with id {driver_update.id} does not exist"
+                message=f"Driver with id {driver_id} does not exist"
             )
         update_data = driver_update.model_dump(
             exclude_unset=True,

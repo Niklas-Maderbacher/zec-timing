@@ -14,12 +14,14 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 
 ## Todo
 - category for challenges (close to series, advanced class, professional class)
-- fix get stuff (url)
+- Attempt endpoints for energy are missing
 - attempt number calculation
 - fix score calculation
 - use rbac at gateway level
+- Upgrades for auth services regarding security
+- fix tests and warnings
+- add more tests to get 80% coverage
 
 ## Notes and future
-- needs 80% Test converage
 - refresh tocken blacklisting could be cool
 - limiter for login to "limit" :) spamming 
