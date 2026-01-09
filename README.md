@@ -13,7 +13,7 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 | Auth service          |slight auth hardening|
 
 ## Todo
-- category for challenges (open, idk, idk)
+- category for challenges (close to series, advanced class, professional class)
 - fix get stuff (url)
 - attempt number calculation
 - fix score calculation
