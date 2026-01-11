@@ -13,8 +13,9 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 | Auth service          |done|
 
 ## Todo
-- category for challenges (close to series, advanced class, professional class)
+- adjust leaderboard to new team categories
+- make teamlead auth pass for admin
 - attempt number calculation
-- fix score calculation
+- fix score calculation PENALTY
 - fix tests and warnings
 - add more tests to get 80% coverage

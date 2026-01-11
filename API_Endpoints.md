@@ -252,6 +252,7 @@ Needs Bearer authorization header containing `access_token` from a user with adm
   "mean_power": float,
   "vehicle_weight": float,
   "rfid_identifier": str,
+  "category": team_category
 }
 ```
 #### Update Team
@@ -269,6 +270,7 @@ Everything is optional depending on what needs to be updated
     "mean_power": float,
     "vehicle_weight": float,
     "rfid_identifier": string,
+    "category": team_category
 }
 ```
 #### Delete Team
