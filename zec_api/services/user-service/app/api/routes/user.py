@@ -45,5 +45,5 @@ def remove_roles_from_user(user_id: str, roles_request: UserRolesRequest):
     return {
         "message": "Roles remove successfully",
         "user_id": user_id,
-        "assigned_roles": roles_request.roles
+        "unassigned_roles": roles_request.roles
     }

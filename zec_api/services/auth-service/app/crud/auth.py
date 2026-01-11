@@ -44,12 +44,13 @@ def decode_keycloak_token(credentials = Depends(security)):
             token, 
             public_key, 
             algorithms=['RS256'], 
-            options={"verify_aud": False}  
+            issuer=f"{KC_URL}/realms/{settings.KEYCLOAK_REALM}",
+            options={"verify_aud": False}
         )
     except jwt.ExpiredSignatureError:
-        raise exception.TokenExpired()
+        raise exception.TokenExpired("Token has expired")
     except jwt.JWTClaimsError:
-        raise exception.InvalidClaims()
+        raise exception.InvalidClaims("Invalid claims in token")
     return payload
 
 def keycloak_login(username: str, password: str):
@@ -62,8 +63,12 @@ def keycloak_login(username: str, password: str):
         "scope": "openid profile email"
     }
     try:
-        response = requests.post(KC_TOKEN_URL, data=payload)
+        response = requests.post(KC_TOKEN_URL, data=payload, timeout=10)
         response.raise_for_status()
+    except requests.Timeout:
+        raise exception.KeycloakUnavailable()
+    except requests.ConnectionError:
+        raise exception.KeycloakUnavailable()
     except requests.HTTPError as e:
         if e.response.status_code == 401:
             raise exception.InvalidCredentials()
@@ -90,7 +95,7 @@ def extract_roles_from_payload(payload: dict) -> list[str]:
     resource_access = payload.get("resource_access")
     if not isinstance(resource_access, dict):
         return []
-    client_access = resource_access.get(KC_ADMIN_CLIENT_ID)
+    client_access = resource_access.get(KC_CLIENT_ID)
     if not isinstance(client_access, dict):
         return []
     roles = client_access.get("roles")

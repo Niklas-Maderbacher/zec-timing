@@ -10,12 +10,11 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 | Score service         |calculation and refresh(acceleration) needs fixes|
 | Challenge service     |done|
 | Team/Driver service   |done|
-| Auth service          |slight auth hardening|
+| Auth service          |done|
 
 ## Todo
 - category for challenges (close to series, advanced class, professional class)
 - attempt number calculation
 - fix score calculation
-- Upgrades for auth services regarding security
 - fix tests and warnings
 - add more tests to get 80% coverage

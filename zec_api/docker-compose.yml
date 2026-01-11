@@ -32,7 +32,7 @@ services:
       KEYCLOAK_USER_URL: http://keycloak:8080/admin/realms/zec-realm/users
       AUTH_SERVICE_URL: http://auth-service:8002
       KC_CLIENTS_URL: http://keycloak:8080/admin/realms/zec-realm/clients
-      KC_ADMIN_CLIENT_ID: user-admin-client
+      KC_CLIENT_ID: login-client
 
   auth-service:
     build:

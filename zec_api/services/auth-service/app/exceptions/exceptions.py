@@ -41,4 +41,3 @@ class TokenRefreshFailed(AuthserviceApiError):
 
 class MissingRoles(AuthserviceApiError):
     pass
-

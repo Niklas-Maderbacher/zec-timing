@@ -15,7 +15,7 @@ from app.exceptions.exceptions import (
 
 KC_USER_URL = settings.KEYCLOAK_USER_URL
 KC_CLIENTS_URL = settings.KC_CLIENTS_URL
-KC_ADMIN_CLIENT_ID = settings.KC_ADMIN_CLIENT_ID
+KC_CLIENT_ID = settings.KC_CLIENT_ID
 
 def create_user(db: SessionDep, request: CreateUserKC):
     access_token = get_admin_token()
@@ -118,7 +118,7 @@ def add_roles_to_user(user_id: str, roles: list[str]) -> None:
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
-    client_resp = requests.get(f"{KC_CLIENTS_URL}?clientId={KC_ADMIN_CLIENT_ID}", headers=headers)
+    client_resp = requests.get(f"{KC_CLIENTS_URL}?clientId={KC_CLIENT_ID}", headers=headers)
     if client_resp.status_code != 200:
         raise ServiceError("Unable to resolve client")
     clients = client_resp.json()
@@ -148,7 +148,7 @@ def remove_roles_from_user(user_id: str, roles: list[str]) -> None:
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
-    client_resp = requests.get(f"{KC_CLIENTS_URL}?clientId={KC_ADMIN_CLIENT_ID}", headers=headers)
+    client_resp = requests.get(f"{KC_CLIENTS_URL}?clientId={KC_CLIENT_ID}", headers=headers)
     if client_resp.status_code != 200:
         raise ServiceError("Unable to resolve client")
     client_uuid = client_resp.json()[0]["id"]
