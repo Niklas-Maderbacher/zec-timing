@@ -63,9 +63,9 @@ Needs Bearer authorization header containing `access_token` from a user with adm
   "team_id": int,
   "driver_id": int,
   "challenge_id": int,
-  "attempt_number": int,
-  "start_time": datetime,
-  "end_time": datetime,
+  "is_valid": bool, (optional) if you want to create a invalid attempt
+  "start_time": datetime, (with milliseconds)
+  "end_time": datetime, (with milliseconds)
   "energy_used": float
 }
 ```
@@ -82,7 +82,7 @@ All fields are optional depending on what needs to be updated.
   "team_id": int,
   "driver_id": int,
   "challenge_id": int,
-  "attempt_number": int,
+  "is_valid": bool,
   "start_time": datetime, (with milliseconds)
   "end_time": datetime, (with milliseconds)
   "energy_used": float

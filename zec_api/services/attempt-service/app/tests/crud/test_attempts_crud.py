@@ -34,3 +34,26 @@ def test_delete_attempt(db, seeded_attempts):
     assert deleted.id == seeded_attempts[0].id
     with pytest.raises(EntityDoesNotExistError):
         crud.get_attempt(db=db, attempt_id=deleted.id)
+
+
+def test_invalidate_attempt_deletes_score(db, seeded_attempts, monkeypatch):
+    deleted_url = {}
+    def fake_delete(url):
+        deleted_url['url'] = url
+        class R:
+            status_code = 200
+        return R()
+    monkeypatch.setattr("app.crud.attempt.requests.delete", fake_delete)
+    update = AttemptUpdate(is_valid=False)
+    updated = crud.update_attempt(db=db, attempt_id=seeded_attempts[0].id, attempt_update=update)
+    assert updated.is_valid is False
+    assert deleted_url['url'].endswith(f"/api/scores/attempt/{seeded_attempts[0].id}")
+
+
+def test_invalid_attempts_ignored_in_fastest(db, seeded_attempts):
+    # mark the fastest seeded attempt invalid and ensure it's ignored
+    fastest = seeded_attempts[1]
+    fastest.is_valid = False
+    db.commit()
+    attempt = crud.get_fastest_attempt(db=db, challenge_id=1)
+    assert attempt.id != fastest.id

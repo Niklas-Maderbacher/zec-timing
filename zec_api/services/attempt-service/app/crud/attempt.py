@@ -44,6 +44,10 @@ def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
     _validate_team(attempt.team_id)
     _validate_driver(attempt.driver_id)
     _validate_challenge(attempt.challenge_id)
+    db_challenge = requests.get(f"{CHALLENGE_URL}/api/challenges/{attempt.challenge_id}").json()
+    attempt_count = get_attempts_for_team_per_challenge(db=db, team_id=attempt.team_id, challenge_id=attempt.challenge_id)
+    if len(attempt_count) >= db_challenge["max_attempts"]:
+        raise ServiceError("Maximum attempts reached for this challenge")
     attempt_data = attempt.model_dump(exclude_unset=True)
     db_attempt = Attempt(**attempt_data)
     db.add(db_attempt)
@@ -62,6 +66,12 @@ def update_attempt(*, db: SessionDep, attempt_id: int, attempt_update: AttemptUp
     update_data = attempt_update.model_dump(exclude_unset=True, exclude={"id"})
     for field, value in update_data.items():
         setattr(db_attempt, field, value)
+    if "is_valid" in update_data and update_data.get("is_valid") is False:
+        resp = requests.delete(f"{SCORE_URL}/api/scores/attempt/{db_attempt.id}")
+        if resp.status_code in (401, 403):
+            raise AuthenticationFailed("Unauthorized to delete score for attempt")
+        if resp.status_code not in (200, 404):
+            raise ServiceError(f"Failed to delete score for attempt {db_attempt.id}: {resp.text}")
     db.commit()
     db.refresh(db_attempt)
     return db_attempt
@@ -82,7 +92,7 @@ def get_attempts(*, db: SessionDep):
     return db.query(Attempt).all()
 
 def get_attempts_for_challenge(*, db: SessionDep, challenge_id: int):
-    db_attempt = db.query(Attempt).filter(Attempt.challenge_id == challenge_id).all()
+    db_attempt = db.query(Attempt).filter(Attempt.challenge_id == challenge_id, Attempt.is_valid == True).all()
     if not db_attempt:
         raise EntityDoesNotExistError("Attempt does not exist")
     return db_attempt
@@ -90,7 +100,7 @@ def get_attempts_for_challenge(*, db: SessionDep, challenge_id: int):
 def get_fastest_attempt(*, db: SessionDep, challenge_id: int):
     db_attempt = (
         db.query(Attempt)
-        .filter(Attempt.challenge_id == challenge_id)
+        .filter(Attempt.challenge_id == challenge_id, Attempt.is_valid == True)
         .order_by(Attempt.end_time - Attempt.start_time)
         .first()
     )
@@ -103,7 +113,8 @@ def get_fastest_attempt_for_team(*, db: SessionDep, team_id: int, challenge_id: 
         db.query(Attempt)
         .filter(
             Attempt.team_id == team_id,
-            Attempt.challenge_id == challenge_id
+            Attempt.challenge_id == challenge_id,
+            Attempt.is_valid == True
         )
         .order_by(Attempt.end_time - Attempt.start_time)
         .first()
@@ -115,7 +126,7 @@ def get_fastest_attempt_for_team(*, db: SessionDep, team_id: int, challenge_id: 
 def get_least_energy_attempt(*, db: SessionDep, challenge_id: int):
     db_attempt = (
         db.query(Attempt)
-        .filter(Attempt.challenge_id == challenge_id)
+        .filter(Attempt.challenge_id == challenge_id, Attempt.is_valid == True)
         .order_by(Attempt.energy_used)
         .first()
     )
@@ -123,13 +134,13 @@ def get_least_energy_attempt(*, db: SessionDep, challenge_id: int):
         raise EntityDoesNotExistError("Attempt does not exist")
     return db_attempt
 
-
 def get_least_energy_attempt_for_team(*, db: SessionDep, team_id: int, challenge_id: int):
     db_attempt = (
         db.query(Attempt)
         .filter(
             Attempt.team_id == team_id,
-            Attempt.challenge_id == challenge_id
+            Attempt.challenge_id == challenge_id,
+            Attempt.is_valid == True
         )
         .order_by(Attempt.energy_used)
         .first()
@@ -137,3 +148,15 @@ def get_least_energy_attempt_for_team(*, db: SessionDep, team_id: int, challenge
     if not db_attempt:
         raise EntityDoesNotExistError("Attempt does not exist")
     return db_attempt
+
+def get_attempts_for_team_per_challenge(*, db: SessionDep, team_id: int, challenge_id: int):
+    db_attempts = (
+        db.query(Attempt)
+        .filter(
+            Attempt.team_id == team_id,
+            Attempt.challenge_id == challenge_id,
+            Attempt.is_valid == True
+        )
+        .all()
+    )
+    return db_attempts

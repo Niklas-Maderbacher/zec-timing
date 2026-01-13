@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Float, DateTime
+from sqlalchemy import Column, Integer, Float, DateTime, Boolean
 from datetime import datetime
 from app.database.session import Base
 
@@ -9,7 +9,7 @@ class Attempt(Base):
     team_id = Column(Integer)
     driver_id = Column(Integer)
     challenge_id = Column(Integer)
-    attempt_number = Column(Integer)
+    is_valid = Column(Boolean, default=True)
     start_time = Column(DateTime)
     end_time = Column(DateTime)
     energy_used = Column(Float)
