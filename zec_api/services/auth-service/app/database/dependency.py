@@ -7,6 +7,20 @@ from app.crud.auth import get_current_user
 from app.models.user import UserRole
 import app.exceptions.exceptions as exception
 
+ROLE_HIERARCHY = {
+    UserRole.VIEWER: {
+        UserRole.VIEWER,
+        UserRole.TEAM_LEAD,
+        UserRole.ADMIN,
+    },
+    UserRole.TEAM_LEAD: {
+        UserRole.TEAM_LEAD,
+        UserRole.ADMIN,
+    },
+    UserRole.ADMIN: {
+        UserRole.ADMIN,
+    },
+}
 
 def get_db() -> Generator[Session, None, None]:
     db = Session(bind=engine)
@@ -17,7 +31,9 @@ def get_db() -> Generator[Session, None, None]:
 
 def require_role(required_role: UserRole):
     def role_checker(user: CurrentUser):
-        if required_role.value not in user["roles"]:
+        user_roles = {UserRole(role) for role in user["roles"]}
+        allowed_roles = ROLE_HIERARCHY[required_role]
+        if user_roles.isdisjoint(allowed_roles):
             raise exception.InsufficientPermissions
         return user
     return role_checker

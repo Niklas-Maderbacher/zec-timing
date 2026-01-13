@@ -48,7 +48,8 @@
   - 7.6 [Assign Roles](#assign-roles)
   - 7.7 [Remove Roles](#remove-roles)
 ### Notes
-When talking about access_token in this document i am referring to the token gotten by [Login](#login)
+- When talking about access_token in this document i am referring to the token gotten by [Login](#login)
+- Also users with the role admin have acces to teamlead endpoints
 ### Attempt
 #### Create Attempt
 Needs Bearer authorization header containing `access_token` from a user with admin role  

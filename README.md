@@ -14,6 +14,5 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 
 ## Todo
 - adjust leaderboard to new team categories
-- make teamlead auth pass for admin
 - attempt number calculation
 - fix score calculation PENALTY
