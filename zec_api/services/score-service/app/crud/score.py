@@ -50,49 +50,29 @@ def handle_skidpad(db_attempt):
     if resp.status_code != 200:
         raise ServiceError(resp.text)
     fastest_attempt = resp.json()
-    resp_team = requests.get(
-        f"{ATTEMPT_URL}/api/attempts/fastest/per-team/",
-        params={"team_id": db_attempt["team_id"], "challenge_id": db_attempt["challenge_id"]}
-    )
-    if resp_team.status_code == 404:
-        raise EntityDoesNotExistError("Team attempt not found")
-    if resp_team.status_code != 200:
-        raise ServiceError(resp_team.text)
-    fastest_attempt_team = resp_team.json()
-
-    t_min = datetime.strptime(fastest_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
+    best_time = datetime.strptime(fastest_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
             datetime.strptime(fastest_attempt["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
-    t_team = datetime.strptime(fastest_attempt_team["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
-             datetime.strptime(fastest_attempt_team["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
-    return 100 * t_min.total_seconds() / t_team.total_seconds()
+    team_time = datetime.strptime(db_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
+             datetime.strptime(db_attempt["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
+    return round(100 * best_time.total_seconds() / team_time.total_seconds(), 2)
 
 @register_score_processor("Acceleration")
 def handle_acceleration(db_attempt):
     try:
-        f_pm_best_team = calculate_f_pm(db_attempt)
+        f_pm_besteam_time = calculate_f_pm(db_attempt)
     except ScoreserviceApiError:
         raise
-    f_points = 50 - f_pm_best_team / 20
+    f_points = 50 - f_pm_besteam_time / 20
     resp = requests.get(f"{ATTEMPT_URL}/api/attempts/fastest/{db_attempt['challenge_id']}")
     if resp.status_code != 200:
         raise ServiceError("Failed to fetch fastest attempt")
     fastest_attempt = resp.json()
-    t_min = datetime.strptime(fastest_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
+    best_time = datetime.strptime(fastest_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
             datetime.strptime(fastest_attempt["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
-    t_min_seconds = t_min.total_seconds()
-    resp_team = requests.get(
-        f"{ATTEMPT_URL}/api/attempts/fastest/per-team/",
-        params={"team_id": db_attempt["team_id"], "challenge_id": db_attempt["challenge_id"]}
-    )
-    if resp_team.status_code != 200:
-        raise ServiceError("Failed to fetch team fastest attempt")
-    fastest_attempt_team = resp_team.json()
-    t_team = datetime.strptime(fastest_attempt_team["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
-             datetime.strptime(fastest_attempt_team["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
-    t_team_seconds = t_team.total_seconds()
+    team_time = datetime.strptime(db_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
+             datetime.strptime(db_attempt["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
     f_pm = calculate_f_pm(db_attempt)
-    return f_points * (t_min_seconds / t_team_seconds) + f_pm / 20
-
+    return round(f_points * (best_time.total_seconds() / team_time.total_seconds()) + f_pm / 20, 2)
 
 @register_score_processor("Slalom")
 def handle_slalom(db_attempt):
@@ -100,18 +80,11 @@ def handle_slalom(db_attempt):
     if resp.status_code != 200:
         raise ServiceError("Failed to fetch fastest attempt")
     fastest_attempt = resp.json()
-    t_min = datetime.strptime(fastest_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
+    best_time = datetime.strptime(fastest_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
             datetime.strptime(fastest_attempt["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
-    resp_team = requests.get(
-        f"{ATTEMPT_URL}/api/attempts/fastest/per-team/",
-        params={"team_id": db_attempt["team_id"], "challenge_id": db_attempt["challenge_id"]}
-    )
-    if resp_team.status_code != 200:
-        raise ServiceError("Failed to fetch team fastest attempt")
-    fastest_attempt_team = resp_team.json()
-    t_team = datetime.strptime(fastest_attempt_team["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
-             datetime.strptime(fastest_attempt_team["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
-    return 100 * t_min.total_seconds() / t_team.total_seconds()
+    team_time = datetime.strptime(db_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
+             datetime.strptime(db_attempt["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
+    return round(100 * best_time.total_seconds() / team_time.total_seconds(), 2)
 
 @register_score_processor("Endurance")
 def handle_endurance(db_attempt):
@@ -120,37 +93,20 @@ def handle_endurance(db_attempt):
     if resp.status_code != 200:
         raise ServiceError("Failed to fetch fastest attempt")
     fastest_attempt = resp.json()
-    t_min = datetime.strptime(fastest_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
+    best_time = datetime.strptime(fastest_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
             datetime.strptime(fastest_attempt["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
-    resp_team = requests.get(
-        f"{ATTEMPT_URL}/api/attempts/fastest/per-team/",
-        params={"team_id": db_attempt["team_id"], "challenge_id": db_attempt["challenge_id"]}
-    )
-    if resp_team.status_code != 200:
-        raise ServiceError("Failed to fetch team fastest attempt")
-    fastest_attempt_team = resp_team.json()
-    t_team = datetime.strptime(fastest_attempt_team["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
-             datetime.strptime(fastest_attempt_team["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
-    time_score = 75 * t_min.total_seconds() / t_team.total_seconds()
+    team_time = datetime.strptime(db_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f") - \
+             datetime.strptime(db_attempt["start_time"], "%Y-%m-%dT%H:%M:%S.%f")
+    time_score = 75 * best_time.total_seconds() / team_time.total_seconds()
     # Energy score
-    resp_energy = requests.get(
-        f"{ATTEMPT_URL}/api/attempts/least-energy",
-        params={"challenge_id": db_attempt["challenge_id"]}
-    )
+    resp_energy = requests.get(f"{ATTEMPT_URL}/api/attempts/least-energy/{db_attempt['challenge_id']}")
     if resp_energy.status_code != 200:
         raise ServiceError("Failed to fetch least-energy attempt")
     least_energy_attempt = resp_energy.json()
     e_min = least_energy_attempt["energy_used"]
-    resp_energy_team = requests.get(
-        f"{ATTEMPT_URL}/api/attempts/least-energy/per-team/",
-        params={"team_id": db_attempt["team_id"], "challenge_id": db_attempt["challenge_id"]}
-    )
-    if resp_energy_team.status_code != 200:
-        raise ServiceError("Failed to fetch team least-energy attempt")
-    least_energy_attempt_team = resp_energy_team.json()
-    e_team = least_energy_attempt_team["energy_used"]
+    e_team = db_attempt["energy_used"]
     energy_score = 175 * e_min / e_team
-    return time_score + energy_score
+    return round(time_score + energy_score, 2)
 
 def create_score(*, db: SessionDep, score: ScoreCreate):
     attempt_resp = requests.get(f"{ATTEMPT_URL}/api/attempts/{score.attempt_id}")
@@ -173,10 +129,6 @@ def create_score(*, db: SessionDep, score: ScoreCreate):
             f"No score processor registered for {challenge['name']}"
         )
     score_value = processor(db_attempt)
-    recalculate_acceleration_scores(
-        db=db,
-        challenge_id=db_attempt["challenge_id"],
-    )
     db_score = Score(
         attempt_id=score.attempt_id,
         challenge_id=db_attempt["challenge_id"],
@@ -221,32 +173,3 @@ def get_score_for_attempt(*, db: SessionDep, attempt_id: int):
     if not db_score:
         raise EntityDoesNotExistError(f"No score for attempt_id: {attempt_id}")
     return db_score
-
-def recalculate_acceleration_scores(*, db: SessionDep, challenge_id: int):
-    challenge_resp = requests.get(f"{CHALLENGE_URL}/api/challenges/{challenge_id}")
-    if challenge_resp.status_code != 200:
-        raise ServiceError("Failed to fetch challenge")
-    challenge = challenge_resp.json()
-    if challenge["name"] != "Acceleration":
-        return False
-    fastest_resp = requests.get(f"{ATTEMPT_URL}/api/attempts/fastest/{challenge_id}")
-    if fastest_resp.status_code != 200:
-        raise ServiceError("Failed to fetch fastest attempt")
-    #fastest_attempt = fastest_resp.json()
-    attempts_resp = requests.get(
-        f"{ATTEMPT_URL}/api/attempts/",
-        params={"challenge_id": challenge_id}
-    )
-    if attempts_resp.status_code != 200:
-        raise ServiceError("Failed to fetch attempts")
-    attempts = attempts_resp.json()
-    for attempt in attempts:
-        existing_score = (
-            db.query(Score)
-            .filter(Score.attempt_id == attempt["id"])
-            .first()
-        )
-        if existing_score:
-            existing_score.value = handle_acceleration(attempt)
-    db.commit()
-    return True

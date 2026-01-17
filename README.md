@@ -13,5 +13,6 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 | Auth service          |done|
 
 ## Todo
-- fix score calculation
 - trigger score reload when penalty is added
+- score reload when a new best attempt is added
+- getDrivers(team_id)
