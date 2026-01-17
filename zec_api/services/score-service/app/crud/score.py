@@ -18,16 +18,16 @@ TEAM_URL = settings.TEAM_SERVICE_URL
 score_processors = {}
 
 def calculate_f_pm(db_attempt):
-    resp = requests.get(f"{ATTEMPT_URL}/api/attempts/fastest/{db_attempt['challenge_id']}")
+    resp = requests.get(f"{ATTEMPT_URL}/api/attempts/{db_attempt['id']}")
     if resp.status_code != 200:
-        raise ServiceError("Failed to fetch fastest attempt")
-    fastest_attempt = resp.json()
-    team_resp = requests.get(f"{TEAM_URL}/api/teams/{fastest_attempt['team_id']}")
+        raise ServiceError("Failed to fetch attempt")
+    attempt = resp.json()
+    team_resp = requests.get(f"{TEAM_URL}/api/teams/{attempt['team_id']}")
     if team_resp.status_code == 404:
         raise EntityDoesNotExistError("Team does not exist")
     if team_resp.status_code != 200:
         raise ServiceError(team_resp.text)
-    driver_resp = requests.get(f"{TEAM_URL}/api/drivers/{fastest_attempt['driver_id']}")
+    driver_resp = requests.get(f"{TEAM_URL}/api/drivers/{attempt['driver_id']}")
     if driver_resp.status_code == 404:
         raise EntityDoesNotExistError("Driver does not exist")
     if driver_resp.status_code != 200:
