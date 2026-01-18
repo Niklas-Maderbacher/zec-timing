@@ -1,6 +1,9 @@
 from app.database.dependency import SessionDep
 from app.schemas.score import ScoreUpdate, ScoreCreate
 from app.models.score import Score
+from app.models.penalty import Penalty
+from app.models.penalty_type import PenaltyType
+from datetime import timedelta
 from app.core.config import settings
 import requests
 from datetime import datetime
@@ -115,6 +118,21 @@ def create_score(*, db: SessionDep, score: ScoreCreate):
     if attempt_resp.status_code != 200:
         raise ServiceError(attempt_resp.text)
     db_attempt = attempt_resp.json()
+    try:
+        penalties = db.query(Penalty).filter(Penalty.attempt_id == score.attempt_id).all()
+        total_penalty_time = 0
+        for penalty in penalties:
+            penalty_type = db.query(PenaltyType).filter(PenaltyType.id == penalty.penalty_type_id).first()
+            if penalty_type:
+                total_penalty_time += penalty_type.amount * penalty.count
+        if total_penalty_time > 0:
+            end_time = datetime.strptime(db_attempt["end_time"], "%Y-%m-%dT%H:%M:%S.%f")
+            end_time += timedelta(seconds=total_penalty_time)
+            db_attempt["end_time"] = end_time.strftime("%Y-%m-%dT%H:%M:%S.%f")
+    except Exception:
+        #pass if no penalties are found
+        pass
+    
     challenge_resp = requests.get(
         f"{CHALLENGE_URL}/api/challenges/{db_attempt['challenge_id']}"
     )

@@ -60,16 +60,17 @@ def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
     db.add(db_attempt)
     db.commit()
     db.refresh(db_attempt)
-    penalty_payload = {
-        "attempt_id": db_attempt.id,
-        "count": attempt.penalty_count,
-        "penalty_type_id": attempt.penalty_type,
-    }
-    pen_resp = requests.post(f"{SCORE_URL}/api/penalties/", json=penalty_payload)
-    if pen_resp.status_code in (401, 403):
-        raise AuthenticationFailed("Unauthorized to create penalty")
-    if pen_resp.status_code != 200:
-        raise ServiceError(f"Failed to create penalty for attempt {db_attempt.id}")
+    if attempt.penalty_count and attempt.penalty_type:
+        penalty_payload = {
+            "attempt_id": db_attempt.id,
+            "count": attempt.penalty_count,
+            "penalty_type_id": attempt.penalty_type,
+        }
+        pen_resp = requests.post(f"{SCORE_URL}/api/penalties/", json=penalty_payload)
+        if pen_resp.status_code in (401, 403):
+            raise AuthenticationFailed("Unauthorized to create penalty")
+        if pen_resp.status_code != 200:
+            raise ServiceError(f"Failed to create penalty for attempt {db_attempt.id}")
     score_payload = {"attempt_id": db_attempt.id}
     score_resp = requests.post(f"{SCORE_URL}/api/scores/", json=score_payload)
     if score_resp.status_code in (401, 403):
