@@ -2,7 +2,7 @@
 Repository for **Z**ero**E**mission**C**hallenge Timing by Darnhofer and Maderbacher
 - Web-App branch by Darnhofer
 
-## Todo list
+## Todo
 - somehow make driver and team "one" thing
 - Add attempt tab
 - map footer to bottom
