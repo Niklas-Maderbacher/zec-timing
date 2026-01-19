@@ -5,8 +5,7 @@ Repository for **Z**ero**E**mission**C**hallenge Timing by Darnhofer and Maderba
 ## Todo
 - somehow make driver and team "one" thing
 - Add attempt tab
-- map footer to bottom
-- make own footer
+- make own footer (wait for feedback)
 - rework the tabs
 - add some sort of mobile version
 - Test with Playwright

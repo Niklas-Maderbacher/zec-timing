@@ -32,6 +32,13 @@ export default function Webapp() {
   const mockLeaderboardData = {
     test1: [
       { position: 1, driver: "Pro One", team: "Gamma", bestTime: "1:11.999", points: 100 },
+      { position: 2, driver: "Pro One", team: "Gamma", bestTime: "1:11.999", points: 100 },
+      { position: 3, driver: "Pro One", team: "Gamma", bestTime: "1:11.999", points: 100 },
+      { position: 4, driver: "Pro One", team: "Gamma", bestTime: "1:11.999", points: 100 },
+      { position: 5, driver: "Pro One", team: "Gamma", bestTime: "1:11.999", points: 100 },
+      { position: 6, driver: "Pro One", team: "Gamma", bestTime: "1:11.999", points: 100 },
+      { position: 7, driver: "Pro One", team: "Gamma", bestTime: "1:11.999", points: 100 },
+      { position: 8, driver: "Pro One", team: "Gamma", bestTime: "1:11.999", points: 100 },
     ],
     test2: [
       { position: 1, driver: "Am One", team: "Delta", bestTime: "1:15.123", points: 80 },

@@ -11,16 +11,6 @@ import {
 const Footer: React.FC = () => {
     return (
         <Box>
-            <h1
-                style={{
-                    color: "green",
-                    textAlign: "center",
-                    marginTop: "10px",
-                }}
-            >
-                A Computer Science Portal for Geeks!
-            </h1>
-
             <FooterContainer>
                 <Row>
                     <Column>
