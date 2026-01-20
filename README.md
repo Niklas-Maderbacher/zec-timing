@@ -9,6 +9,6 @@ Repository for **Z**ero**E**mission**C**hallenge Timing by Darnhofer and Maderba
 - rework the tabs
 - add some sort of mobile version
 - Test with Playwright
-- login and account overview
+- login and account overview (add endpoints)
 - different versions for what you see
 - fix how data is gotten on the main page

@@ -10,7 +10,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { User, Users, UserCog, Download, Trophy, Swords } from "lucide-react"
+import { User, Users, UserCog, Download, Trophy, Swords, CircleUser } from "lucide-react"
 import Footer from "@/components/footer/footer"
 
 export type Tabs =
@@ -21,6 +21,7 @@ export type Tabs =
   | "users"
   | "export"
   | "config"
+  | "login"
 
 interface MainLayoutProps {
   activeTab: Tabs
@@ -109,6 +110,18 @@ export function SideBarLayout({ activeTab, setActiveTab, children }: MainLayoutP
                   <span>Export</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  tooltip="Login"
+                  isActive={activeTab === "login"}
+                  onClick={() => setActiveTab("login")}
+                >
+                  <CircleUser />
+                  <span>Login</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
             </SidebarMenu>
           </Sidebar>
 

@@ -6,9 +6,12 @@ import UsersTab from "@/components/tabs/UsersTab"
 import ChallengeTab from "@/components/tabs/ChallengeTab"
 import ExportTab from "@/components/tabs/ExportTab"
 import LeaderboardTab from "@/components/tabs/LeaderboardTab"
+import LoginTab from "@/components/tabs/LoginTab"
 import {SideBarLayout, type Tabs} from "@/components/layout/sidebarlayout"
 
 export default function Webapp() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [currentUser, setCurrentUser] = useState<any | null>(null)
   const [activeTab, setActiveTab] = useState<Tabs>("leaderboard")
   const [isAddDriverOpen, setIsAddDriverOpen] = useState(false)
   const [isAddTeamOpen, setIsAddTeamOpen] = useState(false)
@@ -62,6 +65,19 @@ export default function Webapp() {
     const team = visibleTeams.find((team) => team.id === id)
     return team ? team.name : "N/A"
   }
+  const handleLogin = (username: string, password: string) => {
+    setCurrentUser({
+      id: 1,
+      username,
+      role: "admin",
+    })
+    setIsLoggedIn(true)
+  }
+
+  const handleLogout = () => {
+    setCurrentUser(null)
+    setIsLoggedIn(false)
+  }
 
   return (
     <SideBarLayout activeTab={activeTab} setActiveTab={setActiveTab}>
@@ -113,6 +129,14 @@ export default function Webapp() {
           exportDateRange={exportDateRange}
           setExportDateRange={setExportDateRange}
           handleExport={handleExport}
+        />
+      )}
+      {activeTab === "login" && (
+        <LoginTab
+          isLoggedIn={isLoggedIn}
+          user={currentUser}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
         />
       )}
     </SideBarLayout>
