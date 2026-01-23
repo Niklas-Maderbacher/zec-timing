@@ -1,5 +1,2 @@
-Fix timestamp timezone
-
-Default in formula shows +1 hour time offset
-Manual input has -1 hour offset
-When selecting timestamps, there is no offset
+When entering a manual timestamp and then selecting a timestamp, the median gets build
+Force to use the selected timestamp and only use the manual timestamp, when the selecte one is zero
