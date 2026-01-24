@@ -23,7 +23,9 @@ interface DecodedToken {
   };
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost';
+const API_BASE_URL = typeof window !== 'undefined' 
+  ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost')
+  : 'http://localhost:8000';
 
 export class AuthService {
   private static ACCESS_TOKEN_KEY = 'access_token';
@@ -35,19 +37,29 @@ export class AuthService {
     formData.append('username', username);
     formData.append('password', password);
 
-    const response = await fetch(`${API_BASE_URL}/login`, {
-      method: 'POST',
-      body: formData,
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: 'POST',
+        body: formData,
+        mode: 'cors',
+        credentials: 'include',
+      });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || 'Login failed');
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ detail: 'Login failed' }));
+        throw new Error(error.detail || 'Login failed');
+      }
+
+      const tokenData: TokenData = await response.json();
+      this.saveTokens(tokenData);
+      return tokenData;
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Cannot connect to server. Please check if the API is running.');
+      }
+      throw error;
     }
-
-    const tokenData: TokenData = await response.json();
-    this.saveTokens(tokenData);
-    return tokenData;
   }
 
   static async refresh(): Promise<TokenData> {
@@ -59,25 +71,33 @@ export class AuthService {
     const formData = new FormData();
     formData.append('refresh_token', refreshToken);
 
-    const response = await fetch(`${API_BASE_URL}/refresh`, {
-      method: 'POST',
-      body: formData,
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/refresh`, {
+        method: 'POST',
+        body: formData,
+        mode: 'cors',
+        credentials: 'include',
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        this.clearTokens();
+        throw new Error('Token refresh failed');
+      }
+
+      const tokenData: TokenData = await response.json();
+      this.saveTokens(tokenData);
+      return tokenData;
+    } catch (error) {
       this.clearTokens();
-      throw new Error('Token refresh failed');
+      throw error;
     }
-
-    const tokenData: TokenData = await response.json();
-    this.saveTokens(tokenData);
-    return tokenData;
   }
 
   static saveTokens(tokenData: TokenData): void {
     localStorage.setItem(this.ACCESS_TOKEN_KEY, tokenData.access_token);
     localStorage.setItem(this.REFRESH_TOKEN_KEY, tokenData.refresh_token);
-    const expiryTime = Date.now() + 300;
+    
+    const expiryTime = Date.now() + tokenData.expires_in * 1000;
     localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiryTime.toString());
   }
 
@@ -130,14 +150,19 @@ export class AuthService {
 
     const decoded = this.decodeToken(accessToken);
     if (!decoded) return null;
+
     if (decoded.resource_access) {
       for (const resource of Object.values(decoded.resource_access)) {
         if (resource.roles && resource.roles.length > 0) {
-          return resource.roles[0].toLowerCase();
+          const commonRoles = ['admin', 'team_lead', 'viewer'];
+          const foundRole = resource.roles.find(role => 
+            commonRoles.includes(role.toLowerCase())
+          );
+          if (foundRole) return foundRole.toLowerCase();
+          return resource.roles[0]?.toLowerCase();
         }
       }
     }
-
     return null;
   }
 
@@ -166,6 +191,11 @@ export async function authenticatedFetch(
 
   const headers = new Headers(options.headers);
   headers.set('Authorization', `Bearer ${token}`);
+  if (!(options.body instanceof FormData)) {
+    if (!headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
+    }
+  }
 
   return fetch(url, {
     ...options,
