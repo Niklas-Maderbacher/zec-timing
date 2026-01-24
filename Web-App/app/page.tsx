@@ -23,15 +23,12 @@ export default function Webapp() {
   const [activeTab, setActiveTab] = useState<Tabs>("leaderboard")
   const [isAddDriverOpen, setIsAddDriverOpen] = useState(false)
   const [isAddTeamOpen, setIsAddTeamOpen] = useState(false)
-  const [isAddUserOpen, setIsAddUserOpen] = useState(false)
   const [isAddChallengeOpen, setIsAddChallengeOpen] = useState(false)
   const [editingDriver, setEditingDriver] = useState<any | null>(null)
   const [editingTeam, setEditingTeam] = useState<any | null>(null)
-  const [editingUser, setEditingUser] = useState<any | null>(null)
   const [editingChallenge, setEditingChallenge] = useState<any | null>(null)
   const [drivers, setDrivers] = useState<any[]>([])
   const [visibleTeams, setVisibleTeams] = useState<any[]>([])
-  const [users, setUsers] = useState<any[]>([])
   const [challenges, setChallenges] = useState<any[]>([])
   const [exportFormat, setExportFormat] = useState("csv")
   const [exportDateRange, setExportDateRange] = useState({
@@ -55,6 +52,8 @@ export default function Webapp() {
       { position: 1, driver: "Am One", team: "Delta", bestTime: "1:15.123", points: 80 },
     ],
   }
+
+  // Get user permissions
   const permissions = getPermissions(currentUser?.role || null)
 
   useEffect(() => {
@@ -72,6 +71,7 @@ export default function Webapp() {
           }
           setCurrentUser(user)
           setIsLoggedIn(true)
+          // Set default tab based on role
           setActiveTab(getDefaultTab(role))
         }
       }
@@ -89,8 +89,10 @@ export default function Webapp() {
         username: userUsername || username,
         role: role || "viewer",
       }
+      
       setCurrentUser(user)
       setIsLoggedIn(true)
+      // Navigate to default tab for user's role
       setActiveTab(getDefaultTab(user.role))
     } catch (error) {
       console.error("Login failed:", error)
@@ -105,6 +107,7 @@ export default function Webapp() {
     setActiveTab("login")
   }
 
+  // Enhanced tab change handler that checks permissions
   const handleTabChange = (tab: Tabs) => {
     if (canAccessTab(currentUser?.role || null, tab)) {
       setActiveTab(tab)
@@ -118,6 +121,7 @@ export default function Webapp() {
       alert("You don't have permission to delete teams")
       return
     }
+    // Your delete logic here
   }
   
   const handleExport = () => {
@@ -125,6 +129,7 @@ export default function Webapp() {
       alert("You don't have permission to export data")
       return
     }
+    // Your export logic here
   }
   
   const toggleUserStatus = (id: string | number) => {
@@ -132,6 +137,7 @@ export default function Webapp() {
       alert("You don't have permission to edit users")
       return
     }
+    // Your toggle logic here
   }
   
   const handleEditUser = (user: any) => {
@@ -205,13 +211,7 @@ export default function Webapp() {
         />
       )}
       {activeTab === "users" && permissions.canEditUsers && (
-        <UsersTab
-          users={users}
-          setIsAddUserOpen={setIsAddUserOpen}
-          handleEditUser={handleEditUser}
-          toggleUserStatus={toggleUserStatus}
-          getTeamName={getTeamName}
-        />
+        <UsersTab />
       )}
       {activeTab === "export" && permissions.canExport && (
         <ExportTab
