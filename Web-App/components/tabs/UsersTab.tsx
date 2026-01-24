@@ -56,14 +56,11 @@ export default function UsersTab() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  // Form states
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   })
   const [selectedRoles, setSelectedRoles] = useState<string[]>([])
-
-  // Load users on mount
   useEffect(() => {
     loadUsers()
   }, [])
@@ -98,7 +95,6 @@ export default function UsersTab() {
       setIsAddUserOpen(false)
       setFormData({ username: "", password: "" })
       
-      // Reload all users
       loadUsers()
     } catch (error: any) {
       toast.error(error.message || "Failed to create user")
@@ -121,8 +117,6 @@ export default function UsersTab() {
       
       setIsEditUserOpen(false)
       setFormData({ username: "", password: "" })
-      
-      // Reload all users
       loadUsers()
     } catch (error: any) {
       toast.error(error.message || "Failed to update user")
@@ -137,10 +131,7 @@ export default function UsersTab() {
     setIsDeleting(true)
     try {
       await usersApi.deleteUser(userId)
-      
       toast.success("User deleted successfully")
-      
-      // Reload all users
       loadUsers()
     } catch (error: any) {
       toast.error(error.message || "Failed to delete user")
@@ -164,12 +155,9 @@ export default function UsersTab() {
       const rolesToAdd = selectedRoles.filter(r => !currentRoles.includes(r))
       const rolesToRemove = currentRoles.filter(r => !selectedRoles.includes(r))
 
-      // Add new roles
       if (rolesToAdd.length > 0) {
         await usersApi.assignRoles(selectedUser.id, rolesToAdd)
       }
-
-      // Remove old roles
       if (rolesToRemove.length > 0) {
         await usersApi.removeRoles(selectedUser.id, rolesToRemove)
       }
@@ -177,8 +165,7 @@ export default function UsersTab() {
       toast.success("Roles updated successfully")
       
       setIsManageRolesOpen(false)
-      
-      // Reload all users
+    
       loadUsers()
     } catch (error: any) {
       toast.error(error.message || "Failed to update roles")
@@ -203,7 +190,6 @@ export default function UsersTab() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">User Management</h2>
         <Button
@@ -218,7 +204,6 @@ export default function UsersTab() {
         </Button>
       </div>
 
-      {/* Users Table */}
       <Card>
         <CardHeader>
           <CardTitle>All Users</CardTitle>
@@ -300,7 +285,6 @@ export default function UsersTab() {
         </CardContent>
       </Card>
 
-      {/* Add User Dialog */}
       <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
         <DialogContent>
           <DialogHeader>
@@ -346,7 +330,6 @@ export default function UsersTab() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit User Dialog */}
       <Dialog open={isEditUserOpen} onOpenChange={setIsEditUserOpen}>
         <DialogContent>
           <DialogHeader>
@@ -392,7 +375,6 @@ export default function UsersTab() {
         </DialogContent>
       </Dialog>
 
-      {/* Manage Roles Dialog */}
       <Dialog open={isManageRolesOpen} onOpenChange={setIsManageRolesOpen}>
         <DialogContent>
           <DialogHeader>
