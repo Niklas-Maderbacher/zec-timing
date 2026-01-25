@@ -1,4 +1,3 @@
-// hooks/useAuth.ts
 import { useState, useEffect } from 'react'
 import { AuthService } from '@/lib/auth'
 

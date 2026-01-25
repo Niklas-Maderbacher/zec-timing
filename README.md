@@ -12,3 +12,4 @@ Repository for **Z**ero**E**mission**C**hallenge Timing by Darnhofer and Maderba
 - login and account overview (add endpoints)
 - different versions for what you see
 - fix how data is gotten on the main page
+- Roles on user tab

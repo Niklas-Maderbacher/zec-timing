@@ -26,13 +26,6 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Plus, Trash2, UserCog, Loader2 } from "lucide-react"
 import { usersApi } from "@/lib/api/users"
 import { toast } from "sonner"
@@ -45,7 +38,7 @@ interface User {
   roles?: string[]
 }
 
-const AVAILABLE_ROLES = ["admin", "teamlead", "viewer"]
+const AVAILABLE_ROLES = ["ADMIN", "TEAM_LEAD", "VIEWER"]
 
 export default function UsersTab() {
   const [users, setUsers] = useState<User[]>([])

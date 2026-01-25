@@ -23,13 +23,10 @@ export default function Webapp() {
   const [activeTab, setActiveTab] = useState<Tabs>("leaderboard")
   const [isAddDriverOpen, setIsAddDriverOpen] = useState(false)
   const [isAddTeamOpen, setIsAddTeamOpen] = useState(false)
-  const [isAddChallengeOpen, setIsAddChallengeOpen] = useState(false)
   const [editingDriver, setEditingDriver] = useState<any | null>(null)
   const [editingTeam, setEditingTeam] = useState<any | null>(null)
-  const [editingChallenge, setEditingChallenge] = useState<any | null>(null)
   const [drivers, setDrivers] = useState<any[]>([])
   const [visibleTeams, setVisibleTeams] = useState<any[]>([])
-  const [challenges, setChallenges] = useState<any[]>([])
   const [exportFormat, setExportFormat] = useState("csv")
   const [exportDateRange, setExportDateRange] = useState({
     from: new Date().toISOString(),
@@ -53,7 +50,6 @@ export default function Webapp() {
     ],
   }
 
-  // Get user permissions
   const permissions = getPermissions(currentUser?.role || null)
 
   useEffect(() => {
@@ -71,7 +67,6 @@ export default function Webapp() {
           }
           setCurrentUser(user)
           setIsLoggedIn(true)
-          // Set default tab based on role
           setActiveTab(getDefaultTab(role))
         }
       }
@@ -92,7 +87,6 @@ export default function Webapp() {
       
       setCurrentUser(user)
       setIsLoggedIn(true)
-      // Navigate to default tab for user's role
       setActiveTab(getDefaultTab(user.role))
     } catch (error) {
       console.error("Login failed:", error)
@@ -107,7 +101,6 @@ export default function Webapp() {
     setActiveTab("login")
   }
 
-  // Enhanced tab change handler that checks permissions
   const handleTabChange = (tab: Tabs) => {
     if (canAccessTab(currentUser?.role || null, tab)) {
       setActiveTab(tab)
@@ -121,7 +114,6 @@ export default function Webapp() {
       alert("You don't have permission to delete teams")
       return
     }
-    // Your delete logic here
   }
   
   const handleExport = () => {
@@ -129,47 +121,7 @@ export default function Webapp() {
       alert("You don't have permission to export data")
       return
     }
-    // Your export logic here
-  }
-  
-  const toggleUserStatus = (id: string | number) => {
-    if (!permissions.canEditUsers) {
-      alert("You don't have permission to edit users")
-      return
-    }
-    // Your toggle logic here
-  }
-  
-  const handleEditUser = (user: any) => {
-    if (!permissions.canEditUsers) {
-      alert("You don't have permission to edit users")
-      return
-    }
-    setIsAddUserOpen(true)
-    setEditingUser(user)
-  }
-  
-  const deleteChallenge = (id: string | number) => {
-    if (!permissions.canEditChallenges) {
-      alert("You don't have permission to delete challenges")
-      return
-    }
-    setChallenges(challenges.filter((c) => c.id !== id))
-  }
-  
-  const handleEditChallenge = (challenge: any) => {
-    if (!permissions.canEditChallenges) {
-      alert("You don't have permission to edit challenges")
-      return
-    }
-    setIsAddChallengeOpen(true)
-    setEditingChallenge(challenge)
-  }
-  
-  const getTeamName = (id: string | number | undefined): string => {
-    const team = visibleTeams.find((team) => team.id === id)
-    return team ? team.name : "N/A"
-  }
+  }  
 
   return (
     <SideBarLayout 
@@ -203,12 +155,7 @@ export default function Webapp() {
         />
       )}
       {activeTab === "challenges" && permissions.canEditChallenges && (
-        <ChallengeTab
-          challenges={challenges}
-          setIsAddChallengeOpen={setIsAddChallengeOpen}
-          setEditingChallenge={handleEditChallenge}
-          deleteChallenge={deleteChallenge}
-        />
+        <ChallengeTab />
       )}
       {activeTab === "users" && permissions.canEditUsers && (
         <UsersTab />

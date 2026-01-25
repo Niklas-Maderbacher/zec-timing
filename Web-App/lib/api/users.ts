@@ -1,8 +1,6 @@
 import { authenticatedFetch } from "@/lib/auth"
 
-const API_BASE_URL = typeof window !== 'undefined' 
-  ? (process.env.NEXT_PUBLIC_API_URL || 'http://localhost')
-  : 'http://localhost:8000'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost'
 
 export interface UserKC {
   id: string
