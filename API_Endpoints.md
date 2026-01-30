@@ -58,6 +58,7 @@
   - 8.5 [Get Penalty](#get-penalty)
   - 8.6 [Get Penalties (all)](#get-penalties-all)
   - 8.7 [Get Penalties for Attempt](#get-penalties-for-attempt)
+  - 8.8 [Get Penaltytypes](#get-penalty-types)
 ### Notes
 - When talking about access_token in this document i am referring to the token gotten by [Login](#login)
 - Also users with the role admin have acces to teamlead endpoints
