@@ -130,7 +130,6 @@ def create_score(*, db: SessionDep, score: ScoreCreate):
             end_time += timedelta(seconds=total_penalty_time)
             db_attempt["end_time"] = end_time.strftime("%Y-%m-%dT%H:%M:%S.%f")
     except Exception:
-        #pass if no penalties are found
         pass
     
     challenge_resp = requests.get(

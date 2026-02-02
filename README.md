@@ -13,5 +13,4 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 | Auth service          |done|
 
 ## Todo
-- score reload when a new best attempt is added
-- score service tests
+- score reload whenever is decided
