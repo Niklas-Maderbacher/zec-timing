@@ -48,6 +48,10 @@ export default function Page() {
   const [selectedStartTimestamps, setSelectedStartTimestamps] = useState<string[] | null>(null);
   const [selectedEndTimestamps, setSelectedEndTimestamps] = useState<string[] | null>(null);
 
+  // Compute median timestamps as strings
+  const medianStartTimestamp = medianTimestamp(selectedStartTimestamps ?? []);
+  const medianEndTimestamp = medianTimestamp(selectedEndTimestamps ?? []);
+
   // Fetch Teams
   const fetchTeams = async () => {
     try {
@@ -59,7 +63,6 @@ export default function Page() {
           }
         }
       );
-
 
       setTeams(response.data);
       if (response.data.length > 0) setSelectedTeam(response.data[0]);
@@ -265,7 +268,6 @@ export default function Page() {
           status={connectionStatus}
           setStatus={setConnectionStatus}
         />
-
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 mb-4 gap-6">
@@ -314,21 +316,20 @@ export default function Page() {
         </Card>
 
         <FormulaCard
-          medianStartTimestamp={medianTimestamp(selectedStartTimestamps ?? [])}
-          medianEndTimestamp={medianTimestamp(selectedEndTimestamps ?? [])}
+          medianStartTimestamp={medianStartTimestamp}
+          medianEndTimestamp={medianEndTimestamp}
           manualAttemptTime={manualAttemptTime}
           penaltyCount={penaltyCount}
           selectedPenaltyAmount={selectedPenalty?.amount ?? 0}
           setManualTimestamp={setManualAttemptTime}
         />
 
-
         <AttemptResultCard
           selectedTeam={selectedTeam}
           selectedDriver={selectedDriver}
           selectedChallenge={selectedChallenge}
-          medianStartTimestamp={medianTimestamp(selectedStartTimestamps ?? [])}
-          medianEndTimestamp={medianTimestamp(selectedEndTimestamps ?? [])}
+          medianStartTimestamp={medianStartTimestamp}
+          medianEndTimestamp={medianEndTimestamp}
           manualAttemptTime={manualAttemptTime}
           energyConsumption={energyConsumption}
           selectedPenalty={selectedPenalty}

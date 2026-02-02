@@ -5,13 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
 interface FormulaCardProps {
-    medianStartTimestamp: number | null
-    medianEndTimestamp: number | null
+    medianStartTimestamp: string
+    medianEndTimestamp: string
     manualAttemptTime: string | null
     penaltyCount: number
     selectedPenaltyAmount: number
     setManualTimestamp: (timestamp: string | null) => void
-
 }
 
 export function FormulaCard({
@@ -22,10 +21,10 @@ export function FormulaCard({
     selectedPenaltyAmount,
     setManualTimestamp,
 }: FormulaCardProps) {
-    const formatTimestampUTC = (input: string | number | Date): string => {
-        const date = typeof input === "string" || typeof input === "number"
-            ? new Date(input)
-            : input
+    const formatTimestampUTC = (isoString: string): string => {
+        if (!isoString) return "00:00:00:000"
+
+        const date = new Date(isoString)
 
         const hours = String(date.getUTCHours()).padStart(2, "0")
         const minutes = String(date.getUTCMinutes()).padStart(2, "0")
@@ -34,7 +33,6 @@ export function FormulaCard({
 
         return `${hours}:${minutes}:${seconds}:${milliseconds}`
     }
-
 
     return (
         <Card className="md:col-span-2">
@@ -47,8 +45,8 @@ export function FormulaCard({
                 {manualAttemptTime == null ? (
                     <p>
                         Attempt time formula ={" "}
-                        {formatTimestampUTC(medianStartTimestamp ?? 0)} -{" "}
-                        {formatTimestampUTC(medianEndTimestamp ?? 0)} + ({penaltyCount} * {selectedPenaltyAmount})
+                        {formatTimestampUTC(medianEndTimestamp)} -{" "}
+                        {formatTimestampUTC(medianStartTimestamp)} + ({penaltyCount} * {selectedPenaltyAmount})
                     </p>
                 ) : (
                     <p>
@@ -76,19 +74,17 @@ export function FormulaCard({
 
 interface TimeSplitInputProps {
     onChange: (time: string) => void
-    initialTime?: string | number | Date
+    initialTime?: string
 }
 
 function clamp(num: number, min: number, max: number) {
     return Math.min(Math.max(num, min), max)
 }
 
-function normalizeTimeUTC(value?: string | number | Date): [string, string, string] {
-    if (!value) return ["00", "00", "00"]
+function normalizeTimeUTC(isoString?: string): [string, string, string] {
+    if (!isoString) return ["00", "00", "00"]
 
-    const d = typeof value === "string" || typeof value === "number"
-        ? new Date(value)
-        : value
+    const d = new Date(isoString)
 
     return [
         String(d.getUTCHours()).padStart(2, "0"),
@@ -174,9 +170,8 @@ function TimeSplitInput({ onChange, initialTime }: TimeSplitInputProps) {
 
         const timeString = `${h}:${m}:${s}`
         // Pass initialTime as reference to maintain the same date
-        onChange(buildUTCDateFromTime(timeString, initialTime?.toString()))
+        onChange(buildUTCDateFromTime(timeString, initialTime))
     }
-
 
     return (
         <div className="flex items-center gap-1">

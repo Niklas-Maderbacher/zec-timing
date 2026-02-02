@@ -11,8 +11,8 @@ interface AttemptResultCardProps {
     selectedTeam: { id: number } | null
     selectedDriver: { id: number } | null
     selectedChallenge: { id: number } | null
-    medianStartTimestamp: number | null
-    medianEndTimestamp: number | null
+    medianStartTimestamp: string
+    medianEndTimestamp: string
     manualAttemptTime: string | null
     energyConsumption: number
     selectedPenalty: Penalty | null
@@ -55,13 +55,13 @@ export function AttemptResultCard({
         return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}:${String(milliseconds).padStart(4, "0")}`
     }
 
-    const toBackendDateTime = (date: Date): string => {
+    const toBackendDateTime = (isoString: string): string => {
+        const date = new Date(isoString)
         return date
             .toISOString()              // 2024-01-01T10:11:00.123Z
             .replace("Z", "")           // remove Z
             .padEnd(26, "0")            // ensure microseconds
     }
-
 
     const createAttempt = () => {
         if (!selectedTeam?.id) return alert("Please select a team!")
@@ -70,20 +70,20 @@ export function AttemptResultCard({
         if (!energyConsumption || energyConsumption <= 0) return alert("Please enter energy consumption!")
         if (!selectedPenalty?.id) return alert("Please select a penalty!")
 
-        let startTime: Date
-        let endTime: Date
+        let startTime: string
+        let endTime: string
 
         if (manualAttemptTime) {
             const base = new Date(0) // 1970-01-01T00:00:00.000Z
-            startTime = base
-            endTime = new Date(base.getTime() + Number(manualAttemptTime))
+            startTime = base.toISOString()
+            endTime = new Date(base.getTime() + Number(manualAttemptTime)).toISOString()
         } else {
             if (!medianStartTimestamp || !medianEndTimestamp) {
                 return alert("Please provide start and end timestamps!")
             }
 
-            startTime = new Date(medianStartTimestamp)
-            endTime = new Date(medianEndTimestamp)
+            startTime = medianStartTimestamp
+            endTime = medianEndTimestamp
         }
 
         const attempt: Attempt = {
