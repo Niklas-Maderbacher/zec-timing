@@ -3,8 +3,10 @@ from typing import Optional
 from datetime import datetime
 
 class PenaltyTypeResponse(BaseModel):
+    id: int
     type: str
     amount: int
+
 class PenaltyBase(BaseModel):
     attempt_id: int
     count: int
