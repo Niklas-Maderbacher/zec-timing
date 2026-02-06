@@ -1,7 +1,7 @@
 import os
 import pytest
-from datetime import datetime, timedelta
-from unittest.mock import patch, Mock
+from datetime import datetime
+from unittest.mock import patch, MagicMock
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
@@ -87,12 +87,27 @@ def seeded_scores(db):
     return items
 
 @pytest.fixture(scope="function")
-def mock_requests():
+def mock_score_requests():
     with patch("app.crud.score.requests") as mock_requests, \
-         patch("app.crud.penalty.requests") as mock_penalty, \
-         patch("app.crud.leaderboard.requests") as mock_leaderboard:
-
+         patch("app.crud.penalty.requests"), \
+         patch("app.crud.leaderboard.requests"):
         yield mock_requests
+
+@pytest.fixture(scope="function")
+def mock_leaderboard_requests():
+    with patch("app.crud.leaderboard.requests") as mock_requests, \
+         patch("app.crud.score.requests"), \
+         patch("app.crud.penalty.requests"):
+        yield mock_requests
+
+
+@pytest.fixture(autouse=True)
+def mock_requests_penalty():
+    with patch("app.crud.penalty.requests.get") as mock_get:
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200 
+        mock_get.return_value = mock_resp
+        yield mock_get
 
 @pytest.fixture(scope="function")
 def client(

@@ -14,3 +14,4 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 
 ## Todo
 - score reload whenever is decided
+- APi test

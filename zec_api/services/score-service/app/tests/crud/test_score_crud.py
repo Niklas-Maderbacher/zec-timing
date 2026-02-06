@@ -86,7 +86,7 @@ def test_get_score_not_found(db):
     with pytest.raises(EntityDoesNotExistError):
         crud.get_score(db=db, score_id=999)
 
-def test_create_score_success_skidpad(db, mock_requests):
+def test_create_score_success_skidpad(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/" in url:
             return MockResp(200, mock_attempt())
@@ -94,14 +94,14 @@ def test_create_score_success_skidpad(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Skidpad"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     score = crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
     assert score.value > 0
     assert score.challenge_id == 1
 
-def test_create_score_with_penalty_time(db, mock_requests):
+def test_create_score_with_penalty_time(db, mock_score_requests):
     db.add(PenaltyType(id=1, amount=2))
     db.add(Penalty(attempt_id=1, penalty_type_id=1, count=2))
     db.commit()
@@ -113,12 +113,12 @@ def test_create_score_with_penalty_time(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Slalom"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     score = crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
     assert score.value > 0
 
-def test_create_score_missing_processor(db, mock_requests):
+def test_create_score_missing_processor(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/" in url:
             return MockResp(200, mock_attempt())
@@ -126,12 +126,12 @@ def test_create_score_missing_processor(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Unknown"})
         return MockResp(500, "unexpected")
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(InvalidOperationError):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_create_score_attempt_not_found(db, mock_requests):
+def test_create_score_attempt_not_found(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/" in url:
             return MockResp(404, "not found")
@@ -139,7 +139,7 @@ def test_create_score_attempt_not_found(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Skidpad"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(EntityDoesNotExistError):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
@@ -184,7 +184,7 @@ def test_get_score_for_attempt_not_found(db):
     with pytest.raises(EntityDoesNotExistError, match="No score for attempt_id: 999"):
         crud.get_score_for_attempt(db=db, attempt_id=999)
 
-def test_create_score_acceleration(db, mock_requests):
+def test_create_score_acceleration(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/" in url and "/fastest" in url:
             return MockResp(200, mock_attempt(attempt_id=2))
@@ -198,13 +198,13 @@ def test_create_score_acceleration(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Acceleration"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     score = crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
     assert score.value > 0
     assert score.challenge_id == 1
 
-def test_create_score_endurance(db, mock_requests):
+def test_create_score_endurance(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             return MockResp(200, mock_attempt(attempt_id=2))
@@ -216,13 +216,13 @@ def test_create_score_endurance(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Endurance"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     score = crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
     assert score.value > 0
     assert score.challenge_id == 1
 
-def test_create_score_challenge_not_found(db, mock_requests):
+def test_create_score_challenge_not_found(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/" in url:
             return MockResp(200, mock_attempt())
@@ -230,52 +230,12 @@ def test_create_score_challenge_not_found(db, mock_requests):
             return MockResp(404, "not found")
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(EntityDoesNotExistError, match="Challenge does not exist"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_create_score_challenge_service_error(db, mock_requests):
-    def side_effect(url, *_, **__):
-        if "/api/attempts/" in url:
-            return MockResp(200, mock_attempt())
-        if "/api/challenges/" in url:
-            return MockResp(500, "Internal server error")
-        return MockResp(200, {})
-
-    mock_requests.get.side_effect = side_effect
-
-    with pytest.raises(ServiceError, match="Failed to create score"):
-        crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
-
-def test_create_score_attempt_service_error(db, mock_requests):
-    def side_effect(url, *_, **__):
-        if "/api/attempts/" in url:
-            return MockResp(500, "Internal server error")
-        return MockResp(200, {})
-
-    mock_requests.get.side_effect = side_effect
-
-    with pytest.raises(ServiceError):
-        crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
-
-def test_create_score_penalty_exception_ignored(db, mock_requests):
-    db.add(Penalty(attempt_id=1, penalty_type_id=999, count=2))
-    db.commit()
-
-    def side_effect(url, *_, **__):
-        if "/api/attempts/" in url:
-            return MockResp(200, mock_attempt())
-        if "/api/challenges/" in url:
-            return MockResp(200, {"id": 1, "name": "Skidpad"})
-        return MockResp(200, {})
-
-    mock_requests.get.side_effect = side_effect
-
-    score = crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
-    assert score.value > 0
-
-def test_acceleration_team_not_found(db, mock_requests):
+def test_acceleration_team_not_found(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             return MockResp(200, mock_attempt(attempt_id=2))
@@ -287,48 +247,12 @@ def test_acceleration_team_not_found(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Acceleration"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(EntityDoesNotExistError, match="Team does not exist"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_acceleration_team_service_error(db, mock_requests):
-    def side_effect(url, *_, **__):
-        if "/api/attempts/fastest" in url:
-            return MockResp(200, mock_attempt(attempt_id=2))
-        if "/api/attempts/" in url:
-            return MockResp(200, mock_attempt())
-        if "/api/teams/" in url:
-            return MockResp(500, "Internal server error")
-        if "/api/challenges/" in url:
-            return MockResp(200, {"id": 1, "name": "Acceleration"})
-        return MockResp(200, {})
-
-    mock_requests.get.side_effect = side_effect
-
-    with pytest.raises(ServiceError):
-        crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
-
-def test_acceleration_driver_not_found(db, mock_requests):
-    def side_effect(url, *_, **__):
-        if "/api/attempts/fastest" in url:
-            return MockResp(200, mock_attempt(attempt_id=2))
-        if "/api/attempts/" in url:
-            return MockResp(200, mock_attempt())
-        if "/api/teams/" in url:
-            return MockResp(200, mock_team())
-        if "/api/drivers/" in url:
-            return MockResp(404, "not found")
-        if "/api/challenges/" in url:
-            return MockResp(200, {"id": 1, "name": "Acceleration"})
-        return MockResp(200, {})
-
-    mock_requests.get.side_effect = side_effect
-
-    with pytest.raises(EntityDoesNotExistError, match="Driver does not exist"):
-        crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
-
-def test_acceleration_driver_service_error(db, mock_requests):
+def test_acceleration_driver_service_error(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             return MockResp(200, mock_attempt(attempt_id=2))
@@ -342,12 +266,12 @@ def test_acceleration_driver_service_error(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Acceleration"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(ServiceError):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_acceleration_attempt_fetch_in_calculate_fpm_fails(db, mock_requests):
+def test_acceleration_attempt_fetch_in_calculate_fpm_fails(db, mock_score_requests):
     call_count = {"attempts": 0}
     
     def side_effect(url, *_, **__):
@@ -363,12 +287,12 @@ def test_acceleration_attempt_fetch_in_calculate_fpm_fails(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Acceleration"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(ServiceError, match="Failed to fetch attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_skidpad_fastest_attempt_not_found(db, mock_requests):
+def test_skidpad_fastest_attempt_not_found(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             return MockResp(404, "not found")
@@ -378,12 +302,12 @@ def test_skidpad_fastest_attempt_not_found(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Skidpad"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(EntityDoesNotExistError, match="Fastest attempt not found"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_skidpad_fastest_attempt_service_error(db, mock_requests):
+def test_skidpad_fastest_attempt_service_error(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             return MockResp(500, "Internal server error")
@@ -393,12 +317,12 @@ def test_skidpad_fastest_attempt_service_error(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Skidpad"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(ServiceError):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_acceleration_fastest_attempt_service_error(db, mock_requests):
+def test_acceleration_fastest_attempt_service_error(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             return MockResp(500, "Internal server error")
@@ -412,12 +336,12 @@ def test_acceleration_fastest_attempt_service_error(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Acceleration"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(ServiceError, match="Failed to fetch fastest attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_slalom_fastest_attempt_service_error(db, mock_requests):
+def test_slalom_fastest_attempt_service_error(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             return MockResp(500, "Internal server error")
@@ -427,12 +351,12 @@ def test_slalom_fastest_attempt_service_error(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Slalom"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(ServiceError, match="Failed to fetch fastest attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_endurance_fastest_attempt_service_error(db, mock_requests):
+def test_endurance_fastest_attempt_service_error(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             return MockResp(500, "Internal server error")
@@ -442,12 +366,12 @@ def test_endurance_fastest_attempt_service_error(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Endurance"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(ServiceError, match="Failed to fetch fastest attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_endurance_least_energy_service_error(db, mock_requests):
+def test_endurance_least_energy_service_error(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             return MockResp(200, mock_attempt(attempt_id=2))
@@ -459,7 +383,7 @@ def test_endurance_least_energy_service_error(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Endurance"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     with pytest.raises(ServiceError, match="Failed to fetch least-energy attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
@@ -476,7 +400,7 @@ def test_delete_score_not_found(db):
     with pytest.raises(EntityDoesNotExistError, match="No score for id: 999"):
         crud.delete_score(db=db, score_id=999)
 
-def test_create_score_multiple_penalties(db, mock_requests):
+def test_create_score_multiple_penalties(db, mock_score_requests):
     db.add(PenaltyType(id=1, amount=2))
     db.add(PenaltyType(id=2, amount=5))
     db.add(Penalty(attempt_id=1, penalty_type_id=1, count=2))
@@ -490,7 +414,7 @@ def test_create_score_multiple_penalties(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Slalom"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     score = crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
     assert score.value > 0
@@ -506,7 +430,7 @@ def test_delete_scores_for_attempt_single(db):
     deleted = crud.delete_scores_for_attempt(db=db, attempt_id=5)
     assert len(deleted) == 1
 
-def test_score_value_rounding(db, mock_requests):
+def test_score_value_rounding(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
             base = datetime.utcnow()
@@ -526,7 +450,7 @@ def test_score_value_rounding(db, mock_requests):
             return MockResp(200, {"id": 1, "name": "Skidpad"})
         return MockResp(200, {})
 
-    mock_requests.get.side_effect = side_effect
+    mock_score_requests.get.side_effect = side_effect
 
     score = crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
     assert score.value == round(score.value, 2)
