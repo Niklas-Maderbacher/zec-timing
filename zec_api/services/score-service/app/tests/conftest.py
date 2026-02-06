@@ -2,14 +2,9 @@ import os
 import pytest
 from datetime import datetime, timedelta
 from unittest.mock import patch, Mock
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
-
-# ------------------------------------------------------------------
-# Environment variables (MUST be set before app import)
-# ------------------------------------------------------------------
 os.environ.setdefault("ENVIRONMENT", "testing")
 os.environ.setdefault("PROJECT_NAME", "test")
 os.environ.setdefault("POSTGRES_SERVER", "localhost")
@@ -21,24 +16,14 @@ os.environ.setdefault("CHALLENGE_SERVICE_URL", "http://challenge-service")
 os.environ.setdefault("ATTEMPT_SERVICE_URL", "http://attempt-service")
 os.environ.setdefault("SCORE_SERVICE_URL", "http://score-service")
 
-# ------------------------------------------------------------------
-# App + DB imports
-# ------------------------------------------------------------------
 from app.main import app as fastapi_app
 from app.database.session import Base
 from app.database.dependency import get_db
-
-# IMPORTANT: import all models so metadata is populated
-import app.models  # noqa
-
 from app.models.penalty_type import PenaltyType
 from app.models.penalty import Penalty
 from app.models.score import Score
 
-# ------------------------------------------------------------------
-# Database setup
-# ------------------------------------------------------------------
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test_score.db"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
@@ -51,9 +36,6 @@ TestingSessionLocal = sessionmaker(
     bind=engine,
 )
 
-# ------------------------------------------------------------------
-# DB fixture
-# ------------------------------------------------------------------
 @pytest.fixture(scope="function")
 def db():
     Base.metadata.create_all(bind=engine)
@@ -65,9 +47,6 @@ def db():
         session.close()
         Base.metadata.drop_all(bind=engine)
 
-# ------------------------------------------------------------------
-# Seed fixtures
-# ------------------------------------------------------------------
 @pytest.fixture(scope="function")
 def seeded_penalty_types(db):
     items = [
@@ -80,7 +59,6 @@ def seeded_penalty_types(db):
     db.commit()
     return items
 
-
 @pytest.fixture(scope="function")
 def seeded_penalties(db, seeded_penalty_types):
     items = [
@@ -92,7 +70,6 @@ def seeded_penalties(db, seeded_penalty_types):
     db.add_all(items)
     db.commit()
     return items
-
 
 @pytest.fixture(scope="function")
 def seeded_scores(db):
@@ -109,9 +86,6 @@ def seeded_scores(db):
     db.commit()
     return items
 
-# ------------------------------------------------------------------
-# CRUD-level requests mock (THIS FIXES NoneType.get)
-# ------------------------------------------------------------------
 @pytest.fixture(scope="function")
 def mock_requests():
     with patch("app.crud.score.requests") as mock_requests, \
@@ -120,9 +94,6 @@ def mock_requests():
 
         yield mock_requests
 
-# ------------------------------------------------------------------
-# API client fixtures
-# ------------------------------------------------------------------
 @pytest.fixture(scope="function")
 def client(
     db,
