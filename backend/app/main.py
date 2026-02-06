@@ -36,7 +36,7 @@ def get_challenges():
     # Dummy data for challenges
     challenges = [
         {"id": 1, "name": "Slalom", "esp_mac_start1": "00-11-22-33-44-55", "esp_mac_start2": "00-11-22-33-44-56", "esp_mac_finish1": "00-11-22-33-44-57", "esp_mac_finish2": "00-11-22-33-44-58"},
-        {"id": 2, "name": "Challenge B", "esp_mac_start1": "00-11-22-33-44-A5", "esp_mac_start2": "00-11-22-33-44-A6", "esp_mac_finish1": "00-11-22-33-44-A7", "esp_mac_finish2": "00-11-22-33-44-A8"},
+        {"id": 2, "name": "Skidpad", "esp_mac_start1": "00-11-22-33-44-A5", "esp_mac_start2": "00-11-22-33-44-A6", "esp_mac_finish1": "00-11-22-33-44-A7", "esp_mac_finish2": "00-11-22-33-44-A8"},
     ]
     return jsonify(challenges)
 

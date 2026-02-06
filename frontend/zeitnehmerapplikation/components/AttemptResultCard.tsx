@@ -142,8 +142,8 @@ export function AttemptResultCard({
                 }
             })
             .catch((error) => {
-                console.error("Failed to submit attempt", error)
-                alert("Failed to submit attempt!")
+                console.error("Failed to submit attempt! This is probably because the team already made 3 attempts", error)
+                alert("Failed to submit attempt! This is probably because the team already made 3 attempts")
             })
     }
 

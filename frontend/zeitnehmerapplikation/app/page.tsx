@@ -62,20 +62,10 @@ export default function Page() {
 
     // Clear manual inputs
     setManualAttemptTime(null);
-    setEspStart1Input("");
-    setEspStart2Input("");
-    setEspFinish1Input("");
-    setEspFinish2Input("");
 
     // Clear numbers
     SetPenaltyCount(0);
     setEnergyConsumption(0.0);
-
-    // Reset selections to first items
-    if (teams.length > 0) setSelectedTeam(teams[0]);
-    if (challenges.length > 0) setSelectedChallenge(challenges[0]);
-    if (penalties.length > 0) setSelectedPenalty(penalties[0]);
-    if (drivers.length > 0) setSelectedDriver(drivers[0]);
   };
 
   // Fetch Teams
