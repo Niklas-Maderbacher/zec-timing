@@ -1,6 +1,6 @@
 import os
 import pytest
-from datetime import datetime
+from datetime import datetime,timezone
 from unittest.mock import patch, MagicMock
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -78,7 +78,7 @@ def seeded_penalties(db, seeded_penalty_types):
 
 @pytest.fixture(scope="function")
 def seeded_scores(db):
-    base = datetime.utcnow()
+    base = datetime.now(timezone.utc)
     items = [
         Score(id=1, attempt_id=1, challenge_id=1, value=95.5, created_at=base),
         Score(id=2, attempt_id=2, challenge_id=1, value=88.3, created_at=base),
@@ -90,6 +90,14 @@ def seeded_scores(db):
     db.add_all(items)
     db.commit()
     return items
+
+@pytest.fixture
+def mock_attempt_service(mock_penalty_requests):
+    mock_penalty_requests.get.return_value.json.return_value = {
+        "id": 1,
+        "challenge_id": 1,
+        "is_valid": True,
+    }
 
 @pytest.fixture(scope="function")
 def mock_requests():
