@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, Float, DateTime
-from datetime import datetime
+from datetime import datetime, timezone
 from app.database.session import Base
 
 class Score(Base):
@@ -9,5 +9,5 @@ class Score(Base):
     attempt_id = Column(Integer)
     challenge_id = Column(Integer)
     value = Column(Float)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
     

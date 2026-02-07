@@ -1,12 +1,10 @@
 import pytest
-from datetime import datetime
-from unittest.mock import MagicMock, call
+from datetime import datetime, timezone
 
 from app.crud.leaderboard import get_leaderboard
 from app.models.score import Score
 from app.exceptions.exceptions import (
     EntityDoesNotExistError,
-    ServiceError,
     AuthenticationFailed,
 )
 
@@ -61,9 +59,9 @@ def test_get_leaderboard_by_category(db, seeded_scores, mock_leaderboard_request
 
 def test_get_leaderboard_best_score_per_team(db, mock_leaderboard_requests):
     db.add_all([
-        Score(id=1, attempt_id=1, challenge_id=1, value=85.0, created_at=datetime.utcnow()),
-        Score(id=2, attempt_id=2, challenge_id=1, value=95.0, created_at=datetime.utcnow()),
-        Score(id=3, attempt_id=3, challenge_id=1, value=90.0, created_at=datetime.utcnow()),
+        Score(id=1, attempt_id=1, challenge_id=1, value=85.0, created_at=datetime.now(timezone.utc)),
+        Score(id=2, attempt_id=2, challenge_id=1, value=95.0, created_at=datetime.now(timezone.utc)),
+        Score(id=3, attempt_id=3, challenge_id=1, value=90.0, created_at=datetime.now(timezone.utc)),
     ])
     db.commit()
 
@@ -86,9 +84,9 @@ def test_get_leaderboard_best_score_per_team(db, mock_leaderboard_requests):
 
 def test_get_leaderboard_sorted_descending(db, mock_leaderboard_requests):
     db.add_all([
-        Score(id=1, attempt_id=1, challenge_id=1, value=75.0, created_at=datetime.utcnow()),
-        Score(id=2, attempt_id=2, challenge_id=1, value=95.0, created_at=datetime.utcnow()),
-        Score(id=3, attempt_id=3, challenge_id=1, value=85.0, created_at=datetime.utcnow()),
+        Score(id=1, attempt_id=1, challenge_id=1, value=75.0, created_at=datetime.now(timezone.utc)),
+        Score(id=2, attempt_id=2, challenge_id=1, value=95.0, created_at=datetime.now(timezone.utc)),
+        Score(id=3, attempt_id=3, challenge_id=1, value=85.0, created_at=datetime.now(timezone.utc)),
     ])
     db.commit()
 
@@ -178,7 +176,7 @@ def test_get_leaderboard_category_no_matches(db, seeded_scores, mock_leaderboard
 
 def test_get_leaderboard_empty_after_filtering(db, mock_leaderboard_requests):
     db.add_all([
-        Score(id=1, attempt_id=1, challenge_id=1, value=95.0, created_at=datetime.utcnow()),
+        Score(id=1, attempt_id=1, challenge_id=1, value=95.0, created_at=datetime.now(timezone.utc)),
     ])
     db.commit()
 
@@ -195,7 +193,7 @@ def test_get_leaderboard_empty_after_filtering(db, mock_leaderboard_requests):
 
 def test_get_leaderboard_single_team(db, mock_leaderboard_requests):
     db.add_all([
-        Score(id=1, attempt_id=1, challenge_id=1, value=95.0, created_at=datetime.utcnow()),
+        Score(id=1, attempt_id=1, challenge_id=1, value=95.0, created_at=datetime.now(timezone.utc)),
     ])
     db.commit()
 
@@ -216,10 +214,10 @@ def test_get_leaderboard_single_team(db, mock_leaderboard_requests):
 
 def test_get_leaderboard_many_attempts_one_team(db, mock_leaderboard_requests):
     db.add_all([
-        Score(id=1, attempt_id=1, challenge_id=1, value=70.0, created_at=datetime.utcnow()),
-        Score(id=2, attempt_id=2, challenge_id=1, value=80.0, created_at=datetime.utcnow()),
-        Score(id=3, attempt_id=3, challenge_id=1, value=95.0, created_at=datetime.utcnow()),
-        Score(id=4, attempt_id=4, challenge_id=1, value=85.0, created_at=datetime.utcnow()),
+        Score(id=1, attempt_id=1, challenge_id=1, value=70.0, created_at=datetime.now(timezone.utc)),
+        Score(id=2, attempt_id=2, challenge_id=1, value=80.0, created_at=datetime.now(timezone.utc)),
+        Score(id=3, attempt_id=3, challenge_id=1, value=95.0, created_at=datetime.now(timezone.utc)),
+        Score(id=4, attempt_id=4, challenge_id=1, value=85.0, created_at=datetime.now(timezone.utc)),
     ])
     db.commit()
 

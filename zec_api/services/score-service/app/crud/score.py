@@ -6,7 +6,7 @@ from app.models.penalty_type import PenaltyType
 from datetime import timedelta
 from app.core.config import settings
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 from app.exceptions.exceptions import (
     ScoreserviceApiError,
     EntityDoesNotExistError,
@@ -150,7 +150,7 @@ def create_score(*, db: SessionDep, score: ScoreCreate):
         attempt_id=score.attempt_id,
         challenge_id=db_attempt["challenge_id"],
         value=score_value,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
     db.add(db_score)
     db.commit()

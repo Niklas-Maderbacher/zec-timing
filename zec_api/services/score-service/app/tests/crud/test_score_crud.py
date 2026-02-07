@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app.crud import score as crud
 from app.schemas.score import ScoreCreate, ScoreUpdate
@@ -28,7 +28,7 @@ def iso(dt):
     return dt.strftime("%Y-%m-%dT%H:%M:%S.%f")
 
 def mock_attempt(challenge_id=1, energy=50, team_id=1, driver_id=1, attempt_id=1):
-    base = datetime.utcnow()
+    base = datetime.now(timezone.utc)
     return {
         "id": attempt_id,
         "challenge_id": challenge_id,
@@ -433,7 +433,7 @@ def test_delete_scores_for_attempt_single(db):
 def test_score_value_rounding(db, mock_score_requests):
     def side_effect(url, *_, **__):
         if "/api/attempts/fastest" in url:
-            base = datetime.utcnow()
+            base = datetime.now(timezone.utc)
             return MockResp(200, {
                 "id": 2,
                 "challenge_id": 1,
