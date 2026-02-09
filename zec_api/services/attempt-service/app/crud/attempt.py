@@ -48,19 +48,13 @@ def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
     attempt_count = get_attempts_for_team_per_challenge(db=db, team_id=attempt.team_id, challenge_id=attempt.challenge_id)
     if len(attempt_count) >= db_challenge["max_attempts"]:
         raise ServiceError("Maximum attempts reached for this challenge")
-    start_time = attempt.start_time
-    end_time = attempt.end_time
-    if start_time.microsecond == 0:
-        start_time = start_time.replace(microsecond=1)
-    if end_time.microsecond == 0:
-        end_time = end_time.replace(microsecond=1)
     db_attempt = Attempt(
         team_id = attempt.team_id,
         driver_id = attempt.driver_id,
         challenge_id = attempt.challenge_id,
         is_valid = attempt.is_valid,
-        start_time = start_time,
-        end_time = end_time,
+        start_time = attempt.start_time,
+        end_time = attempt.end_time,
         energy_used = attempt.energy_used,
     )
     db.add(db_attempt)
