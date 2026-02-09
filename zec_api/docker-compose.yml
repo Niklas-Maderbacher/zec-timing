@@ -1,0 +1,265 @@
+version: "3.9"
+
+services:
+  nginx:
+    build: ./services/api-gateway
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - auth-service
+      - challenge-service
+      - score-service   
+      - attempt-service
+      - team-service
+      - user-service
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "8001:8000"
+    depends_on:
+      - user-db
+    environment:
+      PROJECT_NAME: user-service
+      POSTGRES_SERVER: user-db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: userdb
+      KEYCLOAK_USER_URL: http://keycloak:8080/admin/realms/zec-realm/users
+      AUTH_SERVICE_URL: http://auth-service:8002
+      KC_CLIENTS_URL: http://keycloak:8080/admin/realms/zec-realm/clients
+      KC_CLIENT_ID: login-client
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "8002:8000"
+    depends_on:
+      - auth-db
+    environment:
+      PROJECT_NAME: auth-service
+      POSTGRES_SERVER: auth-db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: authdb
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: zec-realm
+      KEYCLOAK_CLIENT_ID: login-client
+      KEYCLOAK_ADMIN_CLIENT_ID: user-admin-client
+      KEYCLOAK_ADMIN_CLIENT_SECRET: FzF2Bqb7NnmXECNfkzaE3Bx6mc176Yen
+      KEYCLOAK_CLIENT_SECRET: ESW6xtI8MjLN7dW35ZKq7h1Ex2z9lgaF
+      KEYCLOAK_TOKEN_URL: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/token
+      KEYCLOAK_JWKS_URL: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/certs
+      KEYCLOAK_USER_URL: http://keycloak:8080/admin/realms/zec-realm/users
+
+  challenge-service:
+    build:
+      context: ./services/challenge-service
+      dockerfile: Dockerfile
+    container_name: challenge-service
+    ports:
+      - "8003:8000"
+    depends_on:
+      - challenge-db
+    environment:
+      PROJECT_NAME: challenge-service
+      POSTGRES_SERVER: challenge-db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: challengedb
+
+  attempt-service:
+    build:
+      context: ./services/attempt-service
+      dockerfile: Dockerfile
+    container_name: attempt-service
+    ports:
+      - "8004:8000"
+    depends_on:
+      - attempt-db
+    environment:
+      PROJECT_NAME: attempt-service
+      POSTGRES_SERVER: attempt-db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: attemptdb
+      SCORE_SERVICE_URL: http://score-service:8005
+      TEAM_SERVICE_URL: http://team-service:8006
+      CHALLENGE_SERVICE_URL: http://challenge-service:8003
+
+  score-service:
+    build:
+      context: ./services/score-service
+      dockerfile: Dockerfile
+    container_name: score-service
+    ports:
+      - "8005:8000"
+    depends_on:
+      - score-db
+    environment:
+      PROJECT_NAME: score-service
+      POSTGRES_SERVER: score-db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: scoredb
+      CHALLENGE_SERVICE_URL: http://challenge-service:8003
+      ATTEMPT_SERVICE_URL: http://attempt-service:8004
+      TEAM_SERVICE_URL: http://team-service:8006
+
+  team-service:
+    build:
+      context: ./services/team-service
+      dockerfile: Dockerfile
+    container_name: team-service
+    ports:
+      - "8006:8000"
+    depends_on:
+      - team-db
+    environment:
+      PROJECT_NAME: team-service
+      POSTGRES_SERVER: team-db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: teamdb
+
+  user-db:
+    image: postgres:16
+    container_name: user-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: userdb
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  auth-db:
+    image: postgres:16
+    container_name: auth-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: authdb
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
+  challenge-db:
+    image: postgres:16
+    container_name: challenge-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: challengedb
+    volumes:
+      - challenge_db_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+
+  attempt-db:
+    image: postgres:16
+    container_name: attempt-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: attemptdb
+    volumes:
+      - attempt_db_data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+
+  score-db:
+    image: postgres:16
+    container_name: score-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: scoredb
+    volumes:
+      - score_db_data:/var/lib/postgresql/data
+    ports:
+      - "5437:5432"
+
+  team-db:
+    image: postgres:16
+    container_name: team-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: teamdb
+    volumes:
+      - team_db_data:/var/lib/postgresql/data
+    ports:
+      - "5438:5432"
+
+  keycloak-db:
+    image: postgres:17
+    container_name: keycloak-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: keycloak
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.2
+    container_name: keycloak
+    command: ["start-dev"]
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: keycloak-db
+      KC_DB_URL_PORT: 5432
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+    ports:
+      - "8090:8080"
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-db
+      - auth-db
+      - challenge-db
+      - attempt-db
+      - score-db
+      - team-db
+      - keycloak-db
+
+volumes:
+  user_db_data:
+  auth_db_data:
+  challenge_db_data:
+  attempt_db_data:
+  score_db_data:
+  team_db_data:
+  keycloak_db_data:
