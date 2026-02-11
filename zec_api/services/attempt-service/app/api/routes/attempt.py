@@ -27,13 +27,18 @@ def get_attempt(db: SessionDep, attempt_id: int):
     return attempt
 
 @router.get("/", response_model=List[AttemptResponse])
-def list_attempts(db: SessionDep):
+def get_all_attempts(db: SessionDep):
     attempts = crud.get_attempts(db=db)
     return attempts
 
 @router.get("/challenges/{challenge_id}", response_model=List[AttemptResponse])
-def get_attempts_per_challenge(db: SessionDep, challenge_id: int):
-    attempts = crud.get_attempts_for_challenge(db=db, challenge_id=challenge_id)
+def get_all_attempts_per_challenge(db: SessionDep, challenge_id: int):
+    attempts = crud.get_all_attempts_for_challenge(db=db, challenge_id=challenge_id)
+    return attempts
+
+@router.get("/challenges/valid/{challenge_id}", response_model=List[AttemptResponse])
+def get_valid_attempts_per_challenge(db: SessionDep, challenge_id: int):
+    attempts = crud.get_valid_attempts_for_challenge(db=db, challenge_id=challenge_id)
     return attempts
 
 @router.get("/fastest/{challenge_id}", response_model=AttemptResponse)

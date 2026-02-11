@@ -45,6 +45,8 @@ def create_attempt(*, db: SessionDep, attempt: AttemptCreate):
     _validate_driver(attempt.driver_id)
     _validate_challenge(attempt.challenge_id)
     db_challenge = requests.get(f"{CHALLENGE_URL}/api/challenges/{attempt.challenge_id}").json()
+    if not db_challenge:
+        raise EntityDoesNotExistError(f"Challenge {attempt.challenge_id} does not exist")
     attempt_count = get_attempts_for_team_per_challenge(db=db, team_id=attempt.team_id, challenge_id=attempt.challenge_id)
     if len(attempt_count) >= db_challenge["max_attempts"]:
         raise ServiceError("Maximum attempts reached for this challenge")
@@ -119,10 +121,16 @@ def get_attempt(*, db: SessionDep, attempt_id: int):
 def get_attempts(*, db: SessionDep):
     return db.query(Attempt).all()
 
-def get_attempts_for_challenge(*, db: SessionDep, challenge_id: int):
+def get_all_attempts_for_challenge(*, db: SessionDep, challenge_id: int):
+    db_attempt = db.query(Attempt).filter(Attempt.challenge_id == challenge_id).all()
+    if not db_attempt:
+        raise EntityDoesNotExistError("No attempts found for this challenge")
+    return db_attempt
+
+def get_valid_attempts_for_challenge(*, db: SessionDep, challenge_id: int):
     db_attempt = db.query(Attempt).filter(Attempt.challenge_id == challenge_id, Attempt.is_valid).all()
     if not db_attempt:
-        raise EntityDoesNotExistError("Attempt does not exist")
+        raise EntityDoesNotExistError("No valid attempts found for this challenge")
     return db_attempt
 
 def get_fastest_attempt(*, db: SessionDep, challenge_id: int):
