@@ -1,5 +1,5 @@
 import pytest
-from datetime import timedelta, datetime, timezone
+from datetime import timedelta, datetime
 from app.crud import attempt as crud
 from app.schemas.attempt import AttemptUpdate, AttemptCreate
 from app.exceptions.exceptions import EntityDoesNotExistError, ServiceError
@@ -13,7 +13,7 @@ def test_get_attempts(db, seeded_attempts):
     assert len(attempts) == 2
 
 def test_get_attempts_for_challenge(db, seeded_attempts):
-    attempts = crud.get_attempts_for_challenge(db=db, challenge_id=1)
+    attempts = crud.get_all_attempts_for_challenge(db=db, challenge_id=1)
     assert len(attempts) == 2
 
 def test_fastest_attempt(db, seeded_attempts):
@@ -67,12 +67,13 @@ def test_invalid_attempts_ignored_in_fastest(db, seeded_attempts):
     assert attempt.id != fastest.id
 
 def test_create_attempt_success(db, mock_requests):
+    now = datetime.now().replace(microsecond=123456)
     payload = AttemptCreate(
         team_id=1,
         driver_id=1,
         challenge_id=1,
-        start_time=datetime.now(timezone.utc),
-        end_time=datetime.now(timezone.utc) + timedelta(seconds=5),
+        start_time=now.isoformat(),
+        end_time=(now + timedelta(seconds=5)).isoformat(),
         energy_used=30,
         is_valid=True,
     )
@@ -81,12 +82,13 @@ def test_create_attempt_success(db, mock_requests):
     assert created.energy_used == 30
 
 def test_create_attempt_max_attempts_reached(db, seeded_attempts, mock_requests):
+    now = datetime.now().replace(microsecond=123456)
     payload = AttemptCreate(
         team_id=1,
         driver_id=1,
         challenge_id=1,
-        start_time=datetime.now(timezone.utc),
-        end_time=datetime.now(timezone.utc) + timedelta(seconds=5),
+        start_time=now.isoformat(),
+        end_time=(now + timedelta(seconds=5)).isoformat(),
         energy_used=20,
         is_valid=True,
     )
@@ -102,7 +104,7 @@ def test_create_attempt_max_attempts_reached(db, seeded_attempts, mock_requests)
 
 def test_get_attempts_for_challenge_not_found(db):
     with pytest.raises(EntityDoesNotExistError):
-        crud.get_attempts_for_challenge(db=db, challenge_id=999)
+        crud.get_all_attempts_for_challenge(db=db, challenge_id=999)
 
 def test_get_fastest_attempt_not_found(db):
     with pytest.raises(EntityDoesNotExistError):
