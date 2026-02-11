@@ -14,9 +14,13 @@ def test_get_teams_by_ids(client):
     assert resp.status_code == 200
     assert len(resp.json()) == 2
 
-def test_delete_team(client):
+def test_delete_team(client, mock_attempt_service_no_attempts):
     resp = client.delete("/api/teams/1")
     assert resp.status_code == 200
+
+def test_delete_team_with_attempts(client, mock_attempt_service_with_attempts):
+    resp = client.delete("/api/teams/1")
+    assert resp.status_code == 400
 
 def test_create_team(client):
     payload = {
