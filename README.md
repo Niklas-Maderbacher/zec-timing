@@ -21,3 +21,4 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 - Look at error Handling for Leaderboard
 - allow assigning a user to a team
 - set driver to delete on team delete
+- check if team has attempts before allowing deletion
