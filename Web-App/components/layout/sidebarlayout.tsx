@@ -10,7 +10,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Activity, Users, UserCog, Download, Trophy, Swords, CircleUser } from "lucide-react"
+import { FolderClosed, Users, UserCog, Download, Trophy, Swords, CircleUser } from "lucide-react"
 import Footer from "@/components/footer/footer"
 import { canAccessTab } from "@/lib/permissions"
 
@@ -33,7 +33,7 @@ interface TabConfig {
 
 const allTabs: TabConfig[] = [
   { id: "leaderboard", label: "Leaderboard", icon: Trophy, tooltip: "Leaderboard" },
-  { id: "attempts", label: "Attempts", icon: Activity, tooltip: "Attempts" },
+  { id: "attempts", label: "Attempts", icon: FolderClosed, tooltip: "Attempts" },
   { id: "teams", label: "Teams", icon: Users, tooltip: "Teams" },
   { id: "challenges", label: "Challenges", icon: Swords, tooltip: "Challenges" },
   { id: "users", label: "Users", icon: UserCog, tooltip: "Users" },
