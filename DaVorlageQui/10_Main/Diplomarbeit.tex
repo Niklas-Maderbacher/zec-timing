@@ -1,0 +1,32 @@
+\documentclass{scrreprt}
+\input{../00_DefTex/0Präambel.tex}
+\input{../01_DefDa/DefNamenUndDaten.tex}
+\input{../01_DefDa/DefKurzfassung.tex}
+\input{../01_DefDa/Acronyme.tex}
+
+\addbibresource{../01_DefDa/Quellenverweise.bib}	
+
+\newif\ifCompileFinal\CompileFinaltrue   			%\CompileFinaltrue \CompileFinalfalse
+\input{../00_DefTex/CompilerOptions.tex}
+
+\begin{document}
+	\frontmatter						%Nummerierung mit römischen Seitenzahlen
+	\input{../00_DefTex/DoTitle.tex}
+	\input{../00_DefTex/DoAbstract.tex}
+	\input{../01_DefDa/Vorwort.tex}
+
+	\tableofcontents
+	\mainmatter
+
+	\input{../11_D1/KurzfassungErlaeuterung.tex}
+	\input{../13_D3/Projektmanagement.tex}
+	\input{../12_D2/Zitate.tex}
+	\input{../13_D3/Beurteilung.tex}
+	\input{../13_D3/Tex.tex}
+
+
+	\label{mylastpage}
+	\backmatter						%Nummerierung mit römischen Seitenzahlen
+	\input{../01_DefDa/Anhang.tex}
+	
+\end{document}

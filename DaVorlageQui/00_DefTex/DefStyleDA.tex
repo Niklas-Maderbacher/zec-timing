@@ -1,0 +1,78 @@
+\KOMAoptions	{paper = A4			%Papiergröße
+				,paper		= portrait		%Papierausrichtung
+				,BCOR		= 5mm			%Bindekorrektur
+				,fontsize	= {12pt}		%Schriftgröße
+				,twoside 	= true			%zweiseitig drucken (Binderand!)
+				,headinclude= false			%Kopfzeile bei Satzspiegelberechnung zum Textkörper zählen
+				,footinclude= false			%Fußzeile bei Satzspiegelberechnung zum Textkörper zählen
+%				,headwidth	= 18cm
+				,headlines	= 1.25			%Anzahl der Kopfzeilen
+				,headheight = 20mm			%Höhe der Kopfzeile (Alternative zu headlines)
+%				,mpinclude	= true			%Randnotizen in Satzspiegel einrechnen (nur für Profis, macht den 2.rand schmal...)
+				,DIV		= 14			%neuberechenen des Satzspiegels (Font sollte zuvor spezifiziert sein; Siehe Komascript S38ff)
+}
+\flushbottom
+
+\newcommand*{\authorOfNextLines}{}
+\usepackage[automark, pagestyleset=KOMA-Script]{scrlayer-scrpage}	
+\pagestyle{scrheadings}
+\clearpairofpagestyles
+\renewcommand*{\chaptermarkformat}{}
+\ihead*{\includegraphics[scale=0.45]{../00_DefTex/LogoHTL.png}}% \includegraphics[scale=0.1]{../../LaTexDef/logo_HtlMt_250.png}}
+\ohead*{\headmark}
+% Zeilenabstände vorgeben
+\onehalfspacing		%Definition Zeilenabst<nd (package setspace)
+\AfterTOCHead {\singlespacing}			%Zeilenabstand Inhaltsverzeichnis
+
+
+%Unterschriften
+\captionsetup{margin=10pt,font=small
+				, labelfont={color=black!80, bf}
+				, textfont={color=black!60}
+				, format=plain
+				, justification=justified
+				, singlelinecheck=false
+				, indention=-1cm}
+\captionsetup[wrapfigure]{name=Abb.}
+\captionsetup[figure]{name=Abb.}
+\captionsetup[table]{name=Tab.}
+\captionsetup[longtable]{name=Tab.}
+
+%Gestaltung von Links
+\hypersetup{		%Farbgestaltung von Links festlegen
+	colorlinks			= true
+	,linkbordercolor	= white
+	,urlbordercolor 	= white
+	,linkcolor			= darkgreen
+	,filecolor			= magenta
+	,urlcolor			= cyan
+}
+
+
+%Dont touch
+\makeatletter
+\newcommand*{\frontmatter}	{%
+							\cleardoublepage
+							\pagenumbering{roman}
+							\ofoot*{\thepage{}}
+							\ifoot*{}
+							}
+
+\newcommand*{\mainmatter}	{%
+							\cleardoublepage
+							\pagenumbering{arabic}
+							\ofoot*{Seite \thepage{} von \pageref*{mylastpage}}
+							\ifoot*{\authorOfNextLines}
+							}
+
+\newcommand*{\backmatter}{%
+							\if@openright
+							\cleardoublepage
+							\else
+							\clearpage
+							\fi
+							\pagenumbering{roman}
+							\ofoot*{\thepage{}}
+							\ifoot*{}
+							}
+\makeatother
