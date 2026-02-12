@@ -15,11 +15,12 @@ def get_timestamps(mac: str):
         if not redis_connection.exists(mac):
             raise MacNotFound(
                 message=("No ESP with this MAC address exists or no timestamps yet exist. "
-                    "If you think it should exist, please send new MQTT data.")
+                    "If you think it should exist, please send new MQTT data."),
+                error_code=404
             )
 
         # Only get newest timestamp
-        return redis_connection.lrange(mac, -1, -1)
+        return redis_connection.lrange(mac, 0, -1)
 
 def delete_timestamps(mac: str):
     with redis_lock:
@@ -27,8 +28,9 @@ def delete_timestamps(mac: str):
         if not redis_connection.exists(mac):
             raise MacNotFound(
                 message=("No ESP with this MAC address exists or no timestamps yet exist. "
-                    "If you think it should exist, please send new MQTT data.")
+                    "If you think it should exist, please send new MQTT data."),
+                error_code=404
             )
 
         # Delete all timestamps for this MAC
-        return redis_connection.ltrim(mac, 1, 0)
+        return redis_connection.ltrim(mac, 0, 0)

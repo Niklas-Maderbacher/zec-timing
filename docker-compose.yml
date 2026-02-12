@@ -6,7 +6,7 @@ services:
       - .env
     ports:
       - ${MQTT_PORT}:${MQTT_PORT}
-      - 8080:8080
+      - 8100:8080
     volumes:
       - ./config:/mosquitto/config
       - ./data:/mosquitto/data

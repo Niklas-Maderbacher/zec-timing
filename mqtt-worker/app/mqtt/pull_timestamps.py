@@ -15,7 +15,6 @@ def extract_payload(payload):
 
     # Clean values
     mac_address = mac_address.split("-", 1)[1]
-    timestamp = timestamp.split("T", 1)[1]
 
     add_timestamp(mac_address, timestamp)
 
