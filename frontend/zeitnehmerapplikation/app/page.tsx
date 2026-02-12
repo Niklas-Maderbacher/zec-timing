@@ -4,7 +4,7 @@ import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useEffect, useState } from "react";
 
-import { SERVER_API_URL, MQTT_WORKER_API_URL, API_KEY } from "@/next.config";
+import { SERVER_API_URL, MQTT_WORKER_API_URL, API_KEY } from "@/lib/env";
 import { FormulaCard } from "@/components/FormulaCard";
 import { SelectionCard } from "@/components/SelectionCard";
 import { MacInputRow } from "@/components/MacInputRow";
@@ -151,8 +151,8 @@ export default function Page() {
   const fetchStartTimestamps = async () => {
     if (!selectedChallenge) return;
     try {
-      const start_1 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start1}`);
-      const start_2 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start2}`);
+      const start_1 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start1.replace(/:/g, '-')}`);
+      const start_2 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start2.replace(/:/g, '-')}`);
       const combined = [...(start_1.data.timestamp || []), ...(start_2.data.timestamp || [])];
       setStartTimestamps(combined);
     } catch (error) {
@@ -163,8 +163,8 @@ export default function Page() {
   const fetchEndTimestamps = async () => {
     if (!selectedChallenge) return;
     try {
-      const end_1 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_finish1}`);
-      const end_2 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_finish2}`);
+      const end_1 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_finish1.replace(/:/g, '-')}`);
+      const end_2 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_finish2.replace(/:/g, '-')}`); 3
       const combined = [...(end_1.data.timestamp || []), ...(end_2.data.timestamp || [])];
       setEndTimestamps(combined);
     } catch (error) {
