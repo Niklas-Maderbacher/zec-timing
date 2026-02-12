@@ -21,4 +21,4 @@ class Team(Base):
     rfid_identifier = Column(String)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     
-    drivers = relationship("Driver", back_populates="team")
+    drivers = relationship("Driver", back_populates="team", cascade="all, delete-orphan")

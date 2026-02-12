@@ -3,8 +3,13 @@ from app.schemas.team import TeamCreate, TeamUpdate
 from app.models.team import Team
 from app.exceptions.exceptions import (
     EntityDoesNotExistError,
+    InvalidOperationError,
     ServiceError,
 )
+import requests
+from app.core.config import settings 
+
+ATTEMPT_URL = settings.ATTEMPT_SERVICE_URL
 
 def create_team(*, db: SessionDep, team: TeamCreate):
     try:
@@ -39,6 +44,9 @@ def update_team(*, db: SessionDep, team_id: int, team_update: TeamUpdate):
         raise ServiceError() from exc
 
 def delete_team(*, db: SessionDep, team_id: int):
+    db_attempts = requests.get(f"{ATTEMPT_URL}/api/attempts/per-team/{team_id}").json()
+    if db_attempts:
+        raise InvalidOperationError(f"Cannot delete team {team_id} because it has made attempts")
     try:
         db_team = get_team(db=db, team_id=team_id)
         db.delete(db_team)

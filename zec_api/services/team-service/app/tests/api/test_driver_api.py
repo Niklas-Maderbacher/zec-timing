@@ -8,6 +8,10 @@ def test_get_driver(client):
     assert resp.status_code == 200
     assert resp.json()["name"] == "Driver 1"
 
-def test_delete_driver(client):
+def test_delete_driver(client, mock_attempt_service_no_attempts):
     resp = client.delete("/api/drivers/1")
     assert resp.status_code == 200
+
+def test_delete_driver_with_attempts(client, mock_attempt_service_with_attempts):
+    resp = client.delete("/api/drivers/1")
+    assert resp.status_code == 400

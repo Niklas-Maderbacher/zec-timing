@@ -7,10 +7,13 @@
   - 1.4 [Get Attempt](#get-attempt)
   - 1.5 [Get Attempts (all)](#get-attempts-all)
   - 1.6 [Get Attempts per Challenge](#get-attempts-per-challenge)
-  - 1.7 [Get Fastest Attempt for a Challenge](#get-fastest-attempt-for-a-challenge)
-  - 1.8 [Get Fastest Attempt for a Team in a Challenge](#get-fastest-attempt-for-a-team-in-a-challenge)
-  - 1.8 [Get Least Energy Attempt for a Challenge](#get-least-energy-attempt-for-a-challenge)
-  - 1.9 [Get Least Energy Attempt for a Team in a Challenge](#get-least-energy-attempt-for-a-team-in-a-challenge)
+  - 1.7 [Get Attempts per Challenge (valid)](#get-attempts-per-challenge-valid)
+  - 1.8 [Get Fastest Attempt for a Challenge](#get-fastest-attempt-for-a-challenge)
+  - 1.9 [Get Fastest Attempt for a Team in a Challenge](#get-fastest-attempt-for-a-team-in-a-challenge)
+  - 1.10 [Get Least Energy Attempt for a Challenge](#get-least-energy-attempt-for-a-challenge)
+  - 1.11 [Get Least Energy Attempt for a Team in a Challenge](#get-least-energy-attempt-for-a-team-in-a-challenge)
+  - 1.12 [Get Attempts per Team](#get-attempts-per-team)
+  - 1.13 [Get Attempts per Driver](#get-attempts-per-driver)
 - ## 2. Auth
   - 2.1 [Login](#login)
   - 2.2 [Refresh Token](#refresh-token)
@@ -123,6 +126,11 @@ Needs Bearer authorization header containing `access_token` from a user with adm
 `GET`
 
 **URL** http://hostname/attempts/challenges/{challenge_id}
+#### Get Attempts per Challenge valid
+Needs Bearer authorization header containing `access_token` from a user with admin role  
+`GET`
+
+**URL** http://hostname/attempts/challenges/valid/{challenge_id}
 #### Get Fastest Attempt for a Challenge
 Needs Bearer authorization header containing `access_token` from a user with admin role  
 `GET`
@@ -151,6 +159,16 @@ Needs Bearer authorization header containing `access_token` from a user with adm
 **Query Parameters**
 - `challenge_id` (int): ID of the challenge  
 - `team_id` (int): ID of the team
+#### Get Attempts per Team
+Needs Bearer authorization header containing `access_token` from a user with admin role  
+`GET`
+
+**URL** http://hostname/attempts/per-team/{team_id}
+#### Get Attempts per Driver
+Needs Bearer authorization header containing `access_token` from a user with admin role  
+`GET`
+
+**URL** http://hostname/attempts/per-driver/{driver_id}
 ### Auth
 #### Login
 `POST`

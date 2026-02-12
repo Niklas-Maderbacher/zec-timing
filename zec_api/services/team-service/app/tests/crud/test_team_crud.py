@@ -9,7 +9,7 @@ from app.crud.team import (
 )
 from app.schemas.team import TeamCreate, TeamUpdate
 from app.models.team import team_category
-from app.exceptions.exceptions import EntityDoesNotExistError, ServiceError
+from app.exceptions.exceptions import EntityDoesNotExistError, InvalidOperationError, ServiceError
 
 def test_get_team(db, seeded_data):
     team = seeded_data["teams"][0]
@@ -25,10 +25,15 @@ def test_get_teams_by_ids(db, seeded_data):
     teams = get_teams_by_ids(db=db, team_ids=ids)
     assert len(teams) == 2
 
-def test_delete_team(db, seeded_data):
+def test_delete_team(db, seeded_data, mock_attempt_service_no_attempts):
     team = seeded_data["teams"][0]
     deleted = delete_team(db=db, team_id=team.id)
     assert deleted.id == team.id
+
+def test_delete_team_with_attempts(db, seeded_data, mock_attempt_service_with_attempts):
+    team = seeded_data["teams"][0]
+    with pytest.raises(InvalidOperationError):
+        delete_team(db=db, team_id=team.id)
 
 def test_get_team_not_found(db):
     with pytest.raises(EntityDoesNotExistError):
@@ -88,11 +93,11 @@ def test_update_team_service_error(db, seeded_data, monkeypatch):
             team_update=update,
         )
 
-def test_delete_team_not_found(db):
+def test_delete_team_not_found(db, mock_attempt_service_no_attempts):
     with pytest.raises(EntityDoesNotExistError):
         delete_team(db=db, team_id=999)
 
-def test_delete_team_service_error(db, seeded_data, monkeypatch):
+def test_delete_team_service_error(db, seeded_data, monkeypatch, mock_attempt_service_no_attempts):
     team = seeded_data["teams"][0]
     def fail_commit():
         raise Exception("Commit failed")

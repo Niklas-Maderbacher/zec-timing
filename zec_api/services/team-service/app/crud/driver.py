@@ -1,9 +1,19 @@
 from app.database.dependency import SessionDep
 from app.schemas.driver import DriverCreate, DriverUpdate
 from app.models.driver import Driver
-from app.exceptions.exceptions import EntityDoesNotExistError, ServiceError
+from app.exceptions.exceptions import EntityDoesNotExistError, InvalidOperationError, ServiceError
+import requests
+from app.core.config import settings 
+from app.crud.team import get_team
+
+ATTEMPT_URL = settings.ATTEMPT_SERVICE_URL
 
 def create_driver(*, db: SessionDep, driver: DriverCreate):
+    db_team = get_team(db=db, team_id=driver.team_id)
+    if not db_team:
+        raise EntityDoesNotExistError(
+            message=f"Team with id {driver.team_id} does not exist"
+        )
     try:
         driver_data = driver.model_dump(exclude_unset=True)
         db_driver = Driver(**driver_data)
@@ -40,6 +50,9 @@ def update_driver(*, db: SessionDep, driver_id: int, driver_update: DriverUpdate
         raise ServiceError() from exc
 
 def delete_driver(*, db: SessionDep, driver_id: int):
+    db_attempts = requests.get(f"{ATTEMPT_URL}/api/attempts/per-driver/{driver_id}").json()
+    if db_attempts:
+        raise InvalidOperationError(f"Cannot delete driver {driver_id} because they have made attempts")
     try:
         db_driver = get_driver(db=db, driver_id=driver_id)
         if not db_driver:

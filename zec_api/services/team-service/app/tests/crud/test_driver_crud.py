@@ -7,7 +7,7 @@ from app.crud.driver import (
     delete_driver,
 )
 from app.schemas.driver import DriverCreate, DriverUpdate
-from app.exceptions.exceptions import EntityDoesNotExistError, ServiceError
+from app.exceptions.exceptions import EntityDoesNotExistError, InvalidOperationError, ServiceError
 
 def test_get_driver(db, seeded_data):
     driver = seeded_data["drivers"][0]
@@ -18,10 +18,15 @@ def test_list_drivers(db, seeded_data):
     drivers = get_drivers(db=db)
     assert len(drivers) == 2
 
-def test_delete_driver(db, seeded_data):
+def test_delete_driver(db, seeded_data, mock_attempt_service_no_attempts):
     driver = seeded_data["drivers"][0]
     deleted = delete_driver(db=db, driver_id=driver.id)
     assert deleted.id == driver.id
+
+def test_delete_driver_with_attempts(db, seeded_data, mock_attempt_service_with_attempts):
+    driver = seeded_data["drivers"][0]
+    with pytest.raises(InvalidOperationError):
+        delete_driver(db=db, driver_id=driver.id)
 
 def test_get_driver_not_found(db):
     with pytest.raises(EntityDoesNotExistError):
@@ -88,11 +93,11 @@ def test_update_driver_service_error(db, seeded_data, monkeypatch):
             driver_update=update,
         )
 
-def test_delete_driver_not_found(db):
+def test_delete_driver_not_found(db, mock_attempt_service_no_attempts):
     with pytest.raises(EntityDoesNotExistError):
         delete_driver(db=db, driver_id=999)
 
-def test_delete_driver_service_error(db, seeded_data, monkeypatch):
+def test_delete_driver_service_error(db, seeded_data, monkeypatch, mock_attempt_service_no_attempts):
     driver = seeded_data["drivers"][0]
     def fail_commit():
         raise Exception("Commit failed")

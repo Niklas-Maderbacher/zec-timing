@@ -1,5 +1,6 @@
 import os
 import pytest
+from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -10,6 +11,7 @@ os.environ.setdefault("POSTGRES_SERVER", "localhost")
 os.environ.setdefault("POSTGRES_USER", "test")
 os.environ.setdefault("POSTGRES_PASSWORD", "test")
 os.environ.setdefault("POSTGRES_DB", "test")
+os.environ.setdefault("ATTEMPT_SERVICE_URL", "http://attempt-service")
 
 from app.main import app
 from app.database.session import Base
@@ -76,3 +78,40 @@ def client(db, seeded_data):
         yield c
 
     app.dependency_overrides.clear()
+
+@pytest.fixture
+def mock_attempt_service_no_attempts():
+    """Mock attempt service that returns empty list (no attempts)"""
+    with patch("requests.get") as mock_get:
+        mock_response = MagicMock()
+        mock_response.json.return_value = []
+        mock_get.return_value = mock_response
+        yield mock_get
+
+@pytest.fixture
+def mock_attempt_service_with_attempts():
+    with patch("requests.get") as mock_get:
+        mock_response = MagicMock()
+        mock_response.json.return_value = [
+            {
+                "id": 1,
+                "team_id": 1,
+                "driver_id": 1,
+                "challenge_id": 1,
+                "is_valid": True,
+                "start_time": "2024-01-01T10:00:00.000000",
+                "end_time": "2024-01-01T10:05:00.000000",
+                "energy_used": 50.5,
+                "created_at": "2024-01-01T10:00:00.000000",
+            }
+        ]
+        mock_get.return_value = mock_response
+        yield mock_get
+
+@pytest.fixture
+def mock_attempt_service_custom(request):
+    with patch("requests.get") as mock_get:
+        mock_response = MagicMock()
+        mock_response.json.return_value = request.param if hasattr(request, "param") else []
+        mock_get.return_value = mock_response
+        yield mock_get

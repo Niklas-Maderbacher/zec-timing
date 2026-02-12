@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 def test_list_attempts(client):
     response = client.get("/api/attempts/")
@@ -26,12 +26,13 @@ def test_fastest_attempt_per_team(client):
     assert response.json()["team_id"] == 1
 
 def test_create_attempt_success(client):
+    now = datetime.now().replace(microsecond=123456)
     payload = {
         "team_id": 1,
         "driver_id": 1,
         "challenge_id": 1,
-        "start_time": datetime.now(timezone.utc).isoformat(),
-        "end_time": (datetime.now(timezone.utc) + timedelta(seconds=5)).isoformat(),
+        "start_time": now.isoformat(),
+        "end_time": (now + timedelta(seconds=5)).isoformat(),
         "energy_used": 25,
         "is_valid": True,
     }
