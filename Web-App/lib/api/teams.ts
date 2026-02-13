@@ -1,6 +1,6 @@
 import { authenticatedFetch } from "@/lib/auth"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 export enum TeamCategory {
   CLOSE_TO_SERIES = "close_to_series",
