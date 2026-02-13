@@ -133,6 +133,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: teamdb
+      ATTEMPT_SERVICE_URL: http://attempt-service:8004
 
   user-db:
     image: postgres:16

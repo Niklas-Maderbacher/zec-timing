@@ -18,3 +18,7 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 ## Todo
 - on score creation best score is taken without penalties applied
 - score reload whenever is decided
+- Look at error Handling for Leaderboard
+- allow assigning a user to a team
+- set a default user
+- renew the db-schema.md

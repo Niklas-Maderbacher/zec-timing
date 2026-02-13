@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
 
+    ATTEMPT_SERVICE_URL: str
+
     @computed_field
     def SQLALCHEMY_DATABASE_URI(self) -> str:
         if self.ENVIRONMENT == "testing":
