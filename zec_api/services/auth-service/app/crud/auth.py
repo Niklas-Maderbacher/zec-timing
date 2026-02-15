@@ -73,7 +73,13 @@ def keycloak_login(username: str, password: str):
         if e.response.status_code == 401:
             raise exception.InvalidCredentials()
         raise exception.KeycloakUnavailable()
-    return response.json()
+    return {
+        "access_token": response.json().get("access_token"),
+        "refresh_token": response.json().get("refresh_token"),
+        "expires_in": response.json().get("expires_in"),
+        "refresh_expires_in": response.json().get("refresh_expires_in"),
+        "token_type": response.json().get("token_type"),
+    }
 
 def keycloak_refresh(refresh_token: str):
     payload = {
@@ -90,6 +96,7 @@ def keycloak_refresh(refresh_token: str):
     return response.json()
 
 def extract_roles_from_payload(payload: dict) -> list[str]:
+    allowed_roles = {"ADMIN", "TEAM_LEAD", "VIEWER"}
     if not isinstance(payload, dict):
         raise exception.InvalidClaims("Token payload is not a dictionary")
     resource_access = payload.get("resource_access")
@@ -103,6 +110,8 @@ def extract_roles_from_payload(payload: dict) -> list[str]:
         return []
     if not isinstance(roles, list):
         raise exception.InvalidClaims("Roles claim is not a list")
+    if not all(isinstance(role, str) and role in allowed_roles for role in roles):
+        return []
     return [role for role in roles if isinstance(role, str)]
 
 def get_current_user(payload: dict = Depends(decode_keycloak_token)):
