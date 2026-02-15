@@ -42,7 +42,7 @@ export function useAuth() {
     const newUser = {
       id: userUsername || username,
       username: userUsername || username,
-      role: role || "user",
+      role: role || "no role",
     }
     setUser(newUser)
     return newUser

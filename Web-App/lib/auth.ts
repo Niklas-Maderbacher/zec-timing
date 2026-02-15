@@ -152,12 +152,18 @@ export class AuthService {
     if (decoded.resource_access) {
       for (const resource of Object.values(decoded.resource_access)) {
         if (resource.roles && resource.roles.length > 0) {
-          const commonRoles = ['admin', 'team_lead', 'viewer'];
+          const commonRoles = ['ADMIN', 'TEAM_LEAD', 'VIEWER'];
           const foundRole = resource.roles.find(role => 
-            commonRoles.includes(role.toLowerCase())
+            commonRoles.includes(role.toUpperCase())
           );
-          if (foundRole) return foundRole.toLowerCase();
-          return resource.roles[0]?.toLowerCase();
+          if (foundRole) {
+            const roleMap: { [key: string]: string } = {
+              'ADMIN': 'Admin',
+              'TEAM_LEAD': 'Team Lead',
+              'VIEWER': 'Viewer'
+            };
+            return roleMap[foundRole.toUpperCase()];
+          }
         }
       }
     }

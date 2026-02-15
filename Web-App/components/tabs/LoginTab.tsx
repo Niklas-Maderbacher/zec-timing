@@ -43,7 +43,7 @@ export default function LoginTab({ isLoggedIn, user, onLoginSuccess, onLogout }:
       const userData: User = {
         id: userUsername || username,
         username: userUsername || username,
-        role: role || "viewer",
+        role: role || "no role",
       }
       onLoginSuccess(userData)
       setUsername("")
