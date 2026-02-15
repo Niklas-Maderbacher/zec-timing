@@ -8,3 +8,4 @@ Repository for **Z**ero**E**mission**C**hallenge-Timing by Darnhofer and Maderba
 - allow assigning a user to a team
 - set a default user
 - remove useless returns on login
+- only show admin teamlead and viewer role
