@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.schemas.user import CreateUserKC, UpdateUserKC, UserRolesRequest
+from app.schemas.user import CreateUserKC, UpdateUserKC, UserRolesRequest, UserResponseKC
 from app.crud import user as crud
 from app.database.dependency import SessionDep
 
@@ -48,7 +48,7 @@ def remove_roles_from_user(user_id: str, roles_request: UserRolesRequest):
         "unassigned_roles": roles_request.roles
     }
 
-@router.get("/", response_model=list[dict])
-def list_users():
-    users = crud.get_all_users()
+@router.get("/", response_model=list[UserResponseKC])
+def get_all_users(db: SessionDep):
+    users = crud.get_all_users(db=db)
     return users

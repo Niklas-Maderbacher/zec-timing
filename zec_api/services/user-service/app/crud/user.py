@@ -1,7 +1,7 @@
 import requests
 import time
 from app.core.config import settings
-from app.schemas.user import CreateUserKC, UpdateUserKC
+from app.schemas.user import CreateUserKC, UpdateUserKC, UserResponseKC
 from app.models.user import User
 from datetime import datetime, timezone
 from typing import Optional
@@ -265,7 +265,7 @@ def get_user_by_id(user_id: str) -> dict:
         "username": user["username"],
     }
 
-def get_all_users() -> list[dict]:
+def get_all_users(db: SessionDep) -> list[UserResponseKC]:
     access_token = get_admin_token()
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -288,14 +288,15 @@ def get_all_users() -> list[dict]:
     enriched_users = []
     for user in users:
         user_id = user.get("id")
+        db_user = get_user_by_id_db(db=db, user_id=user_id)
+        db_team = requests.get(f"{TEAM_URL}/api/teams/{db_user.team_id}", params={"team_id": db_user.team_id})
         user_data = {
-            "id": user_id,
+            "id": db_user.id,
+            "kc_id": user_id,
             "username": user.get("username"),
             "email": user.get("email"),
-            "firstName": user.get("firstName"),
-            "lastName": user.get("lastName"),
-            "enabled": user.get("enabled", False),
-            "emailVerified": user.get("emailVerified", False),
+            "team_id": db_user.team_id,
+            "team_name": db_team.json().get("name") if db_team else None,
             "roles": []
         }
 

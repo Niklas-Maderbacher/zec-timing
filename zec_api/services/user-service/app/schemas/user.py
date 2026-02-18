@@ -32,5 +32,15 @@ class UpdateUserKC(BaseModel):
     password: Optional[str] = None
     team_id: Optional[int] = None
 
+class UserResponseKC(UserBase):
+    id: int
+    kc_id: str
+    username: str
+    team_id: Optional[int] = None
+    team_name: Optional[str] = None
+    roles: list[str] = []
+
+    model_config = ConfigDict(from_attributes=True)
+
 class UserRolesRequest(BaseModel):
     roles: list[str]
