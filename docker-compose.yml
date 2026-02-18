@@ -8,9 +8,8 @@ services:
       - ${MQTT_PORT}:${MQTT_PORT}
       - 8100:8080
     volumes:
-      - ./config:/mosquitto/config
-      - ./data:/mosquitto/data
-      - ./log:/mosquitto/log
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/log:/mosquitto/log
     healthcheck:
       test: [ "CMD-SHELL", "pgrep mosquitto" ]
       interval: 10s
