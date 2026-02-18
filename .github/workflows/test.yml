@@ -14,7 +14,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build-api-gateway:
+  build-attempt-service:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -39,3 +39,133 @@ jobs:
         push: true
         tags: ghcr.io/niklas-maderbacher/zec-timing:attempt-service
         context: ./zec_api/services/attempt-service
+
+  build-auth-service:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build api gateway
+      uses: docker/build-push-action@v6
+      with:
+        platforms: linux/amd64
+        pull: true
+        push: true
+        tags: ghcr.io/niklas-maderbacher/zec-timing:auth-service
+        context: ./zec_api/services/auth-service
+  
+  build-challenge-service:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build api gateway
+      uses: docker/build-push-action@v6
+      with:
+        platforms: linux/amd64
+        pull: true
+        push: true
+        tags: ghcr.io/niklas-maderbacher/zec-timing:challenge-service
+        context: ./zec_api/services/challenge-service
+  
+  build-score-service:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build api gateway
+      uses: docker/build-push-action@v6
+      with:
+        platforms: linux/amd64
+        pull: true
+        push: true
+        tags: ghcr.io/niklas-maderbacher/zec-timing:score-service
+        context: ./zec_api/services/score-service
+  
+  build-team-service:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build api gateway
+      uses: docker/build-push-action@v6
+      with:
+        platforms: linux/amd64
+        pull: true
+        push: true
+        tags: ghcr.io/niklas-maderbacher/zec-timing:team-service
+        context: ./zec_api/services/team-service
+  
+  build-user-service:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build api gateway
+      uses: docker/build-push-action@v6
+      with:
+        platforms: linux/amd64
+        pull: true
+        push: true
+        tags: ghcr.io/niklas-maderbacher/zec-timing:user-service
+        context: ./zec_api/services/user-service
