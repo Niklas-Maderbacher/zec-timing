@@ -37,5 +37,5 @@ jobs:
         platforms: linux/amd64
         pull: true
         push: true
-        tags: ghcr.io/niklas-maderbacker/zec-timing:attempt-service
+        tags: ghcr.io/niklas-maderbacher/zec-timing:attempt-service
         context: ./zec_api/services/attempt-service
