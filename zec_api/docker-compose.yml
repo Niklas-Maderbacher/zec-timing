@@ -9,7 +9,7 @@ services:
     depends_on:
       - auth-service
       - challenge-service
-      - score-service   
+      - score-service
       - attempt-service
       - team-service
       - user-service
@@ -54,8 +54,8 @@ services:
       KEYCLOAK_REALM: zec-realm
       KEYCLOAK_CLIENT_ID: login-client
       KEYCLOAK_ADMIN_CLIENT_ID: user-admin-client
-      KEYCLOAK_ADMIN_CLIENT_SECRET: FzF2Bqb7NnmXECNfkzaE3Bx6mc176Yen
-      KEYCLOAK_CLIENT_SECRET: ESW6xtI8MjLN7dW35ZKq7h1Ex2z9lgaF
+      KEYCLOAK_ADMIN_CLIENT_SECRET: qKBlWYE6Qq8qTt3fqc35PQWlB1AoZsvd
+      KEYCLOAK_CLIENT_SECRET: ldKRu6s1CCnULFXYiZuv2TA4z1302coq
       KEYCLOAK_TOKEN_URL: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/token
       KEYCLOAK_JWKS_URL: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/certs
       KEYCLOAK_USER_URL: http://keycloak:8080/admin/realms/zec-realm/users
@@ -217,7 +217,7 @@ services:
     volumes:
       - keycloak_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -225,7 +225,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.4.2
     container_name: keycloak
-    command: ["start-dev"]
+    command: [ "start-dev" ]
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
