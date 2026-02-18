@@ -1,15 +1,9 @@
 fastapi[standard]
 sqlalchemy
-uvicorn[standard]
 pydantic
-python-dotenv
 pydantic-settings
-alembic
+typing-extensions
+uvicorn[standard]
 psycopg[binary]
-psycopg2-binary
-authlib
 python-jose
-httpx
-itsdangerous
 requests
-slowapi

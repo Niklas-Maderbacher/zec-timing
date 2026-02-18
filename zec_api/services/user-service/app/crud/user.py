@@ -1,4 +1,5 @@
 import requests
+import time
 from app.core.config import settings
 from app.schemas.user import CreateUserKC, UpdateUserKC
 from app.models.user import User
@@ -16,6 +17,16 @@ from app.exceptions.exceptions import (
 KC_USER_URL = settings.KEYCLOAK_USER_URL
 KC_CLIENTS_URL = settings.KC_CLIENTS_URL
 KC_CLIENT_ID = settings.KC_CLIENT_ID
+TEAM_URL = settings.TEAM_SERVICE_URL
+
+def _validate_team(team_id: int):
+    resp = requests.get(f"{TEAM_URL}/api/teams/{team_id}", params={"team_id": team_id})
+    if resp.status_code == 404:
+        raise EntityDoesNotExistError(f"Team {team_id} does not exist")
+    if resp.status_code in (401, 403):
+        raise AuthenticationFailed(f"Unauthorized to fetch team {team_id}")
+    if resp.status_code != 200:
+        raise ServiceError(f"Failed to fetch team {team_id}: {resp.text}")
 
 def create_user(db: SessionDep, request: CreateUserKC):
     access_token = get_admin_token()
@@ -55,6 +66,9 @@ def create_user(db: SessionDep, request: CreateUserKC):
         kc_id=kc_user["id"],
         created_at=datetime.now(timezone.utc),
     )
+    if request.team_id is not None:
+        _validate_team(request.team_id)
+        db_user.team_id = request.team_id
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -89,7 +103,12 @@ def update_user(db: SessionDep, user_id: str, request: UpdateUserKC) -> Optional
         db_user.username = request.username
         db.commit()
         db.refresh(db_user)
-    return {"id": db_user.kc_id, "username": db_user.username}
+    if request.team_id is not None:
+        _validate_team(request.team_id)
+        db_user.team_id = request.team_id
+        db.commit()
+        db.refresh(db_user)
+    return {"id": db_user.kc_id, "username": db_user.username, "team_id": db_user.team_id}
 
 def delete_user(db: SessionDep, user_id: str) -> None:
     access_token = get_admin_token()
@@ -176,8 +195,38 @@ def get_user_by_id_db(db: SessionDep, user_id: str):
     return db_user
 
 def get_admin_token() -> str:
-    access_token = requests.get(f"{settings.AUTH_SERVICE_URL}/api/auth/internal/get-admin-token").json()
-    return access_token
+    url = f"{settings.AUTH_SERVICE_URL}/api/auth/internal/get-admin-token"
+    last_exc = None
+    last_resp = None
+    for attempt in range(1, 11):
+        try:
+            resp = requests.get(url, timeout=5)
+            last_resp = resp
+        except requests.RequestException as e:
+            last_exc = e
+            time.sleep(0.5 * attempt)
+            continue
+        if resp.status_code != 200:
+            last_exc = Exception(f"Auth service returned status {resp.status_code}")
+            time.sleep(0.5 * attempt)
+            continue
+        try:
+            data = resp.json()
+        except ValueError:
+            raise ServiceError(f"Invalid JSON from auth service: {resp.text}")
+        if isinstance(data, str):
+            return data
+        if isinstance(data, dict):
+            token = data.get("access_token") or data.get("token") or data.get("accessToken")
+            if token:
+                return token
+            raise ServiceError(f"Auth service JSON missing token field: {data}")
+        raise ServiceError(f"Unexpected auth service response: {data}")
+    if last_exc:
+        raise ServiceError(f"Failed to obtain admin token: {last_exc}")
+    if last_resp is not None:
+        raise ServiceError(f"Failed to obtain admin token, last response: {last_resp.text}")
+    raise ServiceError("Failed to obtain admin token: unknown error")
 
 def get_user_by_username(username: str) -> Optional[dict]:
     access_token = get_admin_token()
@@ -191,6 +240,8 @@ def get_user_by_username(username: str) -> Optional[dict]:
     if response.status_code == 404:
         raise EntityDoesNotExistError(f"No user for id: {username}")
     users = response.json()
+    if not users:
+        raise EntityDoesNotExistError(f"No user for username: {username}")
     user = users[0]
     return {
         "id": user["id"],

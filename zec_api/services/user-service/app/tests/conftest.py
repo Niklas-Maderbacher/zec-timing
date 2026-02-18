@@ -67,6 +67,15 @@ def mock_admin_token():
 def mock_requests():
     with patch("app.crud.user.requests") as mock_requests:
         def _get_side_effect(url, *args, **kwargs):
+            if "/users/" in url and "username=" not in url:
+                user_id = url.rsplit("/", 1)[-1]
+                username = "testuser" if user_id == "kc-123" else ("admin" if user_id == "kc-admin" else user_id)
+                return MagicMock(status_code=200, json=lambda: {"id": user_id, "username": username})
+            if "username=admin" in url:
+                return MagicMock(
+                    status_code=200,
+                    json=lambda: [{"id": "kc-admin", "username": "admin"}],
+                )
             if "username=newuser" in url or "username=apiuser" in url:
                 return MagicMock(
                     status_code=200,
@@ -77,15 +86,26 @@ def mock_requests():
                     status_code=200,
                     json=lambda: [{"id": "kc-123", "username": "testuser"}],
                 )
-            return MagicMock(status_code=200, json=lambda: {})
-
+            if "clients?clientId" in url:
+                return MagicMock(status_code=200, json=lambda: [{"id": "client-uuid"}])
+            if "/clients/" in url and "/roles/" in url:
+                role_name = url.rsplit("/", 1)[-1]
+                return MagicMock(status_code=200, json=lambda: {"id": f"role-{role_name}", "name": role_name})
+            return MagicMock(status_code=200, json=lambda: [])
         mock_requests.get.side_effect = _get_side_effect
-        mock_requests.post.return_value = MagicMock(status_code=201)
+        def _post_side_effect(url, *args, **kwargs):
+            rv = getattr(mock_requests.post, "return_value", None)
+            if rv is not None and getattr(rv, "status_code", None) in (401, 409, 500):
+                return rv
+            if "/role-mappings/clients/" in url:
+                return MagicMock(status_code=204)
+            if url.startswith(os.environ.get("KEYCLOAK_USER_URL", "http://keycloak/users")):
+                return MagicMock(status_code=201)
+            return MagicMock(status_code=201)
+        mock_requests.post.side_effect = _post_side_effect
         mock_requests.put.return_value = MagicMock(status_code=204)
         mock_requests.delete.return_value = MagicMock(status_code=204)
-
         yield mock_requests
-
 
 @pytest.fixture(scope="function")
 def client(db, seeded_user):

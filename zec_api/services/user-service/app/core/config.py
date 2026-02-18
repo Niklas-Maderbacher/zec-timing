@@ -23,6 +23,7 @@ class Settings(BaseSettings):
 
     KEYCLOAK_USER_URL: str = ""
     AUTH_SERVICE_URL: str = ""
+    TEAM_SERVICE_URL: str = ""
     KC_CLIENTS_URL: str = ""
     KC_CLIENT_ID: str = ""
 

@@ -8,7 +8,7 @@ class UserBase(BaseModel):
     kc_id: str
 
 class UserCreate(UserBase):
-    pass
+    team_id: Optional[int] = None
 
 class UserUpdate(BaseModel):
     id: int
@@ -17,6 +17,7 @@ class UserUpdate(BaseModel):
 
 class UserResponse(UserBase):
     id: int
+    team_id: Optional[int] = None
     created_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
@@ -24,10 +25,12 @@ class UserResponse(UserBase):
 class CreateUserKC(BaseModel):
     username: str
     password: str
+    team_id: Optional[int] = None
 
 class UpdateUserKC(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
+    team_id: Optional[int] = None
 
 class UserRolesRequest(BaseModel):
     roles: list[str]

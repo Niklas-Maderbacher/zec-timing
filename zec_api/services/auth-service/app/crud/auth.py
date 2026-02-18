@@ -5,6 +5,7 @@ import requests
 from app.core.config import settings
 from functools import lru_cache
 import app.exceptions.exceptions as exception
+import time
 
 KC_URL = settings.KEYCLOAK_URL
 KC_ADMIN_CLIENT_ID = settings.KEYCLOAK_ADMIN_CLIENT_ID
@@ -73,7 +74,13 @@ def keycloak_login(username: str, password: str):
         if e.response.status_code == 401:
             raise exception.InvalidCredentials()
         raise exception.KeycloakUnavailable()
-    return response.json()
+    return {
+        "access_token": response.json().get("access_token"),
+        "refresh_token": response.json().get("refresh_token"),
+        "expires_in": response.json().get("expires_in"),
+        "refresh_expires_in": response.json().get("refresh_expires_in"),
+        "token_type": response.json().get("token_type"),
+    }
 
 def keycloak_refresh(refresh_token: str):
     payload = {
@@ -90,6 +97,7 @@ def keycloak_refresh(refresh_token: str):
     return response.json()
 
 def extract_roles_from_payload(payload: dict) -> list[str]:
+    allowed_roles = {"ADMIN", "TEAM_LEAD", "VIEWER"}
     if not isinstance(payload, dict):
         raise exception.InvalidClaims("Token payload is not a dictionary")
     resource_access = payload.get("resource_access")
@@ -103,6 +111,8 @@ def extract_roles_from_payload(payload: dict) -> list[str]:
         return []
     if not isinstance(roles, list):
         raise exception.InvalidClaims("Roles claim is not a list")
+    if not all(isinstance(role, str) and role in allowed_roles for role in roles):
+        return []
     return [role for role in roles if isinstance(role, str)]
 
 def get_current_user(payload: dict = Depends(decode_keycloak_token)):
@@ -118,21 +128,28 @@ def get_current_user(payload: dict = Depends(decode_keycloak_token)):
     }
 
 def get_admin_token():
-    try:
-        response = requests.post(
-            KC_TOKEN_URL,
-            data={
-                "client_id": KC_ADMIN_CLIENT_ID,
-                "client_secret": KC_ADMIN_CLIENT_SECRET,
-                "grant_type": "client_credentials",
-            },
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
+    retries = 5
+    backoff_seconds = 1
+    for attempt in range(1, retries + 1):
+        try:
+            response = requests.post(
+                KC_TOKEN_URL,
+                data={
+                    "client_id": KC_ADMIN_CLIENT_ID,
+                    "client_secret": KC_ADMIN_CLIENT_SECRET,
+                    "grant_type": "client_credentials",
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                timeout=10,
             )
-        response.raise_for_status()
-    except requests.HTTPError:
-        raise exception.AuthserviceApiError()
-    token_data = response.json()
-    if not token_data:
-        raise exception.AuthserviceApiError()
-    access_token = token_data.get("access_token")
-    return access_token
+            response.raise_for_status()
+            token_data = response.json()
+            if not token_data:
+                raise exception.AuthserviceApiError()
+            return token_data.get("access_token")
+        except requests.HTTPError:
+            raise exception.AuthserviceApiError()
+        except (requests.ConnectionError, requests.Timeout):
+            if attempt == retries:
+                raise exception.KeycloakUnavailable()
+            time.sleep(backoff_seconds * (2 ** (attempt - 1)))
