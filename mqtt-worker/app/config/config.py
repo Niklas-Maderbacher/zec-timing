@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     MQTT_PORT: int
     MQTT_TOPIC: str
 
+    MQTT_USER: str
+    MQTT_PASSWORD: str
+
     REDIS_HOST: str
     REDIS_PORT: int
 

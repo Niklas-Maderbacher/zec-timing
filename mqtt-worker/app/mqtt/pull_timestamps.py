@@ -32,6 +32,9 @@ def on_message(client, userdata, msg):
 
 def run_client():
     client = mqtt.Client()
+
+    client.username_pw_set(settings.MQTT_USER, settings.MQTT_PASSWORD)
+
     client.on_connect = on_connect
     client.on_message = on_message
 
@@ -39,6 +42,7 @@ def run_client():
     client.subscribe(settings.MQTT_TOPIC)
 
     client.loop_forever()
+
 
 def start_mqtt_worker():
     thread = threading.Thread(target=run_client, daemon=True)
