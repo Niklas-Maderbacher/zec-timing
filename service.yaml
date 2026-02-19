@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service-service
+spec:
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service-service
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - protocol: TCP
+      port: 8002
+      targetPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: challenge-service-service
+spec:
+  selector:
+    app: challenge-service
+  ports:
+    - protocol: TCP
+      port: 8003
+      targetPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: attempt-service-service
+spec:
+  selector:
+    app: attempt-service
+  ports:
+    - protocol: TCP
+      port: 8004
+      targetPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: score-service-service
+spec:
+  selector:
+    app: score-service
+  ports:
+    - protocol: TCP
+      port: 8005
+      targetPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: team-service-service
+spec:
+  selector:
+    app: team-service
+  ports:
+    - protocol: TCP
+      port: 8006
+      targetPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-service
+spec:
+  selector:
+    app: keycloak
+  ports:
+    - protocol: TCP
+      port: 8090
+      targetPort: 8080

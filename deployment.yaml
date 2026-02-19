@@ -1,0 +1,352 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  labels:
+    app: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+        - name: user-service
+          image: ghcr.io/niklas-maderbacher/zec-timing:user-service
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PROJECT_NAME
+              value: user-service
+            - name: POSTGRES_SERVER
+              value: "192.168.1.113"
+            - name: POSTGRES_PORT
+              value: "5433"
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: userdb
+            - name: KEYCLOAK_USER_URL
+              value: http://keycloak:8080/admin/realms/zec-realm/users
+            - name: AUTH_SERVICE_URL
+              value: http://auth-service:8002
+            - name: TEAM_SERVICE_URL
+              value: http://team-service:8006
+            - name: KC_CLIENTS_URL
+              value: http://keycloak:8080/admin/realms/zec-realm/clients
+            - name: KC_CLIENT_ID
+              value: login-client
+          resources:
+            # todo
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 1000Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  labels:
+    app: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: ghcr.io/niklas-maderbacher/zec-timing:auth-service
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PROJECT_NAME
+              value: auth-service
+            - name: POSTGRES_SERVER
+              value: "192.168.1.113"
+            - name: POSTGRES_PORT
+              value: "5434"
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: authdb
+            - name: KEYCLOAK_URL
+              value: http://keycloak:8080
+            - name: KEYCLOAK_REALM
+              value: zec-realm
+            - name: KEYCLOAK_CLIENT_ID
+              value: login-client
+            - name: KEYCLOAK_ADMIN_CLIENT_ID
+              value: user-admin-client
+            - name: KEYCLOAK_ADMIN_CLIENT_SECRET
+              value: qKBlWYE6Qq8qTt3fqc35PQWlB1AoZsvd
+            - name: KEYCLOAK_CLIENT_SECRET
+              value: ldKRu6s1CCnULFXYiZuv2TA4z1302coq
+            - name: KEYCLOAK_TOKEN_URL
+              value: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/token
+            - name: KEYCLOAK_JWKS_URL
+              value: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/certs
+            - name: KEYCLOAK_USER_URL
+              value: http://keycloak:8080/admin/realms/zec-realm/users
+          resources:
+            # todo
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 1000Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: challenge-service
+  labels:
+    app: challenge-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: challenge-service
+  template:
+    metadata:
+      labels:
+        app: challenge-service
+    spec:
+      containers:
+        - name: challenge-service
+          image: ghcr.io/niklas-maderbacher/zec-timing:challenge-service
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PROJECT_NAME
+              value: challenge-service
+            - name: POSTGRES_SERVER
+              value: "192.168.1.113"
+            - name: POSTGRES_PORT
+              value: "5435"
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: challengedb
+          resources:
+            # todo
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 1000Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: attempt-service
+  labels:
+    app: attempt-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: attempt-service
+  template:
+    metadata:
+      labels:
+        app: attempt-service
+    spec:
+      containers:
+        - name: attempt-service
+          image: ghcr.io/niklas-maderbacher/zec-timing:attempt-service
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PROJECT_NAME
+              value: attempt-service
+            - name: POSTGRES_SERVER
+              value: "192.168.1.113"
+            - name: POSTGRES_PORT
+              value: "5436"
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: attemptdb
+            - name: SCORE_SERVICE_URL
+              value: http://score-service:8005
+            - name: TEAM_SERVICE_URL
+              value: http://team-service:8006
+            - name: CHALLENGE_SERVICE_URL
+              value: http://challenge-service:8003
+          resources:
+            # todo
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 1000Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: score-service
+  labels:
+    app: score-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: score-service
+  template:
+    metadata:
+      labels:
+        app: score-service
+    spec:
+      containers:
+        - name: score-service
+          image: ghcr.io/niklas-maderbacher/zec-timing:score-service
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PROJECT_NAME
+              value: score-service
+            - name: POSTGRES_SERVER
+              value: "192.168.1.113"
+            - name: POSTGRES_PORT
+              value: "5437"
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: scoredb
+            - name: CHALLENGE_SERVICE_URL
+              value: http://challenge-service:8003
+            - name: ATTEMPT_SERVICE_URL
+              value: http://attempt-service:8004
+            - name: TEAM_SERVICE_URL
+              value: http://team-service:8006
+          resources:
+            # todo
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 1000Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: team-service
+  labels:
+    app: team-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: team-service
+  template:
+    metadata:
+      labels:
+        app: team-service
+    spec:
+      containers:
+        - name: team-service
+          image: ghcr.io/niklas-maderbacher/zec-timing:team-service
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PROJECT_NAME
+              value: team-service
+            - name: POSTGRES_SERVER
+              value: "192.168.1.113"
+            - name: POSTGRES_PORT
+              value: "5438"
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: teamdb
+            - name: ATTEMPT_SERVICE_URL
+              value: http://attempt-service:8004
+          resources:
+            # todo
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 1000Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:26.4.2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KEYCLOAK_ADMIN
+              value: admin
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: admin
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL_HOST
+              value: "192.168.1.113"
+            - name: KC_DB_URL_PORT
+              value: "5432"
+            - name: KC_DB_URL_DATABASE
+              value: keycloak
+            - name: KC_DB_USERNAME
+              value: postgres
+            - name: KC_DB_PASSWORD
+              value: postgres
+          resources:
+            # todo
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 1000Mi

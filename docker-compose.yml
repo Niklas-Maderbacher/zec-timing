@@ -69,8 +69,6 @@ services:
       zec-mqtt-broker:
         condition: service_healthy
         restart: true
-      # zec-mqtt-worker-testing:
-      #   condition: service_completed_successfully
 
     env_file:
       - .env
@@ -82,3 +80,124 @@ services:
       - MQTT_TOPIC=${MQTT_TOPIC}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
+
+  nginx:
+    image: ghcr.io/niklas-maderbacher/zec-timing:api-gateway
+    container_name: nginx
+    ports:
+      - "80:80"
+    environment:
+      - NGINX_API=${NGINX_API}
+      - API_KEY_1=${API_KEY_1}
+      - API_KEY_2=${API_KEY_2}
+
+  user-db:
+    image: postgres:16
+    container_name: user-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: userdb
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
+  auth-db:
+    image: postgres:16
+    container_name: auth-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: authdb
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
+  challenge-db:
+    image: postgres:16
+    container_name: challenge-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: challengedb
+    volumes:
+      - challenge_db_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+
+  attempt-db:
+    image: postgres:16
+    container_name: attempt-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: attemptdb
+    volumes:
+      - attempt_db_data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+
+  score-db:
+    image: postgres:16
+    container_name: score-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: scoredb
+    volumes:
+      - score_db_data:/var/lib/postgresql/data
+    ports:
+      - "5437:5432"
+
+  team-db:
+    image: postgres:16
+    container_name: team-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: teamdb
+    volumes:
+      - team_db_data:/var/lib/postgresql/data
+    ports:
+      - "5438:5432"
+
+  keycloak-db:
+    image: postgres:17
+    container_name: keycloak-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: keycloak
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-db
+      - auth-db
+      - challenge-db
+      - attempt-db
+      - score-db
+      - team-db
+      - keycloak-db
+
+volumes:
+  user_db_data:
+  auth_db_data:
+  challenge_db_data:
+  attempt_db_data:
+  score_db_data:
+  team_db_data:
+  keycloak_db_data:
