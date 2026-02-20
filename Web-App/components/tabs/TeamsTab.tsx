@@ -83,7 +83,7 @@ export default function TeamsTab() {
       const data = await teamsApi.listTeams()
       setTeams(data)
     } catch (error: any) {
-      toast.error(error.message || "Failed to load teams")
+      console.error("Failed to load teams:", error)
     } finally {
       setIsLoading(false)
     }

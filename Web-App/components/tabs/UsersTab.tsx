@@ -26,15 +26,25 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Plus, Trash2, UserCog, Loader2 } from "lucide-react"
 import { ConfirmDialog } from "@/components/dialogs/confirm-dialog"
 import { usersApi } from "@/lib/api/users"
+import { teamsApi, type Team } from "@/lib/api/teams"
 import { toast } from "sonner"
 
 interface User {
-  id: string
+  id: number
+  kc_id: string
   username: string
   team_id?: string
+  team_name?: string
   email?: string
   roles?: string[]
 }
@@ -43,7 +53,9 @@ const AVAILABLE_ROLES = ["ADMIN", "TEAM_LEAD", "VIEWER"]
 
 export default function UsersTab() {
   const [users, setUsers] = useState<User[]>([])
+  const [teams, setTeams] = useState<Team[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingTeams, setIsLoadingTeams] = useState(false)
   const [isAddUserOpen, setIsAddUserOpen] = useState(false)
   const [isEditUserOpen, setIsEditUserOpen] = useState(false)
   const [isManageRolesOpen, setIsManageRolesOpen] = useState(false)
@@ -59,6 +71,7 @@ export default function UsersTab() {
 
   useEffect(() => {
     loadUsers()
+    loadTeams()
   }, [])
 
   const loadUsers = async () => {
@@ -67,9 +80,21 @@ export default function UsersTab() {
       const data = await usersApi.listUsers()
       setUsers(data)
     } catch (error: any) {
-      toast.error(error.message || "Failed to load users")
+      console.error("Failed to load users:", error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const loadTeams = async () => {
+    setIsLoadingTeams(true)
+    try {
+      const data = await teamsApi.listTeams()
+      setTeams(data)
+    } catch (error: any) {
+      console.error("Failed to load teams:", error)
+    } finally {
+      setIsLoadingTeams(false)
     }
   }
 
@@ -114,11 +139,10 @@ export default function UsersTab() {
       }
 
       if (formData.team_id !== selectedUser.team_id) {
-        payload.team_id =
-          formData.team_id.trim() === "" ? null : formData.team_id
+        payload.team_id = formData.team_id === "none" ? null : formData.team_id
       }
 
-      await usersApi.updateUser(selectedUser.id, payload)
+      await usersApi.updateUser(selectedUser.kc_id, payload)
 
       toast.success("User updated successfully")
       setIsEditUserOpen(false)
@@ -139,7 +163,7 @@ export default function UsersTab() {
   const confirmDeleteUser = async () => {
     if (!userToDelete) return
 
-    const userId = userToDelete.id
+    const userId = userToDelete.kc_id
 
     setIsDeleting(true)
     try {
@@ -163,7 +187,7 @@ export default function UsersTab() {
   const handleUpdateRoles = async () => {
     if (!selectedUser) return
 
-    const userId = selectedUser.id
+    const userId = selectedUser.kc_id
     const currentRoles = selectedUser.roles || []
 
     setIsLoading(true)
@@ -205,7 +229,7 @@ export default function UsersTab() {
     setFormData({
       username: user.username,
       password: "",
-      team_id: user.team_id || "",
+      team_id: user.team_id ? user.team_id.toString() : "none",
     })
     setIsEditUserOpen(true)
   }
@@ -252,36 +276,25 @@ export default function UsersTab() {
             <TableBody>
               {users.length === 0 && (
                 <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="text-center text-muted-foreground"
-                  >
+                  <TableCell colSpan={4} className="text-center text-muted-foreground">
                     No users found.
                   </TableCell>
                 </TableRow>
               )}
               {users.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="font-medium">
-                    {user.username}
-                  </TableCell>
-                  <TableCell>{user.team_id || "N/A"}</TableCell>
+                  <TableCell className="font-medium">{user.username}</TableCell>
+                  <TableCell>{user.team_name || "N/A"}</TableCell>
                   <TableCell>
                     <div className="flex gap-1 flex-wrap">
                       {user.roles && user.roles.length > 0 ? (
                         user.roles.map((role) => (
-                          <Badge
-                            key={role}
-                            variant="outline"
-                            className="capitalize"
-                          >
+                          <Badge key={role} variant="outline" className="capitalize">
                             {role}
                           </Badge>
                         ))
                       ) : (
-                        <span className="text-sm text-muted-foreground">
-                          No roles
-                        </span>
+                        <span className="text-sm text-muted-foreground">No roles</span>
                       )}
                     </div>
                   </TableCell>
@@ -320,15 +333,7 @@ export default function UsersTab() {
         </CardContent>
       </Card>
 
-      <Dialog
-        open={isAddUserOpen}
-        onOpenChange={(open) => {
-          setIsAddUserOpen(open)
-          if (!open) {
-            setFormData({ username: "", password: "", team_id: "" })
-          }
-        }}
-      >
+      <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
@@ -356,60 +361,42 @@ export default function UsersTab() {
                 id="password"
                 type="password"
                 value={formData.password}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    password: e.target.value,
-                  })
-                }
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="team-id">
-                Team ID{" "}
-                <span className="text-muted-foreground font-normal">
-                  (optional)
-                </span>
-              </Label>
-              <Input
-                id="team-id"
+            <div>
+              <Label htmlFor="team">Team (optional)</Label>
+              <Select
                 value={formData.team_id}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    team_id: e.target.value,
-                  })
-                }
-              />
+                onValueChange={(value) => setFormData({ ...formData, team_id: value === "none" ? "" : value })}
+              >
+                <SelectTrigger id="team">
+                  <SelectValue placeholder="Select team..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Team</SelectItem>
+                  {teams.map((team) => (
+                    <SelectItem key={team.id} value={team.id.toString()}>
+                      {team.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsAddUserOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setIsAddUserOpen(false)}>
               Cancel
             </Button>
             <Button onClick={handleCreateUser} disabled={isLoading}>
-              {isLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create User
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={isEditUserOpen}
-        onOpenChange={(open) => {
-          setIsEditUserOpen(open)
-          if (!open) {
-            setSelectedUser(null)
-            setFormData({ username: "", password: "", team_id: "" })
-          }
-        }}
-      >
+      <Dialog open={isEditUserOpen} onOpenChange={setIsEditUserOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
@@ -444,52 +431,39 @@ export default function UsersTab() {
                 }
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="edit-team-id">
-                Team ID{" "}
-                <span className="text-muted-foreground font-normal">
-                  (optional)
-                </span>
-              </Label>
-              <Input
-                id="edit-team-id"
-                value={formData.team_id}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    team_id: e.target.value,
-                  })
-                }
-              />
+            <div>
+              <Label htmlFor="edit-team">Team</Label>
+              <Select
+                value={formData.team_id || "none"}
+                onValueChange={(value) => setFormData({ ...formData, team_id: value })}
+              >
+                <SelectTrigger id="edit-team">
+                  <SelectValue placeholder="Select team..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Team</SelectItem>
+                  {teams.map((team) => (
+                    <SelectItem key={team.id} value={team.id.toString()}>
+                      {team.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsEditUserOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setIsEditUserOpen(false)}>
               Cancel
             </Button>
             <Button onClick={handleUpdateUser} disabled={isLoading}>
-              {isLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Update User
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <Dialog
-        open={isManageRolesOpen}
-        onOpenChange={(open) => {
-          setIsManageRolesOpen(open)
-          if (!open) {
-            setSelectedUser(null)
-            setSelectedRoles([])
-          }
-        }}
-      >
+      <Dialog open={isManageRolesOpen} onOpenChange={setIsManageRolesOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Manage User Roles</DialogTitle>

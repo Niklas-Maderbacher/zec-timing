@@ -54,7 +54,7 @@ export default function ChallengeTab() {
       const data = await challengesApi.listChallenges()
       setChallenges(data)
     } catch (error: any) {
-      toast.error(error.message || "Failed to load challenges")
+      console.error("Failed to load challenges:", error)
     } finally {
       setIsLoading(false)
     }

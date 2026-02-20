@@ -56,7 +56,7 @@ export default function LeaderboardTab() {
         setSelectedChallenge(data[0].id)
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to load challenges")
+      console.error("Failed to load challenges:", error)
     } finally {
       setIsLoadingChallenges(false)
     }
@@ -86,7 +86,7 @@ export default function LeaderboardTab() {
 
       setLeaderboards(newLeaderboards)
     } catch (error: any) {
-      toast.error(error.message || "Failed to load leaderboards")
+      console.error("Failed to load leaderboards:", error)
     } finally {
       setIsLoading(false)
     }
