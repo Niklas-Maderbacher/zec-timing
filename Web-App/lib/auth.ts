@@ -13,6 +13,7 @@ interface DecodedToken {
   iat: number;
   sub: string;
   preferred_username: string;
+  team_id?: string | number;
   realm_access?: {
     roles: string[];
   };
@@ -158,9 +159,9 @@ export class AuthService {
           );
           if (foundRole) {
             const roleMap: { [key: string]: string } = {
-              'ADMIN': 'Admin',
-              'TEAM_LEAD': 'Team Lead',
-              'VIEWER': 'Viewer'
+              'ADMIN': 'admin',
+              'TEAM_LEAD': 'teamlead',
+              'VIEWER': 'viewer'
             };
             return roleMap[foundRole.toUpperCase()];
           }
@@ -176,6 +177,14 @@ export class AuthService {
 
     const decoded = this.decodeToken(accessToken);
     return decoded?.preferred_username || decoded?.sub || null;
+  }
+
+  static getTeamId(token?: string): string | number | null {
+    const accessToken = token || this.getAccessToken();
+    if (!accessToken) return null;
+
+    const decoded = this.decodeToken(accessToken);
+    return decoded?.team_id || null;
   }
 
   static isLoggedIn(): boolean {

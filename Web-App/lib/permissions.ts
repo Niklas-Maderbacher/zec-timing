@@ -1,6 +1,6 @@
 import { Tabs } from "@/components/layout/sidebarlayout"
 
-export type UserRole = 'admin' | 'team_lead' | 'viewer'
+export type UserRole = 'admin' | 'teamlead' | 'viewer'
 
 export interface RolePermissions {
   allowedTabs: Tabs[]
@@ -14,7 +14,7 @@ export interface RolePermissions {
 
 const rolePermissions: Record<UserRole, RolePermissions> = {
   admin: {
-    allowedTabs: ['leaderboard', 'attempts', 'teams', 'drivers', 'challenges', 'users', 'export', 'login'],
+    allowedTabs: ['leaderboard', 'attempts', 'teams', 'challenges', 'users', 'export', 'login'],
     canViewAttempts: true,
     canEditDrivers: true,
     canEditTeams: true,
@@ -22,7 +22,7 @@ const rolePermissions: Record<UserRole, RolePermissions> = {
     canEditChallenges: true,
     canExport: true,
   },
-  team_lead: {
+  teamlead: {
     allowedTabs: ['leaderboard', 'teams', 'login'],
     canViewAttempts: false,
     canEditDrivers: false,

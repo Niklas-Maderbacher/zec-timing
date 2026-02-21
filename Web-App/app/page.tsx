@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import TeamsTab from "@/components/tabs/TeamsTab"
+import TeamLeadView from "@/components/tabs/TeamLeadView"
 import AttemptsTab from "@/components/tabs/AttemptTab"
 import UsersTab from "@/components/tabs/UsersTab"
 import ChallengeTab from "@/components/tabs/ChallengeTab"
@@ -77,8 +78,14 @@ export default function Webapp() {
       {activeTab === "attempts" && permissions.canViewAttempts && (
         <AttemptsTab />
       )}
-      {activeTab === "teams" && permissions.canEditTeams && (
-        <TeamsTab />
+      {activeTab === "teams" && (
+        <>
+          {currentUser?.role === "teamlead" && permissions.canEditTeams ? (
+            <TeamLeadView />
+          ) : currentUser?.role === "admin" && permissions.canEditTeams ? (
+            <TeamsTab />
+          ) : null}
+        </>
       )}
       {activeTab === "challenges" && permissions.canEditChallenges && (
         <ChallengeTab />
