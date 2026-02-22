@@ -23,7 +23,6 @@ import { Plus, Edit, Trash2, Loader2, Users, Trophy, Zap, Weight } from "lucide-
 import { teamsApi, type Team, type TeamUpdate, TeamCategory } from "@/lib/api/teams"
 import { driversApi, type Driver } from "@/lib/api/drivers"
 import { usersApi } from "@/lib/api/users"
-import { AuthService } from "@/lib/auth"
 import { toast } from "sonner"
 
 const CATEGORY_LABELS: Record<TeamCategory, string> = {
@@ -60,32 +59,20 @@ export default function TeamLeadView() {
   const loadTeamData = async () => {
     setIsLoading(true)
     try {
-      // Get team_id directly from the JWT token
-      const token = AuthService.getAccessToken()
-      if (!token) {
-        toast.error("Not authenticated")
-        return
-      }
-      
-      const teamId = AuthService.getTeamId(token)
-      
-      if (!teamId) {
-        // User has no team assigned
+      const currentUser = await usersApi.getCurrentUser()
+      if (!currentUser?.team_id) {
         setTeam(null)
         setIsLoading(false)
         return
       }
 
-      // Load team data
-      const teamData = await teamsApi.getTeamById(parseInt(teamId.toString()))
+      const teamData = await teamsApi.getTeamById(parseInt(currentUser.team_id))
       setTeam(teamData)
       
-      // Load drivers for this team
       const driversData = await driversApi.getDriversByTeam(teamData.id)
       setDrivers(driversData)
     } catch (error: any) {
       console.error("Failed to load team data:", error)
-      toast.error(error.message || "Failed to load team data")
     } finally {
       setIsLoading(false)
     }
@@ -112,7 +99,7 @@ export default function TeamLeadView() {
       setIsEditTeamOpen(false)
       loadTeamData()
     } catch (error: any) {
-      toast.error(error.message || "Failed to update team")
+      toast.error("Failed to update team")
     } finally {
       setIsLoading(false)
     }
@@ -212,13 +199,11 @@ export default function TeamLeadView() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h2 className="text-3xl font-bold">{team.name}</h2>
         <p className="text-muted-foreground mt-1">Manage your team details and drivers</p>
       </div>
 
-      {/* Team Details Card */}
       <Card className="border-2">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
@@ -266,7 +251,6 @@ export default function TeamLeadView() {
         </CardContent>
       </Card>
 
-      {/* Drivers Section */}
       <Card className="border-2">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
@@ -325,7 +309,6 @@ export default function TeamLeadView() {
         </CardContent>
       </Card>
 
-      {/* Edit Team Dialog */}
       <Dialog open={isEditTeamOpen} onOpenChange={setIsEditTeamOpen}>
         <DialogContent>
           <DialogHeader>
@@ -388,7 +371,6 @@ export default function TeamLeadView() {
         </DialogContent>
       </Dialog>
 
-      {/* Add Driver Dialog */}
       <Dialog open={isAddDriverOpen} onOpenChange={setIsAddDriverOpen}>
         <DialogContent>
           <DialogHeader>
@@ -431,7 +413,6 @@ export default function TeamLeadView() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Driver Dialog */}
       <Dialog open={isEditDriverOpen} onOpenChange={setIsEditDriverOpen}>
         <DialogContent>
           <DialogHeader>

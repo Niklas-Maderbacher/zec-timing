@@ -179,14 +179,6 @@ export class AuthService {
     return decoded?.preferred_username || decoded?.sub || null;
   }
 
-  static getTeamId(token?: string): string | number | null {
-    const accessToken = token || this.getAccessToken();
-    if (!accessToken) return null;
-
-    const decoded = this.decodeToken(accessToken);
-    return decoded?.team_id || null;
-  }
-
   static isLoggedIn(): boolean {
     return !!this.getAccessToken() && !this.isTokenExpired();
   }

@@ -113,4 +113,13 @@ export const usersApi = {
     }
     return response.json()
   },
+  
+  async getCurrentUser(): Promise<any> {
+    const response = await authenticatedFetch(`${API_BASE_URL}/users/me`)
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Failed to fetch current user' }))
+      throw new Error(error.detail || 'Failed to fetch current user')
+    }
+      return response.json()
+  },
 }
