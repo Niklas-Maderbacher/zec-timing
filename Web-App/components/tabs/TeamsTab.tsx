@@ -180,7 +180,7 @@ export default function TeamsTab() {
       toast.success("Team deleted successfully")
       loadTeams()
     } catch (error: any) {
-      toast.error(error.message || "Failed to delete team")
+      toast.error(error.message || "Team has attemps made")
     } finally {
       setIsDeleting(false)
       setTeamToDelete(null)
@@ -195,7 +195,7 @@ export default function TeamsTab() {
       toast.success("Driver deleted successfully")
       loadDriversForTeam(driverToDelete.teamId)
     } catch (error: any) {
-      toast.error(error.message || "Failed to delete driver")
+      toast.error(error.message || "Driver has attemps made")
     } finally {
       setIsDeleting(false)
       setDriverToDelete(null)

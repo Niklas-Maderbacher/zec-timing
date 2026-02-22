@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Trash2, Loader2, Users, Trophy, Zap, Weight } from "lucide-react"
+import { ConfirmDialog } from "@/components/dialogs/confirm-dialog"
 import { teamsApi, type Team, type TeamUpdate, TeamCategory } from "@/lib/api/teams"
 import { driversApi, type Driver } from "@/lib/api/drivers"
 import { usersApi } from "@/lib/api/users"
@@ -39,6 +40,8 @@ export default function TeamLeadView() {
   const [isAddDriverOpen, setIsAddDriverOpen] = useState(false)
   const [isEditDriverOpen, setIsEditDriverOpen] = useState(false)
   const [editingDriver, setEditingDriver] = useState<Driver | null>(null)
+  const [driverToDelete, setDriverToDelete] = useState<Driver | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const [teamForm, setTeamForm] = useState<TeamUpdate>({
     name: "",
@@ -72,7 +75,7 @@ export default function TeamLeadView() {
       const driversData = await driversApi.getDriversByTeam(teamData.id)
       setDrivers(driversData)
     } catch (error: any) {
-      console.error("Failed to load team data:", error)
+      console.error(error)
     } finally {
       setIsLoading(false)
     }
@@ -150,18 +153,19 @@ export default function TeamLeadView() {
     }
   }
 
-  const handleDeleteDriver = async (driverId: number) => {
-    if (!confirm("Are you sure you want to remove this driver?")) return
+  const confirmDeleteDriver = async () => {
+    if (!driverToDelete) return
 
-    setIsLoading(true)
+    setIsDeleting(true)
     try {
-      await driversApi.deleteDriver(driverId)
+      await driversApi.deleteDriver(driverToDelete.id)
       toast.success("Driver removed successfully")
+      setDriverToDelete(null)
       loadTeamData()
     } catch (error: any) {
-      toast.error(error.message || "Failed to remove driver")
+      toast.error("Driver has attemps made")
     } finally {
-      setIsLoading(false)
+      setIsDeleting(false)
     }
   }
 
@@ -201,14 +205,12 @@ export default function TeamLeadView() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold">{team.name}</h2>
-        <p className="text-muted-foreground mt-1">Manage your team details and drivers</p>
       </div>
 
       <Card className="border-2">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
             <CardTitle className="text-2xl">Team Details</CardTitle>
-            <CardDescription>Your team information and specifications</CardDescription>
           </div>
           <Button onClick={openEditTeam}>
             <Edit className="h-4 w-4 mr-2" />
@@ -258,7 +260,6 @@ export default function TeamLeadView() {
               <Users className="h-6 w-6" />
               Team Drivers
             </CardTitle>
-            <CardDescription>Manage your team's driver roster</CardDescription>
           </div>
           <Button onClick={() => setIsAddDriverOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
@@ -270,7 +271,6 @@ export default function TeamLeadView() {
             <div className="text-center py-12 text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p className="text-lg font-medium">No drivers yet</p>
-              <p className="text-sm">Add your first driver to get started</p>
             </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -295,7 +295,7 @@ export default function TeamLeadView() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleDeleteDriver(driver.id)}
+                          onClick={() => setDriverToDelete(driver)}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -313,7 +313,6 @@ export default function TeamLeadView() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Team Details</DialogTitle>
-            <DialogDescription>Update your team's information</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -375,7 +374,6 @@ export default function TeamLeadView() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Driver</DialogTitle>
-            <DialogDescription>Add a driver to your team roster</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -417,7 +415,6 @@ export default function TeamLeadView() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Driver</DialogTitle>
-            <DialogDescription>Update driver information</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -452,6 +449,17 @@ export default function TeamLeadView() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={!!driverToDelete}
+        onOpenChange={() => setDriverToDelete(null)}
+        title="Delete Driver"
+        description={`Are you sure you want to remove ${driverToDelete?.name} from the team?`}
+        confirmLabel="Delete"
+        destructive
+        loading={isDeleting}
+        onConfirm={confirmDeleteDriver}
+      />
     </div>
   )
 }
