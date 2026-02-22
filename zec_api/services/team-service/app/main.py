@@ -7,6 +7,7 @@ from app.database.session import engine, Base
 from typing import Callable
 from app.exceptions.exceptions import (
     AuthenticationFailed,
+    InsufficientPermissions,
     TeamserviceApiError,
     EntityDoesNotExistError,
     InvalidOperationError,
@@ -70,6 +71,13 @@ app.add_exception_handler(
     exc_class_or_status_code=InvalidTokenError,
     handler=create_exception_handler(
         status.HTTP_401_UNAUTHORIZED, "Invalid token, please re-authenticate again."
+    ),
+)
+
+app.add_exception_handler(
+    exc_class_or_status_code=InsufficientPermissions,
+    handler=create_exception_handler(
+        status.HTTP_403_FORBIDDEN, "User lacks permissions."
     ),
 )
 

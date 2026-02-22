@@ -60,6 +60,7 @@ services:
       KEYCLOAK_TOKEN_URL: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/token
       KEYCLOAK_JWKS_URL: http://keycloak:8080/realms/zec-realm/protocol/openid-connect/certs
       KEYCLOAK_USER_URL: http://keycloak:8080/admin/realms/zec-realm/users
+      USER_SERVICE_URL: http://user-service:8001
 
   challenge-service:
     build:

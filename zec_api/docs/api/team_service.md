@@ -87,8 +87,11 @@ Updates an existing team. Only provided fields will be updated.
 All fields are optional - only include fields you want to update.
 ```json
 {
-  "mean_power": 80.0,
-  "vehicle_weight": 245.0
+  "name": "Racing Team Alpha",
+  "mean_power": 75.5,
+  "vehicle_weight": 250.0,
+  "rfid_identifier": "RFID-12345",
+  "category": "advanced_class"
 }
 ```
 
@@ -154,12 +157,6 @@ Retrieves multiple specific teams by their IDs.
 #### Query Parameters
 - `team_ids` (int, repeatable): Team IDs to retrieve (can be repeated multiple times)
 
-#### Example Request
-```bash
-curl -X GET "http://hostname/teams/by-ids/?team_ids=1&team_ids=3&team_ids=5" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-```
-
 #### Responses
 - `200 OK`: Teams retrieved successfully
 - `400 Bad Request`: No team_ids provided
@@ -208,8 +205,9 @@ Updates an existing driver. Only provided fields will be updated.
 All fields are optional - only include fields you want to update.
 ```json
 {
-  "name": "John A. Smith",
-  "weight": 76.0
+  "name": "John Smith",
+  "team_id": 1,
+  "weight": 75.5
 }
 ```
 
