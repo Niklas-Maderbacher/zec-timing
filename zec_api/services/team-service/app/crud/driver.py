@@ -117,4 +117,9 @@ def get_drivers_by_team(*, db: SessionDep, team_id: int, request: Request):
     return db_drivers
 
 def get_drivers_by_ids(*, db: SessionDep, driver_ids: list[int]):
-    return db.query(Driver).filter(Driver.id.in_(driver_ids)).all()
+    drivers =  db.query(Driver).filter(Driver.id.in_(driver_ids)).all()
+    if len(drivers) != len(driver_ids):
+        raise EntityDoesNotExistError(
+            message="One or more drivers do not exist for the provided IDs"
+        )
+    return drivers

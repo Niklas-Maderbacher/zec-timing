@@ -20,8 +20,7 @@ def check_team_permissions(*, db: SessionDep, team_id: int | None = None, reques
         if int(team_id) != int(user_team_id):
             raise InsufficientPermissions("Teamleads can only operate on their own team. Attempted to operate on a team that he is not assigned to")
 
-def create_team(*, db: SessionDep, team: TeamCreate, request: Request):
-    check_team_permissions(db=db, team_id=team.id, request=request)
+def create_team(*, db: SessionDep, team: TeamCreate):
     try:
         team_data = team.model_dump(exclude_unset=True)
         db_team = Team(**team_data)

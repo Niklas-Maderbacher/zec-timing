@@ -7,8 +7,8 @@ from app.crud import team as crud
 router = APIRouter()
 
 @router.post("/", response_model=TeamResponse)
-def create_team(db: SessionDep, team: TeamCreate, request: Request):
-    team = crud.create_team(db=db, team=team, request=request)
+def create_team(db: SessionDep, team: TeamCreate):
+    team = crud.create_team(db=db, team=team)
     return team
 
 @router.put("/{team_id}", response_model=TeamResponse)

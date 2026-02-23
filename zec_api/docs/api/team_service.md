@@ -19,6 +19,7 @@ Manage racing teams and their drivers.
 - [Get Driver](#get-driver)
 - [Get Drivers (all)](#get-drivers-all)
 - [Get Drivers for Team](#get-drivers-for-team)
+- [Get Drivers with IDs](#get-drivers-with-ids)
 
 ## Response Schema
 Response schema for team endpoints and driver endpoints.
@@ -51,7 +52,7 @@ Driver example:
 ### Create Team
 Creates a new racing team.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `POST`  
 **URL:** `http://hostname/teams/`
 
@@ -76,7 +77,7 @@ Creates a new racing team.
 ### Update Team
 Updates an existing team. Only provided fields will be updated.
 
-**Authorization:** Team Lead or Admin role required  
+**Authorization:** Team Lead or Teamlead role required  
 **Method:** `PUT`  
 **URL:** `http://hostname/teams/{team_id}`
 
@@ -106,7 +107,7 @@ All fields are optional - only include fields you want to update.
 ### Delete Team
 Deletes a team and all associated data.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `DELETE`  
 **URL:** `http://hostname/teams/{team_id}`
 
@@ -122,7 +123,7 @@ Deletes a team and all associated data.
 ### Get Team
 Retrieves a single team by ID.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `GET`  
 **URL:** `http://hostname/teams/{team_id}`
 
@@ -138,7 +139,7 @@ Retrieves a single team by ID.
 ### Get Teams (all)
 Retrieves all teams in the system.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `GET`  
 **URL:** `http://hostname/teams/`
 
@@ -150,7 +151,7 @@ Retrieves all teams in the system.
 ### Get Teams with IDs
 Retrieves multiple specific teams by their IDs.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `GET`  
 **URL:** `http://hostname/teams/by-ids/?team_ids=1&team_ids=2&team_ids=3`
 
@@ -170,7 +171,7 @@ Retrieves multiple specific teams by their IDs.
 ### Create Driver
 Creates a new driver for a team.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `POST`  
 **URL:** `http://hostname/drivers/`
 
@@ -194,7 +195,7 @@ Creates a new driver for a team.
 ### Update Driver
 Updates an existing driver. Only provided fields will be updated.
 
-**Authorization:** Team Lead or Admin role required  
+**Authorization:** Team Lead or Teamlead role required  
 **Method:** `PUT`  
 **URL:** `http://hostname/drivers/{driver_id}`
 
@@ -222,7 +223,7 @@ All fields are optional - only include fields you want to update.
 ### Delete Driver
 Deletes a driver and all associated data.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `DELETE`  
 **URL:** `http://hostname/drivers/{driver_id}`
 
@@ -238,7 +239,7 @@ Deletes a driver and all associated data.
 ### Get Driver
 Retrieves a single driver by ID.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `GET`  
 **URL:** `http://hostname/drivers/{driver_id}`
 
@@ -254,7 +255,7 @@ Retrieves a single driver by ID.
 ### Get Drivers (all)
 Retrieves all drivers in the system.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `GET`  
 **URL:** `http://hostname/drivers/`
 
@@ -266,7 +267,7 @@ Retrieves all drivers in the system.
 ### Get Drivers for Team
 Retrieves all drivers belonging to a specific team.
 
-**Authorization:** Admin role required  
+**Authorization:** Teamlead role required  
 **Method:** `GET`  
 **URL:** `http://hostname/drivers/team/{team_id}`
 
@@ -278,3 +279,19 @@ Retrieves all drivers belonging to a specific team.
 - `401 Unauthorized`: Missing or invalid token
 - `403 Forbidden`: Insufficient permissions
 - `404 Not Found`: Team not found
+
+### Get Drivers with IDs
+Retrieves multiple specific drivers by their IDs.
+
+**Authorization:** Teamlead role required  
+**Method:** `GET`  
+**URL:** `http://hostname/drivers/by-ids/?driver_ids=1&driver_ids=2&driver_ids=3`
+
+#### Query Parameters
+- `driver_ids` (int, repeatable): Driver IDs to retrieve (can be repeated multiple times)
+
+#### Responses
+- `200 OK`: Teams retrieved successfully
+- `400 Bad Request`: No driver_ids provided
+- `401 Unauthorized`: Missing or invalid token
+- `403 Forbidden`: Insufficient permissions
