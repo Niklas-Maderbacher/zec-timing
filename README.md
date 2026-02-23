@@ -4,4 +4,3 @@ Repository for **Z**ero**E**mission**C**hallenge Timing by Darnhofer and Maderba
 
 ## Todo
 - Test with Playwright
-- export logic

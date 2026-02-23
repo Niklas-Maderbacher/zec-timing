@@ -18,13 +18,14 @@ const CATEGORY_LABELS: Record<TeamCategory, string> = {
 
 export default function ExportTab() {
   const [challenges, setChallenges] = useState<Challenge[]>([])
-  const [selectedChallenge, setSelectedChallenge] = useState<number | null>(null)
   const [isLoadingChallenges, setIsLoadingChallenges] = useState(false)
 
+  const [leaderboardChallenge, setLeaderboardChallenge] = useState<number | null>(null)
   const [leaderboardFormat, setLeaderboardFormat] = useState<"csv" | "xlsx">("csv")
   const [leaderboardCategory, setLeaderboardCategory] = useState<TeamCategory>(TeamCategory.ADVANCED_CLASS)
   const [isExportingLeaderboard, setIsExportingLeaderboard] = useState(false)
 
+  const [attemptsChallenge, setAttemptsChallenge] = useState<number | null>(null)
   const [attemptsFormat, setAttemptsFormat] = useState<"csv" | "xlsx">("csv")
   const [attemptsCategory, setAttemptsCategory] = useState<string>("all")
   const [isExportingAttempts, setIsExportingAttempts] = useState(false)
@@ -35,7 +36,10 @@ export default function ExportTab() {
       try {
         const data = await challengesApi.listChallenges()
         setChallenges(data)
-        if (data.length > 0) setSelectedChallenge(data[0].id)
+        if (data.length > 0) {
+          setLeaderboardChallenge(data[0].id)
+          setAttemptsChallenge(data[0].id)
+        }
       } catch {
         toast.error("Failed to load challenges")
       } finally {
@@ -46,10 +50,10 @@ export default function ExportTab() {
   }, [])
 
   const handleExportLeaderboard = async () => {
-    if (!selectedChallenge) return toast.error("Select a challenge first")
+    if (!leaderboardChallenge) return toast.error("Select a challenge first")
     setIsExportingLeaderboard(true)
     try {
-      await leaderboardApi.exportLeaderboard(selectedChallenge, leaderboardCategory, leaderboardFormat)
+      await leaderboardApi.exportLeaderboard(leaderboardChallenge, leaderboardCategory, leaderboardFormat)
       toast.success("Leaderboard exported!")
     } catch (error: any) {
       toast.error(error.message || "Failed to export leaderboard")
@@ -59,11 +63,11 @@ export default function ExportTab() {
   }
 
   const handleExportAttempts = async () => {
-    if (!selectedChallenge) return toast.error("Select a challenge first")
+    if (!attemptsChallenge) return toast.error("Select a challenge first")
     setIsExportingAttempts(true)
     try {
       await attemptsApi.exportAttempts(
-        selectedChallenge,
+        attemptsChallenge,
         attemptsFormat,
         attemptsCategory === "all" ? undefined : attemptsCategory
       )
@@ -75,31 +79,41 @@ export default function ExportTab() {
     }
   }
 
+  const ChallengeSelect = ({
+    value,
+    onChange,
+  }: {
+    value: number | null
+    onChange: (v: number) => void
+  }) => (
+    <div>
+      <Label>Challenge</Label>
+      <Select
+        value={value?.toString()}
+        onValueChange={(v) => onChange(parseInt(v))}
+        disabled={isLoadingChallenges}
+      >
+        <SelectTrigger className="mt-2">
+          <SelectValue placeholder={isLoadingChallenges ? "Loading..." : "Select a challenge"} />
+        </SelectTrigger>
+        <SelectContent>
+          {challenges.map((c) => (
+            <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  )
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Data Export</h2>
-        <Select
-          value={selectedChallenge?.toString()}
-          onValueChange={(v) => setSelectedChallenge(parseInt(v))}
-          disabled={isLoadingChallenges}
-        >
-          <SelectTrigger className="w-64">
-            <SelectValue placeholder="Select challenge" />
-          </SelectTrigger>
-          <SelectContent>
-            {challenges.map((c) => (
-              <SelectItem key={c.id} value={c.id.toString()}>{c.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <h2 className="text-2xl font-semibold">Data Export</h2>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Leaderboard Export */}
         <Card>
           <CardHeader><CardTitle>Leaderboard Export</CardTitle></CardHeader>
           <CardContent className="space-y-4">
+            <ChallengeSelect value={leaderboardChallenge} onChange={setLeaderboardChallenge} />
             <div>
               <Label>Category</Label>
               <Select
@@ -129,7 +143,7 @@ export default function ExportTab() {
             </div>
             <Button
               onClick={handleExportLeaderboard}
-              disabled={isExportingLeaderboard || !selectedChallenge}
+              disabled={isExportingLeaderboard || !leaderboardChallenge}
               className="w-full flex items-center gap-2"
             >
               {isExportingLeaderboard
@@ -140,10 +154,10 @@ export default function ExportTab() {
           </CardContent>
         </Card>
 
-        {/* Attempts Export */}
         <Card>
           <CardHeader><CardTitle>Attempts Export</CardTitle></CardHeader>
           <CardContent className="space-y-4">
+            <ChallengeSelect value={attemptsChallenge} onChange={setAttemptsChallenge} />
             <div>
               <Label>Category <span className="text-muted-foreground text-xs">(optional)</span></Label>
               <Select value={attemptsCategory} onValueChange={setAttemptsCategory}>
@@ -171,7 +185,7 @@ export default function ExportTab() {
             </div>
             <Button
               onClick={handleExportAttempts}
-              disabled={isExportingAttempts || !selectedChallenge}
+              disabled={isExportingAttempts || !attemptsChallenge}
               className="w-full flex items-center gap-2"
             >
               {isExportingAttempts
