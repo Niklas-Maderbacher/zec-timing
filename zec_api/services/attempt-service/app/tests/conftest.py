@@ -5,7 +5,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from unittest.mock import patch, Mock
 from datetime import datetime, timedelta, timezone
-
 os.environ.setdefault("ENVIRONMENT", "testing")
 os.environ.setdefault("PROJECT_NAME", "test")
 os.environ.setdefault("POSTGRES_SERVER", "localhost")
@@ -15,7 +14,6 @@ os.environ.setdefault("POSTGRES_DB", "test")
 os.environ.setdefault("TEAM_SERVICE_URL", "http://team-service")
 os.environ.setdefault("CHALLENGE_SERVICE_URL", "http://challenge-service")
 os.environ.setdefault("SCORE_SERVICE_URL", "http://score-service")
-
 from app.main import app
 from app.database.session import Base
 from app.database.dependency import get_db
@@ -34,7 +32,6 @@ TestingSessionLocal = sessionmaker(
     bind=engine,
 )
 
-
 @pytest.fixture(scope="function")
 def db():
     Base.metadata.create_all(bind=engine)
@@ -45,7 +42,6 @@ def db():
         session.rollback()
         session.close()
         Base.metadata.drop_all(bind=engine)
-
 
 @pytest.fixture(scope="function")
 def seeded_attempts(db):
@@ -73,7 +69,6 @@ def seeded_attempts(db):
     db.add_all(attempts)
     db.commit()
     return attempts
-
 
 @pytest.fixture(autouse=True)
 def mock_requests():
@@ -111,7 +106,6 @@ def mock_requests():
             m.delete.side_effect = mock_response
 
         yield mock_attempt, mock_export
-
 
 @pytest.fixture(scope="function")
 def client(db, seeded_attempts, mock_requests):
