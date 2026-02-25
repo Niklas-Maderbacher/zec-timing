@@ -271,7 +271,7 @@ def test_acceleration_driver_service_error(db, mock_score_requests):
     with pytest.raises(ServiceError):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
-def test_acceleration_attempt_fetch_in_calculate_fpm_fails(db, mock_score_requests):
+def test_acceleration_attempt_get_in_calculate_fpm_fails(db, mock_score_requests):
     call_count = {"attempts": 0}
     
     def side_effect(url, *_, **__):
@@ -289,7 +289,7 @@ def test_acceleration_attempt_fetch_in_calculate_fpm_fails(db, mock_score_reques
 
     mock_score_requests.get.side_effect = side_effect
 
-    with pytest.raises(ServiceError, match="Failed to fetch attempt"):
+    with pytest.raises(ServiceError, match="Failed to get attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
 def test_skidpad_fastest_attempt_not_found(db, mock_score_requests):
@@ -338,7 +338,7 @@ def test_acceleration_fastest_attempt_service_error(db, mock_score_requests):
 
     mock_score_requests.get.side_effect = side_effect
 
-    with pytest.raises(ServiceError, match="Failed to fetch fastest attempt"):
+    with pytest.raises(ServiceError, match="Failed to get fastest attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
 def test_slalom_fastest_attempt_service_error(db, mock_score_requests):
@@ -353,7 +353,7 @@ def test_slalom_fastest_attempt_service_error(db, mock_score_requests):
 
     mock_score_requests.get.side_effect = side_effect
 
-    with pytest.raises(ServiceError, match="Failed to fetch fastest attempt"):
+    with pytest.raises(ServiceError, match="Failed to get fastest attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
 def test_endurance_fastest_attempt_service_error(db, mock_score_requests):
@@ -368,7 +368,7 @@ def test_endurance_fastest_attempt_service_error(db, mock_score_requests):
 
     mock_score_requests.get.side_effect = side_effect
 
-    with pytest.raises(ServiceError, match="Failed to fetch fastest attempt"):
+    with pytest.raises(ServiceError, match="Failed to get fastest attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
 def test_endurance_least_energy_service_error(db, mock_score_requests):
@@ -385,7 +385,7 @@ def test_endurance_least_energy_service_error(db, mock_score_requests):
 
     mock_score_requests.get.side_effect = side_effect
 
-    with pytest.raises(ServiceError, match="Failed to fetch least-energy attempt"):
+    with pytest.raises(ServiceError, match="Failed to get least-energy attempt"):
         crud.create_score(db=db, score=ScoreCreate(attempt_id=1))
 
 def test_update_score_not_found(db):
