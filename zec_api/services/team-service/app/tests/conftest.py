@@ -115,3 +115,9 @@ def mock_attempt_service_custom(request):
         mock_response.json.return_value = request.param if hasattr(request, "param") else []
         mock_get.return_value = mock_response
         yield mock_get
+
+@pytest.fixture
+def mock_request():
+    request = MagicMock()
+    request.headers.get.return_value = None
+    return request

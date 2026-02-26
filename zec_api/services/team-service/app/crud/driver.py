@@ -68,21 +68,20 @@ def update_driver(*, db: SessionDep, driver_id: int, driver_update: DriverUpdate
 
 def delete_driver(*, db: SessionDep, driver_id: int, request: Request):
     check_driver_permissions(db=db, driver_id=driver_id, request=request)
+    db_driver = get_driver_no_perm_check(db=db, driver_id=driver_id)
     db_attempts = requests.get(f"{ATTEMPT_URL}/api/attempts/per-driver/{driver_id}").json()
-    if db_attempts and db_attempts.get('detail') != "No attempts found for this driver [Attemptservice]":
+    has_attempts = (
+        isinstance(db_attempts, list) and len(db_attempts) > 0
+    ) or (
+        isinstance(db_attempts, dict)
+        and db_attempts.get("detail") != "No attempts found for this driver [Attemptservice]"
+    )
+    if has_attempts:
         raise InvalidOperationError(f"Cannot delete driver {driver_id} because they have made attempts")
     try:
-        db_driver = get_driver_no_perm_check(db=db, driver_id=driver_id)
-        if not db_driver:
-            raise EntityDoesNotExistError(
-                message=f"Driver with id {driver_id} does not exist"
-            )
         db.delete(db_driver)
         db.commit()
         return db_driver
-    except EntityDoesNotExistError:
-        db.rollback()
-        raise
     except Exception as exc:
         db.rollback()
         raise ServiceError() from exc

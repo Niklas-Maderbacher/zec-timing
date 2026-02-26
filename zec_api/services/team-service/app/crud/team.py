@@ -35,7 +35,7 @@ def create_team(*, db: SessionDep, team: TeamCreate):
 def update_team(*, db: SessionDep, team_id: int, team_update: TeamUpdate, request: Request):
     check_team_permissions(db=db, team_id=team_id, request=request)
     try:
-        db_team = get_team(db=db, team_id=team_id)
+        db_team = get_team(db=db, team_id=team_id, request=request)
         update_data = team_update.model_dump(
             exclude_unset=True,
             exclude={"id"},
@@ -55,10 +55,16 @@ def update_team(*, db: SessionDep, team_id: int, team_update: TeamUpdate, reques
 def delete_team(*, db: SessionDep, team_id: int, request: Request):
     check_team_permissions(db=db, team_id=team_id, request=request)
     db_attempts = requests.get(f"{ATTEMPT_URL}/api/attempts/per-team/{team_id}").json()
-    if db_attempts and db_attempts.get('detail') != "No attempts found for this team [Attemptservice]:":
+    has_attempts = (
+        isinstance(db_attempts, list) and len(db_attempts) > 0
+    ) or (
+        isinstance(db_attempts, dict)
+        and db_attempts.get("detail") != "No attempts found for this team [Attemptservice]:"
+    )
+    if has_attempts:
         raise InvalidOperationError(f"Cannot delete team {team_id} because it has made attempts")
     try:
-        db_team = get_team(db=db, team_id=team_id)
+        db_team = get_team(db=db, team_id=team_id, request=request)
         db.delete(db_team)
         db.commit()
         return db_team
