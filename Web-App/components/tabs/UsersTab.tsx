@@ -337,9 +337,6 @@ export default function UsersTab() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
-            <DialogDescription>
-              Create a new user account in Keycloak
-            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
