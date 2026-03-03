@@ -23,7 +23,7 @@ spec:
             - name: PROJECT_NAME
               value: user-service
             - name: POSTGRES_SERVER
-              value: "192.168.1.113"
+              value: "172.31.177.213"
             - name: POSTGRES_PORT
               value: "5433"
             - name: POSTGRES_USER
@@ -77,7 +77,7 @@ spec:
             - name: PROJECT_NAME
               value: auth-service
             - name: POSTGRES_SERVER
-              value: "192.168.1.113"
+              value: "172.31.177.213"
             - name: POSTGRES_PORT
               value: "5434"
             - name: POSTGRES_USER
@@ -139,7 +139,7 @@ spec:
             - name: PROJECT_NAME
               value: challenge-service
             - name: POSTGRES_SERVER
-              value: "192.168.1.113"
+              value: "172.31.177.213"
             - name: POSTGRES_PORT
               value: "5435"
             - name: POSTGRES_USER
@@ -183,7 +183,7 @@ spec:
             - name: PROJECT_NAME
               value: attempt-service
             - name: POSTGRES_SERVER
-              value: "192.168.1.113"
+              value: "172.31.177.213"
             - name: POSTGRES_PORT
               value: "5436"
             - name: POSTGRES_USER
@@ -233,7 +233,7 @@ spec:
             - name: PROJECT_NAME
               value: score-service
             - name: POSTGRES_SERVER
-              value: "192.168.1.113"
+              value: "172.31.177.213"
             - name: POSTGRES_PORT
               value: "5437"
             - name: POSTGRES_USER
@@ -283,7 +283,7 @@ spec:
             - name: PROJECT_NAME
               value: team-service
             - name: POSTGRES_SERVER
-              value: "192.168.1.113"
+              value: "172.31.177.213"
             - name: POSTGRES_PORT
               value: "5438"
             - name: POSTGRES_USER
@@ -333,7 +333,7 @@ spec:
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL_HOST
-              value: "192.168.1.113"
+              value: "172.31.177.213"
             - name: KC_DB_URL_PORT
               value: "5432"
             - name: KC_DB_URL_DATABASE
