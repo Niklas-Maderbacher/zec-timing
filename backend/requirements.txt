@@ -1,4 +1,0 @@
-colorama
-flask
-flask-cors
-python-multipart
