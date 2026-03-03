@@ -1,0 +1,257 @@
+\definecolor{green}{rgb}{0.8,1.0,0.2}
+\definecolor{orange}{rgb}{0.9,0.64,0.25}
+\definecolor{kaki}{rgb}{0.74,0.74,0.088}
+\definecolor{blue}{rgb}{0.2,0.59,0.94}
+\definecolor{dred}{rgb}{0.722,0.18,0.18}
+\definecolor{itblue}{HTML}{102D69}
+
+\definecolor{darkblue}{RGB}{31,73,125}
+\definecolor{midblue}{RGB}{70,130,180}
+\definecolor{orange}{RGB}{210,90,30}
+\definecolor{lightgray}{RGB}{240,240,240}
+\definecolor{boxgray}{RGB}{220,220,220}
+
+%
+%------------------------------Watermark wird mit einer Designvariablen geladen ---------------------------------------------------------------------------------
+%
+\ifthenelse{\boolean{UseWm}}%
+{\usepackage{draftwatermark}\SetWatermarkText{\WatermarkName$~-~$\WatermarkName\xspace$~-~$\WatermarkName} \SetWatermarkLightness{0.8}\SetWatermarkScale{2}}{}
+%
+\graphicspath{{./../03_AUX/01_PICT/}}
+\newcommand{\changefont}[3]{\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont} % Change a new font 
+% Weg mit der standard LATEX FONT
+
+%
+% --------------------Set the figure description:
+%
+\captionsetup{margin=10pt,font=small, labelfont={color=black!80, bf}, textfont={color=black!60}, format=hang, indention=-1cm}
+\captionsetup[wrapfigure]{name=Bild}
+\captionsetup[figure]{name=Bild}
+% --------------------Set the page margins:
+%
+\setlength{\voffset}{0.0cm}
+\setlength{\textwidth}{16.0cm}
+%\addtolength{\textheight}{10.0cm}
+\setlength{\textheight}{23.2cm}
+\setlength{\topmargin }{-1.5cm}
+\setlength{\marginparsep }{0pt}
+\setlength{\headsep }{1.2cm}
+\setlength{\oddsidemargin}{0.4cm}
+\setlength{\evensidemargin}{0.4cm}
+\setlength{\marginparwidth}{0pt}
+\setlength{\hoffset}{-12pt}
+\setlength{\headwidth}{16.0cm}
+\setlength{\footskip}{30pt}
+\setlength{\parindent}{0pt}
+%
+%
+
+%--------------------Set environment for Header and and Footer:
+%
+\pagestyle{fancy}
+\rhead{\includegraphics[scale=0.07]{/HTL_logo.pdf}}
+\chead{}
+%\lhead{\begin{tabular}{p{7.0cm}} 
+		%		\small{\changefont{pag}{b}{sc}\textcolor{black!30}{\DAName}}
+		%	\end{tabular} \vspace{0.1cm}}
+%\lfoot{\small{\changefont{pag}{b}{sc}\textcolor{black!30}{\SYear - \SClass - \DPLNameOne, \DPLNameTwo}}} 
+%\cfoot{}
+%\rfoot{\small{\changefont{pag}{b}{sc}\textcolor{black!30}{\thepage\ \textbf{\textcolor{orange!100}I} \pageref{LastPage}}}}
+\lhead{\begin{tabular}{p{14.0cm}} 
+		\small{\sffamily\bfseries\textcolor{black!30}{\DAName}}
+	\end{tabular} \vspace{0.1cm}}
+\lfoot{\small{\sffamily\bfseries\textcolor{black!30}{\SYear - \SClass - \DPLNameOne, \DPLNameTwo}}} 
+\cfoot{}
+\rfoot{\small{\sffamily\bfseries\textcolor{black!30}{\thepage\ \textbf{\textcolor{itblue}I} \pageref{LastPage}}}}
+%s
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\let\myHeadrule\headrule
+\let\myFootrule\footrule
+\renewcommand\headrule{\color{black!30}\myHeadrule }
+\renewcommand\footrule{\color{black!30}\myFootrule }
+\addto{\captionsngerman}{%
+	\renewcommand*{\contentsname}{Inhalt}
+	\renewcommand*{\listfigurename}{Abbildungen}
+	\renewcommand*{\listtablename}{Abbildungsverzeichnis}
+}
+%\pagestyle{fancy}
+%\fancypagestyle{ErsteSeite}{%
+	%	\fancyhf{}%
+	%	\fancyhead[L]{}
+	%}
+
+\fancypagestyle{ErsteSeite}{%
+	\fancyhf{} 
+	\renewcommand{\headrulewidth}{0.4pt}
+	
+	\fancyhead[C]{%
+		\begin{minipage}[b]{0.2\textwidth}
+			\raggedright
+			\includegraphics[width=\linewidth]{../../03_AUX/01_PICT/HTL-Weiz-Logo.pdf}
+		\end{minipage}%
+		\hfill
+		\begin{minipage}[b]{0.65\textwidth} 
+			\centering
+			\small 
+			\textbf{Höhere Technische Bundeslehranstalt Weiz}\\[2pt]
+			\footnotesize
+			\textbf{Höhere Abteilung für Elektrotechnik}\\
+			Ausbildungsschwerpunkt Informationstechnologie
+		\end{minipage}%
+		\hfill
+		\begin{minipage}[b]{0.12\textwidth} 
+			\raggedleft
+			\includegraphics[width=\linewidth]{../../03_AUX/01_PICT/HTL-Weiz-IT-Logo.png}
+		\end{minipage}%
+		\vspace{2mm} 
+	}
+	
+	% Fußzeile für ErsteSeite
+	
+}
+%\makenoidxglossaries
+\renewcommand*\acronymname{Vokabelverzeichnis}
+\renewcommand*\glossaryname{Vokabelverzeichnis}
+
+%--------------------Neue Umgebung für M E R K S A T Z (NEU) --------------------
+
+% Zählerdefinition
+\newcounter{MsNr}
+\renewcommand{\theMsNr}{\arabic{MsNr}}
+
+% Definition der Box mit tcolorbox
+\newtcolorbox{Merksatz}{
+	enhanced,              % Erlaubt Schatten
+	colback=yellow!10,     % Hintergrundfarbe
+	colframe=kaki,         % Rahmenfarbe
+	boxrule=1pt,           % Rahmendicke
+	arc=3pt,               % Eckenradius
+	drop fuzzy shadow,     % Weicher Schatten
+	width=15cm,            % Breite
+	center,                % Zentriert die Box
+	before upper={\refstepcounter{MsNr}\textcolor{kaki}{\large\textbf{Merke \theMsNr:}}~} % Titel
+}
+%--------------------------------------------------------------------------------
+
+% Settings for Codelistings within documentation:
+\lstset{ % General setup for the package
+	language=C,
+	basicstyle=\small\sffamily,
+	numbers=left,
+	numberstyle=\tiny,
+	frame=tb,
+	tabsize=4,
+	columns=fixed,
+	showstringspaces=false,
+	showtabs=false,
+	keepspaces,
+	commentstyle=\color{red},
+	keywordstyle=\color{blue}
+}
+
+\setcounter{footnote}{0}
+
+% \changefont{pag}{m}{n}
+
+
+
+% ==================== DB TIK Z SCHEMA ===============
+
+\newcommand{\pk}[1]{\textbf{#1}}
+\newcommand{\type}[1]{\textcolor{gray!70}{\small\texttt{#1}}}
+\newcommand{\fk}[1]{\textbf{#1}}
+
+\tikzset{
+	DB-Schema/.style={
+		dbtable/.style={
+			rectangle split,
+			rectangle split parts=2,
+			rectangle split part fill={blue!10!white, white},
+			draw=gray!40,
+			thick,
+			rounded corners=4pt,
+			minimum width=4.5cm,
+			align=left,
+			font=\sffamily\small,
+			inner sep=1.5ex
+		},
+		fk_line/.style={
+			draw=blue!50!gray,
+			thick,
+			-{Stealth[length=2.5mm]},
+			rounded corners=2mm
+		}
+	}
+}
+
+% ==================== ER TIKZ SCHEMA ===============
+\tikzset{
+	er entity/.style={
+		rectangle, draw=black, thick,
+		minimum width=3cm, minimum height=1cm,
+		fill=blue!10, font=\bfseries,
+		text centered
+	},
+	er weak entity/.style={
+		rectangle, draw=black, thick, double, double distance=2pt,
+		minimum width=3cm, minimum height=1cm,
+		fill=blue!5, font=\bfseries,
+		text centered
+	},
+	er attribute/.style={
+		ellipse, draw=black, thick,
+		minimum width=2.4cm, minimum height=0.8cm,
+		fill=yellow!25,
+		text centered, font=\small
+	},
+	er pk/.style={
+		ellipse, draw=black, thick,
+		minimum width=2.4cm, minimum height=0.8cm,
+		fill=yellow!25,
+		text centered, font=\small        % \underline ENTFERNT
+	},
+	er multivalued/.style={
+		ellipse, draw=black, thick, double, double distance=2pt,
+		minimum width=2.4cm, minimum height=0.8cm,
+		fill=yellow!15,
+		text centered, font=\small
+	},
+	er derived/.style={
+		ellipse, draw=black, thick, dashed,
+		minimum width=2.4cm, minimum height=0.8cm,
+		fill=yellow!10,
+		text centered, font=\small
+	},
+	er relation/.style={
+		diamond, draw=black, thick, aspect=2.5,
+		minimum width=2.5cm, minimum height=1cm,
+		fill=red!12, font=\bfseries\small,
+		text centered
+	},
+	er weak relation/.style={
+		diamond, draw=black, thick, aspect=2.5, double, double distance=2pt,
+		minimum width=2.5cm, minimum height=1cm,
+		fill=red!7, font=\bfseries\small,
+		text centered
+	},
+	er edge/.style={
+		draw=black, thick
+	},
+	er total/.style={
+		draw=black, thick, double, double distance=2pt
+	},
+	er card/.style={
+		font=\bfseries\small, midway
+	}
+}
+
+\newenvironment{erdiagram}[1][]{
+	\begin{tikzpicture}[
+		node distance=2.5cm and 3.5cm,
+		>=Stealth,
+		#1
+		]
+	}{
+	\end{tikzpicture}
+}

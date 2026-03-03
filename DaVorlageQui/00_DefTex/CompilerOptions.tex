@@ -1,8 +1,0 @@
-%\KOMAoption{overfullrule} Option zu volle Zeilen mit kleinem Rechteck markieren
-\newcommand\setFlagsCompileFinal{\KOMAoption{overfullrule}{false}
-								 \fxsetup{final}}
-\newcommand\setFlagsCompileDraft{\KOMAoption{overfullrule}{true}
-								 \fxsetup{draft}}
-\ifCompileFinal\expandafter\setFlagsCompileFinal%
-\else\expandafter\setFlagsCompileDraft%
-\fi

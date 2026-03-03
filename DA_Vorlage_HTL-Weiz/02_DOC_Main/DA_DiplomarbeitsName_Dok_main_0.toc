@@ -1,0 +1,34 @@
+\babel@toc {ngerman}{}\relax 
+\contentsline {section}{\nonumberline Eidesstattliche Erklärung}{2}{}%
+\contentsline {section}{\nonumberline Kurzbeschreibung}{3}{}%
+\contentsline {section}{\nonumberline Abstract}{4}{}%
+\contentsline {section}{\nonumberline Vorwort}{5}{}%
+\contentsline {section}{\numberline {1}Projektmanagement}{8}{}%
+\contentsline {section}{\numberline {2}Dokumentation der Diplomarbeit}{8}{}%
+\contentsline {subsection}{\numberline {2.1}Zeichnungen}{8}{}%
+\contentsline {subsection}{\numberline {2.2}Zitate und Quellenangaben}{9}{}%
+\contentsline {subsection}{\numberline {2.3}FactSheets}{9}{}%
+\contentsline {subsection}{\numberline {2.4}Laborübungen}{9}{}%
+\contentsline {subsection}{\numberline {2.5}Designreports}{10}{}%
+\contentsline {section}{\numberline {3}Konstruktion und Entwurf von Baugruppen}{11}{}%
+\contentsline {subsection}{\numberline {3.1}Berechnungen}{11}{}%
+\contentsline {subsection}{\numberline {3.2}Simulation elektronischer Schaltungen}{11}{}%
+\contentsline {subsection}{\numberline {3.3}Platinenlayout}{11}{}%
+\contentsline {section}{\numberline {4}Kommunikation}{11}{}%
+\contentsline {subsection}{\numberline {4.1}Schriftliche Korrespondenz}{11}{}%
+\contentsline {subsection}{\numberline {4.2}Datenaustausch}{12}{}%
+\contentsline {section}{\numberline {5}Beurteilung der Diplomarbeit}{12}{}%
+\contentsline {subsection}{\numberline {5.1}Schriftliche und praktische Beurteilungskriterien der Arbeit}{12}{}%
+\contentsline {subsection}{\numberline {5.2}Mündliche Beurteilungskriterien der Präsentation und Verteidigung}{12}{}%
+\contentsline {section}{\numberline {6}Regeln für Zitate und Quellenangaben\footnote {Das Quellenverzeichnis ist ein verbindlicher Bestandteil der Diplomarbeit.}}{13}{}%
+\contentsline {subsection}{\numberline {6.1}Zitate}{13}{}%
+\contentsline {subsubsection}{\numberline {6.1.1}Das wörtliche Zitat}{14}{}%
+\contentsline {subsubsection}{\numberline {6.1.2}Das indirekte Zitat}{14}{}%
+\contentsline {section}{\numberline {7}Regeln für Zitate und Quellenangaben\footnote {Das Quellenverzeichnis ist ein verbindlicher Bestandteil der Diplomarbeit.}}{15}{}%
+\contentsline {subsection}{\numberline {7.1}Zitate}{15}{}%
+\contentsline {subsubsection}{\numberline {7.1.1}Das wörtliche Zitat}{16}{}%
+\contentsline {subsubsection}{\numberline {7.1.2}Das indirekte Zitat}{16}{}%
+\contentsline {section}{\numberline {8}Zusammenfassung}{17}{}%
+\contentsline {section}{\numberline {9}Anhang}{18}{}%
+\contentsline {section}{\numberline {10}Verzeichnisse}{19}{}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 
