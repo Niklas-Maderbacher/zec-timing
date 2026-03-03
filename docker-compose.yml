@@ -13,15 +13,29 @@ services:
     container_name: zec-desktop-app-frontend
     build:
       context: ./frontend/zeitnehmerapplikation
-    restart: always
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_DESKTOP_APP_API_URL=${NEXT_PUBLIC_DESKTOP_APP_API_URL}
+        - NEXT_PUBLIC_MQTT_WORKER_API_URL=${NEXT_PUBLIC_MQTT_WORKER_API_URL}
+        - NEXT_PUBLIC_API_KEY=${NEXT_PUBLIC_API_KEY}
+
+    restart: unless-stopped
     env_file:
       - .env
     ports:
-      - ${FRONTEND_PORT_DESKTOP_APP}:${NEXT_JS_PORT}
+      # Expose port 3000 from container (Bun preview server default)
+      - "${FRONTEND_PORT_DESKTOP_APP:-5173}:3000"
     environment:
-      - ${NEXT_PUBLIC_DESKTOP_APP_API_URL}:${NEXT_PUBLIC_DESKTOP_APP_API_URL}
-      - ${NEXT_PUBLIC_MQTT_WORKER_API_URL}:${NEXT_PUBLIC_MQTT_WORKER_API_URL}
-      - ${NEXT_PUBLIC_API_KEY}:${NEXT_PUBLIC_API_KEY}
+      # Runtime environment variables (fixed syntax - was using : instead of =)
+      - NEXT_PUBLIC_DESKTOP_APP_API_URL=${NEXT_PUBLIC_DESKTOP_APP_API_URL}
+      - NEXT_PUBLIC_MQTT_WORKER_API_URL=${NEXT_PUBLIC_MQTT_WORKER_API_URL}
+      - NEXT_PUBLIC_API_KEY=${NEXT_PUBLIC_API_KEY}
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   zec-db-data:

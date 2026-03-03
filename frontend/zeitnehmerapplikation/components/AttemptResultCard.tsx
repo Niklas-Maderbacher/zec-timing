@@ -4,7 +4,7 @@ import React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import axios from "axios"
-import { SERVER_API_URL, API_KEY } from "@/next.config"
+import { SERVER_API_URL, API_KEY } from "@/lib/env"
 import { Attempt, Penalty } from "@/components/types"
 
 interface AttemptResultCardProps {
@@ -92,7 +92,7 @@ export function AttemptResultCard({
             `${hours.toString().padStart(2, "0")}:` +
             `${minutes.toString().padStart(2, "0")}:` +
             `${seconds.toString().padStart(2, "0")}.` +
-            `${(milliseconds * 1000).toString().padStart(6, "0")}+0000`
+            `${(milliseconds * 1000).toString().padStart(6, "0")}`
 
     }
 
