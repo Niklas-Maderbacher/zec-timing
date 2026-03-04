@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service
+  name: user-deployment
   labels:
     app: user-service
 spec:
@@ -55,7 +55,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service
+  name: auth-deployment
   labels:
     app: auth-service
 spec:
@@ -117,7 +117,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: challenge-service
+  name: challenge-deployment
   labels:
     app: challenge-service
 spec:
@@ -161,7 +161,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: attempt-service
+  name: attempt-deployment
   labels:
     app: attempt-service
 spec:
@@ -211,7 +211,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: score-service
+  name: score-deployment
   labels:
     app: score-service
 spec:
@@ -261,7 +261,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: team-service
+  name: team-deployment
   labels:
     app: team-service
 spec:
@@ -307,7 +307,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: keycloak
+  name: keycloak-deployment
   labels:
     app: keycloak
 spec:
@@ -350,3 +350,26 @@ spec:
             limits:
               cpu: 1
               memory: 1000Mi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-deployment
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: ghcr.io/niklas-maderbacher/zec-timing:api-gateway
+          ports:
+            - containerPort: 80
