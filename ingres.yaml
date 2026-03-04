@@ -7,80 +7,10 @@ spec:
     - host: localhost
       http:
         paths:
-          - path: /api/users
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: user-service-service
+                name: nginx-gateway-service
                 port:
-                  number: 8001
-          - path: /api/auth
-            pathType: Prefix
-            backend:
-              service:
-                name: auth-service-service
-                port:
-                  number: 8002
-          - path: /api/challenges
-            pathType: Prefix
-            backend:
-              service:
-                name: challenge-service-service
-                port:
-                  number: 8003
-          - path: /api/attempts
-            pathType: Prefix
-            backend:
-              service:
-                name: attempt-service-service
-                port:
-                  number: 8004
-          - path: /api/scores
-            pathType: Prefix
-            backend:
-              service:
-                name: score-service-service
-                port:
-                  number: 8005
-          - path: /api/leaderboard
-            pathType: Prefix
-            backend:
-              service:
-                name: score-service-service
-                port:
-                  number: 8005
-          - path: /api/teams
-            pathType: Prefix
-            backend:
-              service:
-                name: team-service-service
-                port:
-                  number: 8006
-          - path: /api/penalties
-            pathType: Prefix
-            backend:
-              service:
-                name: score-service-service
-                port:
-                  number: 8005
-          - path: /api/drivers
-            pathType: Prefix
-            backend:
-              service:
-                name: team-service-service
-                port:
-                  number: 8006
-          - path: /keycloak
-            pathType: Prefix
-            backend:
-              service:
-                name: keycloak-service
-                port:
-                  number: 8090
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: team-service
-                port:
-                  number: 8006
+                  number: 80
