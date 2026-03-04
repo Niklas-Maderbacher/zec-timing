@@ -64,4 +64,4 @@ jobs:
           pull: true
           push: true
           tags: ghcr.io/niklas-maderbacher/zec-timing:mqtt-broker
-          context: ./mqtt-worker
+          context: ./mosquitto
