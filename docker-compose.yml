@@ -32,28 +32,6 @@ services:
       timeout: 3s
       retries: 5
 
-  #  zec-mqtt-worker-testing:
-  #    container_name: zec-mqtt-worker-testing
-  #    image: python:3.12
-  #    build:
-  #      context: ./mqtt-worker
-  #    depends_on:
-  #      zec-redis-db:
-  #        condition: service_healthy
-  #        restart: true
-  #      zec-mqtt-broker:
-  #        condition: service_healthy
-  #        restart: true
-  #    command: bash app/tests/test.sh
-  #    env_file:
-  #      - .env
-  #    environment:
-  #      - MQTT_IP=${MQTT_IP}
-  #      - MQTT_PORT=${MQTT_PORT}
-  #      - MQTT_TOPIC=${MQTT_TOPIC}
-  #      - REDIS_HOST=${REDIS_HOST}
-  #      - REDIS_PORT=${REDIS_PORT}
-
   zec-mqtt-worker:
     container_name: zec-mqtt-worker
     image: ghcr.io/niklas-maderbacher/zec-timing:mqtt-worker
