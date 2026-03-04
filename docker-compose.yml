@@ -1,15 +1,12 @@
 services:
   zec-mqtt-broker:
     container_name: zec-mqtt-broker
-    image: eclipse-mosquitto
+    image: ghcr.io/niklas-maderbacher/zec-timing:mqtt-broker
     env_file:
       - .env
     ports:
       - ${MQTT_PORT}:${MQTT_PORT}
       - 8100:8080
-    volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/log:/mosquitto/log
     healthcheck:
       test: [ "CMD-SHELL", "pgrep mosquitto" ]
       interval: 10s
@@ -59,8 +56,7 @@ services:
 
   zec-mqtt-worker:
     container_name: zec-mqtt-worker
-    build:
-      context: ./mqtt-worker
+    image: ghcr.io/niklas-maderbacher/zec-timing:mqtt-worker
     restart: always
     depends_on:
       zec-redis-db:
