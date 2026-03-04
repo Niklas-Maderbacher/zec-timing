@@ -1,6 +1,10 @@
-from fastapi import APIRouter, Form, HTTPException, status
+from fastapi import APIRouter, Form, HTTPException, Response, status, Request
 import app.crud.auth as crud
 from app.database.dependency import AdminUser, TeamLeadUser, ViewerUser
+import requests
+from app.core.config import settings
+
+USER_URL = settings.USER_SERVICE_URL
 
 router = APIRouter()
 
@@ -44,17 +48,24 @@ def verify_admin(current_user: AdminUser):
     }
 
 @router.get("/internal/verify/teamlead", status_code=status.HTTP_200_OK)
-def verify_teamlead(current_user: TeamLeadUser):
+def verify_teamlead(request: Request, response: Response, current_user: TeamLeadUser):
     if not current_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or missing token"
         )
-
+    authorization = request.headers.get("Authorization")
+    user_resp = requests.get(f"{USER_URL}/api/users/me", headers={"Authorization": authorization})
+    user_resp.raise_for_status()
+    user_data = user_resp.json()
+    response.headers["X-User-Id"] = current_user["sub"]
+    response.headers["X-Team-Id"] = str(user_data.get("team_id"))
+    response.headers["X-Role"] = current_user["roles"][0] if current_user["roles"] else ""
     return {
         "active": True,
         "sub": current_user["sub"],
         "username": current_user["username"],
+        "team_id": user_data.get("team_id"),
         "email": current_user["email"],
         "roles": current_user["roles"],
     }

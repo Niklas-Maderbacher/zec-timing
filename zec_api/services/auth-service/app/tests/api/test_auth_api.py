@@ -41,13 +41,38 @@ def test_verify_admin_success(client, override_admin):
     assert resp.json()["active"] is True
     assert "ADMIN" in resp.json()["roles"]
 
-def test_verify_teamlead_success(client, override_teamlead):
+def test_verify_teamlead_success(client, override_teamlead, mocker):
+    mocker.patch(
+        "app.api.routes.auth.requests.get",
+        return_value=mocker.Mock(
+            status_code=200,
+            json=lambda: {"team_id": 42},
+            raise_for_status=lambda: None,
+        ),
+    )
     resp = client.get(
         "/api/auth/internal/verify/teamlead",
         headers={"Authorization": "Bearer token"},
     )
     assert resp.status_code == 200
     assert "TEAM_LEAD" in resp.json()["roles"]
+    assert resp.json()["team_id"] == 42
+
+def test_verify_teamlead_sets_headers(client, override_teamlead, mocker):
+    mocker.patch(
+        "app.api.routes.auth.requests.get",
+        return_value=mocker.Mock(
+            status_code=200,
+            json=lambda: {"team_id": 42},
+            raise_for_status=lambda: None,
+        ),
+    )
+    resp = client.get(
+        "/api/auth/internal/verify/teamlead",
+        headers={"Authorization": "Bearer token"},
+    )
+    assert resp.headers["x-team-id"] == "42"
+    assert resp.headers["x-role"] == "TEAM_LEAD"
 
 def test_verify_viewer_success(client, override_viewer):
     resp = client.get(
@@ -70,9 +95,9 @@ def test_get_admin_token_success(client, mocker):
     assert response.status_code == 200
     assert response.json() == "admin-token"
 
-def test_login_missing_fields_returns_400(client):
+def test_login_missing_fields_returns_422(client):
     response = client.post("/api/auth/login", data={})
-    assert response.status_code == 422  
+    assert response.status_code == 422
 
 def test_login_invalid_credentials_returns_401(client, mocker):
     class FakeResponse:

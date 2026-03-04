@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     KEYCLOAK_JWKS_URL: str = ""
     KEYCLOAK_USER_URL: str = ""
 
+    USER_SERVICE_URL: str = ""    
+
     @computed_field
     @property
     def KEYCLOAK_REALM_URL(self) -> str:

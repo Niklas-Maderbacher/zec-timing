@@ -6,3 +6,5 @@ typing-extensions
 uvicorn[standard]
 psycopg[binary]
 requests
+pandas
+openpyxl

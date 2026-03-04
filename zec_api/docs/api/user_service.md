@@ -27,11 +27,11 @@ Get all endpoints return a list of objects of this
 ```json
 {
   "id": 1,
-  "team_id": 1,
+  "kc_id": "5f2d52db-b766-4eb7-8f81-9ad1bc6fde26",
   "username": "team_leader_01",
-  "email": "",
-  "kc_id": "a3f8b2c1-9d4e-4f5a-8b3c-1e2f3a4b5c6d",
-  "created_at": "2024-02-14T09:00:00.000000"
+  "team_id": 1,
+  "team_name": "testing team",
+  "roles":["TEAM_LEAD"]
 }
 ```
 
@@ -204,3 +204,14 @@ Removes one or more roles from a user.
 - `403 Forbidden`: Insufficient permissions
 - `404 Not Found`: User or role not found
 - `422 Unprocessable Entity`: Validation error
+
+## Get Current User
+Gets the current user.
+
+**Authorization:** Authenticated user required  
+**Method:** `GET`  
+**URL:** `http://hostname/users/me`
+
+### Responses
+- `200 OK`: Roles successfully removed
+- `401 Unauthorized`: Missing or invalid token

@@ -6,3 +6,4 @@ typing-extensions
 uvicorn[standard]
 psycopg[binary]
 requests
+PyJWT

@@ -72,31 +72,40 @@ def seeded_attempts(db):
 
 @pytest.fixture(autouse=True)
 def mock_requests():
-    with patch("app.crud.attempt.requests") as mock_requests:
+    with patch("app.crud.attempt.requests") as mock_attempt, \
+         patch("app.crud.export.requests") as mock_export:
+
         def mock_get(url, *args, **kwargs):
             response = Mock()
             response.status_code = 200
-
             if "/api/challenges/" in url:
-                response.json.return_value = {
-                    "id": 1,
-                    "max_attempts": 3,
-                }
+                response.json.return_value = {"id": 1, "max_attempts": 3, "name": "Speed Run"}
+            elif "/api/teams/by-ids/" in url:
+                response.json.return_value = [{"id": 1, "name": "Team Alpha", "category": "A"}]
             elif "/api/teams/" in url:
                 response.json.return_value = {"id": 1}
+            elif "/api/drivers/by-ids/" in url:
+                response.json.return_value = [
+                    {"id": 1, "name": "Alice", "weight": 60},
+                    {"id": 2, "name": "Bob", "weight": 75},
+                ]
             elif "/api/drivers/" in url:
                 response.json.return_value = {"id": 1}
             else:
                 response.json.return_value = {}
             return response
+
         def mock_response(*args, **kwargs):
             response = Mock()
             response.status_code = 200
             return response
-        mock_requests.get.side_effect = mock_get
-        mock_requests.post.side_effect = mock_response
-        mock_requests.delete.side_effect = mock_response
-        yield mock_requests
+
+        for m in (mock_attempt, mock_export):
+            m.get.side_effect = mock_get
+            m.post.side_effect = mock_response
+            m.delete.side_effect = mock_response
+
+        yield mock_attempt, mock_export
 
 @pytest.fixture(scope="function")
 def client(db, seeded_attempts, mock_requests):

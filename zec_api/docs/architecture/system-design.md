@@ -1,47 +1,61 @@
 ```mermaid
 flowchart TD
-    A[WebApp Frontend] -->|Authenticates via| K[Auth Service]
-    
-    A -->|API requests with JWT token| B[API Gateway]
-    
-    B -->|Validates JWT via| K
-    
-    B --> C1[Team Service]
-    B --> C2[Challenge Service]
-    B --> C3[Attempt Service]
-    B --> C4[Score Service]
-    B --> C5[Leaderboard Service]
-    B --> C6[User Service]
-    
-    C1 --> D[(Database)]
-    C2 --> D
-    C3 --> D
-    C4 --> D
-    C5 --> D
-    C6 --> D
-    
-    C3 -->|benötigt| C1
-    C3 -->|benötigt| C2
-    C4 -->|benötigt| C3
-    C4 -->|benötigt| C2
-    C5 -->|benötigt| C4
-    C5 -->|benötigt| C1
-    
-    K -.->|User synchronization| C6
-    C6 -.->|Custom user attributes| K
-    
-    %% Authentication flows
-    subgraph "Authentication Layer"
-        K
-        B
+    A[WebApp Frontend] -->|API requests with JWT| B[Nginx API Gateway]
+    B -->|Validates JWT internally via auth_request| AS[Auth Service]
+    AS -->|token validation| KC[Keycloak]
+
+    B --> US[User Service]
+    B --> CS[Challenge Service]
+    B --> ATS[Attempt Service]
+    B --> SS[Score Service & Leaderboard]
+    B --> TS[Team Service]
+    B --> AS
+
+    US --> US_DB[(user-db)]
+    AS --> AS_DB[(auth-db)]
+    CS --> CS_DB[(challenge-db)]
+    ATS --> ATS_DB[(attempt-db)]
+    SS --> SS_DB[(score-db)]
+    TS --> TS_DB[(team-db)]
+    KC --> KC_DB[(keycloak-db)]
+
+    %% Inter-service HTTP calls
+    US -->|sync| AS
+    US -->|team lookup| TS
+
+    AS -->|user sync| US
+    AS -->|token/user mgmt| KC
+
+    ATS -->|trigger scoring| SS
+    ATS -->|team + driver info| TS
+    ATS -->|challenge info| CS
+
+    SS -->|attempt data| ATS
+    SS -->|team info| TS
+    SS -->|challenge info| CS
+
+    TS -->|check attempts before delete| ATS
+
+    subgraph "Auth Layer"
+        KC
+        AS
     end
-    
+
     subgraph "Business Services"
-        C1
-        C2
-        C3
-        C4
-        C5
-        C6
+        US
+        CS
+        ATS
+        SS
+        TS
+    end
+
+    subgraph "Databases"
+        US_DB
+        AS_DB
+        CS_DB
+        ATS_DB
+        SS_DB
+        TS_DB
+        KC_DB
     end
 ```

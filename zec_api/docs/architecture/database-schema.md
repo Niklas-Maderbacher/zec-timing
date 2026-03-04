@@ -4,6 +4,7 @@ erDiagram
         int id PK
         string kc_id UNIQUE
         string username UNIQUE
+        int team_id FK
         datetime created_at
     }
 
@@ -71,6 +72,7 @@ erDiagram
     }
 
     TEAMS ||--o{ DRIVERS : "has"
+    TEAMS ||--o{ USERS : "has"
     TEAMS ||--o{ ATTEMPTS : "submits"
     DRIVERS ||--o{ ATTEMPTS : "performs"
     CHALLENGES ||--o{ ATTEMPTS : "defines"

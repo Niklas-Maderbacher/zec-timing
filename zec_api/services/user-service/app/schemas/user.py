@@ -32,7 +32,7 @@ class UpdateUserKC(BaseModel):
     password: Optional[str] = None
     team_id: Optional[int] = None
 
-class UserResponseKC(UserBase):
+class UserResponseKC(BaseModel):
     id: int
     kc_id: str
     username: str

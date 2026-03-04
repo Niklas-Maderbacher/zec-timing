@@ -2,7 +2,8 @@ FROM nginx:1.25-alpine
 
 RUN rm /etc/nginx/conf.d/default.conf
 
-COPY ./templates /etc/nginx/templates
+#COPY ./templates /etc/nginx/templates
+COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 

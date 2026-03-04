@@ -21,3 +21,6 @@ class AuthenticationFailed(TeamserviceApiError):
 
 class InvalidTokenError(TeamserviceApiError):
     pass
+
+class InsufficientPermissions(TeamserviceApiError):
+    pass
