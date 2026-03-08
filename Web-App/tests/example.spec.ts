@@ -2,28 +2,21 @@ import { test, expect } from '@playwright/test';
 
 const BASE = 'http://localhost:3000';
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 async function loginAs(page: any, username: string, password: string) {
   await page.goto(BASE);
   await page.getByRole('button', { name: 'Account' }).click();
   await page.getByRole('textbox', { name: 'Username' }).fill(username);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Login' }).click();
-  // Wait until the login button is gone, confirming auth state has settled
   await expect(page.getByRole('button', { name: 'Login' })).not.toBeVisible();
+  await page.getByRole('button', { name: 'Leaderboard' }).click();
 }
 
 async function logout(page: any) {
+  await page.getByRole('button', { name: 'Leaderboard' }).click();
   await page.getByRole('button', { name: 'Account' }).click();
   await page.getByRole('button', { name: 'Logout' }).click();
 }
-
-// ---------------------------------------------------------------------------
-// Admin — navigation
-// ---------------------------------------------------------------------------
 
 test.describe('Admin navigation', () => {
   test.describe.configure({ mode: 'serial' });
@@ -91,16 +84,12 @@ test.describe('Admin navigation', () => {
     await loginAs(page, 'admin', 'changeme');
     await page.getByRole('button', { name: 'Leaderboard' }).click();
     await page.getByRole('button', { name: 'Account' }).click();
+    await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible();
     await expect(page.getByText('Username')).toBeVisible();
     await expect(page.getByText('admin').first()).toBeVisible();
     await expect(page.getByText('Role')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible();
   });
 });
-
-// ---------------------------------------------------------------------------
-// Admin — Attempts management
-// ---------------------------------------------------------------------------
 
 test.describe('Admin — Attempts', () => {
   test.describe.configure({ mode: 'serial' });
@@ -108,9 +97,7 @@ test.describe('Admin — Attempts', () => {
   test('attempts load for selected challenge', async ({ page }) => {
     await loginAs(page, 'admin', 'changeme');
     await page.getByRole('button', { name: 'Attempts' }).click();
-    // Challenge selector should be pre-populated with the first challenge
     await expect(page.locator('[role="combobox"]').first()).not.toBeEmpty();
-    // Table body should have at least one row or show empty state
     const rows = page.getByRole('row');
     await expect(rows.first()).toBeVisible();
   });
@@ -122,8 +109,10 @@ test.describe('Admin — Attempts', () => {
     const options = page.getByRole('option');
     const count = await options.count();
     if (count > 1) {
+      const secondOption = await options.nth(1).textContent();
       await options.nth(1).click();
-      await expect(page.getByRole('heading', { name: 'All Attempts' })).toBeVisible();
+      await expect(page.locator('[role="combobox"]').first()).toHaveText(secondOption!);
+      await expect(page.getByText('All Attempts')).toBeVisible();
     }
   });
 
@@ -152,15 +141,10 @@ test.describe('Admin — Attempts', () => {
       await page.getByLabel('Validity Status').click();
       await expect(page.getByRole('option', { name: '✓ Valid' })).toBeVisible();
       await expect(page.getByRole('option', { name: '✗ Invalid' })).toBeVisible();
-      // Close without saving
       await page.keyboard.press('Escape');
     }
   });
 });
-
-// ---------------------------------------------------------------------------
-// Admin — Challenges management
-// ---------------------------------------------------------------------------
 
 test.describe('Admin — Challenges', () => {
   test.describe.configure({ mode: 'serial' });
@@ -168,7 +152,6 @@ test.describe('Admin — Challenges', () => {
   test('challenges table lists existing challenges', async ({ page }) => {
     await loginAs(page, 'admin', 'changeme');
     await page.getByRole('button', { name: 'Challenges' }).click();
-    // At least the header row should be visible
     await expect(page.getByRole('columnheader', { name: 'Name' })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Max Attempts' })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Start MACs' })).toBeVisible();
@@ -203,10 +186,6 @@ test.describe('Admin — Challenges', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Admin — Export
-// ---------------------------------------------------------------------------
-
 test.describe('Admin — Export', () => {
   test.describe.configure({ mode: 'serial' });
 
@@ -214,6 +193,7 @@ test.describe('Admin — Export', () => {
     await loginAs(page, 'admin', 'changeme');
     await page.getByRole('button', { name: 'Export' }).click();
     await expect(page.getByText('Leaderboard Export')).toBeVisible();
+    await expect(page.getByRole('combobox').first()).not.toHaveText('Select a challenge');
     await expect(page.getByRole('button', { name: 'Export Leaderboard' })).toBeEnabled();
   });
 
@@ -221,6 +201,7 @@ test.describe('Admin — Export', () => {
     await loginAs(page, 'admin', 'changeme');
     await page.getByRole('button', { name: 'Export' }).click();
     await expect(page.getByText('Attempts Export')).toBeVisible();
+    await expect(page.getByRole('combobox').first()).not.toHaveText('Select a challenge');
     await expect(page.getByRole('button', { name: 'Export Attempts' })).toBeEnabled();
   });
 
@@ -241,10 +222,6 @@ test.describe('Admin — Export', () => {
     await expect(categorySelect).toHaveText('Professional Class');
   });
 });
-
-// ---------------------------------------------------------------------------
-// Admin — Leaderboard
-// ---------------------------------------------------------------------------
 
 test.describe('Admin — Leaderboard', () => {
   test.describe.configure({ mode: 'serial' });
@@ -269,10 +246,6 @@ test.describe('Admin — Leaderboard', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Login — edge cases
-// ---------------------------------------------------------------------------
-
 test.describe('Login', () => {
   test.describe.configure({ mode: 'serial' });
 
@@ -282,12 +255,11 @@ test.describe('Login', () => {
     await page.getByRole('textbox', { name: 'Username' }).fill('notauser');
     await page.getByRole('textbox', { name: 'Password' }).fill('wrongpassword');
     await page.getByRole('button', { name: 'Login' }).click();
-    await expect(page.getByRole('alert')).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: /invalid/i })).toBeVisible();
   });
 
   test('login form clears after successful login', async ({ page }) => {
     await loginAs(page, 'admin', 'changeme');
-    // After login the form is replaced by account info — no inputs visible
     await page.getByRole('button', { name: 'Account' }).click();
     await expect(page.getByRole('textbox', { name: 'Username' })).not.toBeVisible();
   });
@@ -295,7 +267,7 @@ test.describe('Login', () => {
   test('logging out returns to login form', async ({ page }) => {
     await loginAs(page, 'admin', 'changeme');
     await logout(page);
-    await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Username' })).toBeVisible();
   });
 
@@ -307,17 +279,13 @@ test.describe('Login', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// Teamlead role
-// ---------------------------------------------------------------------------
-
 test.describe('Teamlead navigation', () => {
   test.describe.configure({ mode: 'serial' });
 
   test('teamlead only sees allowed tabs', async ({ page }) => {
     await loginAs(page, 'teamlead', 'changeme');
-    await expect(page.getByRole('button', { name: 'Leaderboard' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Teams' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Leaderboard' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Account' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Attempts' })).not.toBeVisible();
     await expect(page.getByRole('button', { name: 'Users' })).not.toBeVisible();
@@ -328,8 +296,9 @@ test.describe('Teamlead navigation', () => {
   test('teamlead Teams tab shows their own team view', async ({ page }) => {
     await loginAs(page, 'teamlead', 'changeme');
     await page.getByRole('button', { name: 'Teams' }).click();
-    await expect(page.getByRole('heading', { name: /team/i })).toBeVisible();
-    // TeamLeadView has driver management; confirm admin TeamsTab heading is NOT shown
+    await expect(page.getByText('Team Details')).toBeVisible();
+    await expect(page.getByText('Team Drivers')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Edit Team' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Teams Management' })).not.toBeVisible();
   });
 
@@ -339,10 +308,6 @@ test.describe('Teamlead navigation', () => {
     await expect(page.getByText('Advanced Class')).toBeVisible();
   });
 });
-
-// ---------------------------------------------------------------------------
-// Viewer role
-// ---------------------------------------------------------------------------
 
 test.describe('Viewer navigation', () => {
   test.describe.configure({ mode: 'serial' });
