@@ -1,0 +1,251 @@
+\documentclass[12pt, a4paper]{report}
+
+% Encoding & Language
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+
+% Layout
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% Hyperlinks & PDF Metadata
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    pdftitle={ZEC-Timing Diplomarbeit},
+    pdfauthor={Niklas, David},
+    pdfsubject={Diplomarbeit HTL Weiz},
+}
+
+% Misc
+\usepackage{parskip}
+\usepackage{microtype}
+
+% -------------------------------------------------------
+
+\begin{document}
+
+% ==================== DANKSAGUNG ====================
+\chapter*{Danksagung}
+\addcontentsline{toc}{chapter}{Danksagung}
+% (beide zusammen ca. 1 Seite)
+
+
+% ==================== KURZBESCHREIBUNG ====================
+\chapter*{Kurzbeschreibung der Diplomarbeit}
+\addcontentsline{toc}{chapter}{Kurzbeschreibung der Diplomarbeit}
+% (pro Person ca. 1/2 Seite)
+
+\section*{Kurzbeschreibung -- Niklas}
+\addcontentsline{toc}{section}{Kurzbeschreibung -- Niklas}
+
+\section*{Kurzbeschreibung -- David}
+\addcontentsline{toc}{section}{Kurzbeschreibung -- David}
+
+
+% ==================== INHALTSVERZEICHNIS ====================
+\tableofcontents
+
+
+% ==================== INDIVIDUELLE AUFGABENSTELLUNG ====================
+\chapter*{Individuelle Aufgabenstellung}
+\addcontentsline{toc}{chapter}{Individuelle Aufgabenstellung}
+% (pro Person ca. 1 Seite)
+
+\section*{Aufgabenstellung -- Niklas}
+\addcontentsline{toc}{section}{Aufgabenstellung -- Niklas}
+
+\section*{Aufgabenstellung -- David}
+\addcontentsline{toc}{section}{Aufgabenstellung -- David}
+
+
+% ==================== ZIELE ====================
+\chapter*{Ziele}
+\addcontentsline{toc}{chapter}{Ziele}
+% (beide zusammen 1 Seite)
+
+
+% ==================== THEORETISCHE GRUNDLAGEN ====================
+\chapter*{Theoretische Grundlagen}
+\addcontentsline{toc}{chapter}{Theoretische Grundlagen}
+
+\section*{Containerisierung}
+\addcontentsline{toc}{section}{Containerisierung}
+% Niklas, 2-3 Seiten
+
+\section*{Microservices}
+\addcontentsline{toc}{section}{Microservices}
+% Niklas, 3-4 Seiten
+
+\section*{MQTT}
+\addcontentsline{toc}{section}{MQTT}
+% Niklas, 1-2 Seiten
+
+\section*{API und HTTP}
+\addcontentsline{toc}{section}{API und HTTP}
+% David, 1-2 Seiten
+
+
+% ==================== SYSTEMARCHITEKTUR ====================
+\chapter*{Systemarchitektur}
+\addcontentsline{toc}{chapter}{Systemarchitektur}
+
+\section*{Überblick}
+\addcontentsline{toc}{section}{Überblick}
+% David, 2-3 Seiten
+
+\section*{Erklärung}
+\addcontentsline{toc}{section}{Erklärung}
+% David, 1-2 Seiten
+
+\section*{Server}
+\addcontentsline{toc}{section}{Server}
+% David, 8-10 Seiten
+
+\section*{Desktop App}
+\addcontentsline{toc}{section}{Desktop App}
+% Niklas, 2-3 Seiten
+
+
+% ==================== IMPLEMENTATION ====================
+\chapter*{Implementation}
+\addcontentsline{toc}{chapter}{Implementation}
+
+\section*{Server}
+\addcontentsline{toc}{section}{Server}
+% David, 8-9 Seiten
+
+\section*{Desktop App}
+\addcontentsline{toc}{section}{Desktop App}
+% Niklas, 2-3 Seiten
+
+\section*{GitHub Workflows}
+\addcontentsline{toc}{section}{GitHub Workflows}
+% Niklas, 2-3 Seiten
+
+\section*{Kubernetes Cluster}
+\addcontentsline{toc}{section}{Kubernetes Cluster}
+% Niklas, 4-5 Seiten
+
+
+% ==================== TESTEN UND DEPLOYMENT ====================
+\chapter*{Testen und Deployment}
+\addcontentsline{toc}{chapter}{Testen und Deployment}
+
+\section*{Testen}
+\addcontentsline{toc}{section}{Testen}
+% Niklas, 3-4 Seiten
+
+\subsection*{Pytest}
+\addcontentsline{toc}{subsection}{Pytest}
+% David, 2-3 Seiten
+
+\subsection*{Playwright}
+\addcontentsline{toc}{subsection}{Playwright}
+% Niklas, 1-2 Seiten
+
+\section*{Deployment}
+\addcontentsline{toc}{section}{Deployment}
+
+\subsection*{Deployment mit Docker}
+\addcontentsline{toc}{subsection}{Deployment mit Docker}
+% Niklas, 1-2 Seiten
+
+\subsection*{Deployment mit Kubernetes}
+\addcontentsline{toc}{subsection}{Deployment mit Kubernetes}
+% Niklas, 2-4 Seiten
+
+
+% ==================== ERGEBNISSE ====================
+\chapter*{Ergebnisse}
+\addcontentsline{toc}{chapter}{Ergebnisse}
+% beide zusammen 1 Seite
+
+
+% ==================== ZUKUNFTSAUSBLICK ====================
+\chapter*{Zukunftsausblick}
+\addcontentsline{toc}{chapter}{Zukunftsausblick}
+% insgesamt 3-4 Seiten
+
+\section*{Datenbank-Skalierung}
+\addcontentsline{toc}{section}{Datenbank-Skalierung}
+% Niklas
+
+\section*{Stand über Lichtschranke abrufen}
+\addcontentsline{toc}{section}{Stand über Lichtschranke abrufen}
+% Niklas
+
+\section*{SD-Karten-Schutz}
+\addcontentsline{toc}{section}{SD-Karten-Schutz}
+% David
+
+
+% ==================== RESÜMEE ====================
+\chapter*{Resümee}
+\addcontentsline{toc}{chapter}{Resümee}
+% beide zusammen 1 Seite
+
+
+% ==================== ANHANG ====================
+\chapter*{Anhang}
+\addcontentsline{toc}{chapter}{Anhang}
+
+\section*{Stundenverzeichnis}
+\addcontentsline{toc}{section}{Stundenverzeichnis}
+
+\subsection*{Stundenverzeichnis -- Niklas}
+\addcontentsline{toc}{subsection}{Stundenverzeichnis -- Niklas}
+
+\subsection*{Stundenverzeichnis -- David}
+\addcontentsline{toc}{subsection}{Stundenverzeichnis -- David}
+
+\section*{Technologieauswahl}
+\addcontentsline{toc}{section}{Technologieauswahl}
+
+\subsection*{GitHub}
+\addcontentsline{toc}{subsection}{GitHub}
+
+\subsection*{Docker}
+\addcontentsline{toc}{subsection}{Docker}
+
+\subsection*{Kubernetes}
+\addcontentsline{toc}{subsection}{Kubernetes}
+
+\subsection*{MQTT}
+\addcontentsline{toc}{subsection}{MQTT}
+
+\subsection*{Redis}
+\addcontentsline{toc}{subsection}{Redis}
+
+\subsection*{PostgreSQL}
+\addcontentsline{toc}{subsection}{PostgreSQL}
+
+\subsection*{Keycloak}
+\addcontentsline{toc}{subsection}{Keycloak}
+
+\subsection*{SQLAlchemy}
+\addcontentsline{toc}{subsection}{SQLAlchemy}
+
+\subsection*{FastAPI}
+\addcontentsline{toc}{subsection}{FastAPI}
+
+\subsection*{Next.js}
+\addcontentsline{toc}{subsection}{Next.js}
+
+\subsection*{shadcn/ui}
+\addcontentsline{toc}{subsection}{shadcn/ui}
+
+
+% ==================== ABBILDUNGSVERZEICHNIS ====================
+\listoffigures
+\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+
+
+% ==================== QUELLENVERZEICHNIS ====================
+\bibliographystyle{plain}
+\bibliography{quellen}
+\addcontentsline{toc}{chapter}{Quellenverzeichnis}
+
+
+\end{document}
