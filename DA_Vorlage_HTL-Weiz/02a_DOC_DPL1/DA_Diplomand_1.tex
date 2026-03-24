@@ -3,16 +3,16 @@
 %=========================== B E G I N   S U B D O C U M E N T  ==========================
 %****************************************************************************************************
 %
-\documentclass[a4paper, 12pt, xcolor=dvipsnames]{scrartcl}		% Article als Modul
-\input{./../00_LATdef/UsePackages.tex}                    			% Input file für gemeinsame Package Definitionen
+\documentclass[a4paper, 12pt, xcolor=dvipsnames]{scrartcl}
+\input{./../00_LATdef/UsePackages.tex}
 %
 %--------------------Set data for document:
 \newcommand{\SYear}{2025/26}
 \newcommand{\SClass}{5AHIT}
 \newcommand{\ADatum}{XX. April 2026}
-\newcommand{\DAName}{Kennzeichenerkennungssystem Parkplatz Zotter}
+\newcommand{\DAName}{ZEC-Timing}
 \newcommand{\DPLNameOne}{Darnhofer David}
-\newcommand{\DPLNameTwo}{}
+\newcommand{\DPLNameTwo}{Niklas}
 \newcommand{\BNameOne}{Mock}
 \newcommand{\BNameTwo}{}
 %
@@ -22,9 +22,52 @@
 %
 \begin{document}
 
-% Kapitel 1: Einleitung
-\input{./../02a_DOC_DPL1/kap_02_theoretische_grundlagen.tex}
+% Danksagung
+\input{./../02a_DOC_DPL1/kap_01_danksagung.tex}
 \newpage
+
+% Inhaltsverzeichnis
+\tableofcontents
+\newpage
+
+% Individuelle Aufgabenstellung
+\input{./../02a_DOC_DPL1/kap_02_aufgabenstellung.tex}
+\newpage
+
+% Ziele
+\input{./../02a_DOC_DPL1/kap_03_ziele.tex}
+\newpage
+
+% Theoretische Grundlagen
+\input{./../02a_DOC_DPL1/kap_04_theoretische_grundlagen.tex}
+\newpage
+
+% Systemarchitektur
+\input{./../02a_DOC_DPL1/kap_05_systemarchitektur.tex}
+\newpage
+
+% Implementation
+\input{./../02a_DOC_DPL1/kap_06_implementation.tex}
+\newpage
+
+% Testen und Deployment
+\input{./../02a_DOC_DPL1/kap_07_testen_deployment.tex}
+\newpage
+
+% Ergebnisse
+\input{./../02a_DOC_DPL1/kap_08_ergebnisse.tex}
+\newpage
+
+% Zukunftsausblick
+\input{./../02a_DOC_DPL1/kap_9_zukunftsausblick.tex}
+\newpage
+
+% Resümee
+\input{./../02a_DOC_DPL1/kap_10_resumee.tex}
+\newpage
+
+% Appendix
+\input{./../02a_DOC_DPL1/kap_11_appendix.tex}
 
 %
 %****************************************************************************************************
