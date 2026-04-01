@@ -71,31 +71,15 @@ Weiz, am \ADatum$~$\DPLNameTwo:  & \dotfill \\
 %
 \thispagestyle{ErsteSeite}
 \addsec{Kurzbeschreibung}
-Die Kurzbeschreibung der Arbeit  ist eine sehr prägnante Inhaltsangabe, mit wichtigen Eigenschaften und Beschreibungen der in der Diplomarbeit behandelten Themengebieten. Der Umfang sollte \textbf{eine Seite} nicht überschreiten!
+Diese Diplomarbeit befasst sich mit der Konzeption und Implementierung eines Zeitmesssystem für die \textit{Zero Emission Challenge} (ZEC), einem Kart Wetbewerb der HTL Weiz. 
+Die bestehende Umsetzung war schlecht wartbar, nicht erweiterbar und hatte einen aufwendigen Setup Prozess, daher wurde die Entscheidung getroffen eine das System
+vollständig neu zu entwickeln. Ziel der Neuentwicklung war ein erweiterbares sowie einfach aufsetzbares System, welches den gesamten Ablauf von der Zeitmessung über die 
+Punkteauswertung bis zur Anzeige der Ergebnisse beinhaltet. Die Kernkomponenten umfassen einen Backend-Server (realisiert mit Python und FastAPI), eine mit Next.js umgesetzte Webanwendung welche Zeitstempel per MQTT-Protokoll 
+von den Lichtschranken empfängt und dann an den Server weiterleitet, sowie eine weitere Next.js basierte Webanwendung zur Anzeige der Ergebnisse und Verwaltung der Teams und Benutzer. 
+Die Authentifizierung und rollenbasierte Zugriffskontrolle wird über Keycloak umgesetzt, die Datenhaltung über eine PostgreSQL-Datenbank.
+Das System basiert auf einer microservice Architektur und kann in einem Kubernetes-Cluster betrieben werden, was Deployment und Hosting erheblich vereinfacht.
+Zur Sicherstellung der Softwarequalität wurden automatisierte CI/CD-Pipelines, welche das Testen, Bauen und Veröffentlichen der Container-Images übernehmen. 
 \vspace{3.0cm}
-
-\textbf{Das entwickelte Gerät soll folgende Funktionen aufweisen:}
-\begin{itemize}
-	\item Eigenschaft 1
-	\item Schutzklasse mindestens IP44
-\end{itemize}
-\newpage
-
-%
-%****************************************************************************************************
-%=============================== B E G I N   4.   P A G E ============================
-%****************************************************************************************************
-%
-\thispagestyle{ErsteSeite}
-\addsec{Abstract}
-Das Abstract ist die Kurzbeschreibung der Arbeit  in Englisch verfasst. Ein Abstract ist eine Inhaltsangabe, die sehr prägnant verfasst ist. Der Umfang sollte \textbf{eine Seite} nicht überschreiten!
-\vspace{3.0cm}
-
-\textbf{The developed device will feature the following items:}
-\begin{itemize}
-	\item Specification 1 
-	\item Minimal protection class of IP44
-\end{itemize}
 \newpage
 
 %
