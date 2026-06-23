@@ -191,175 +191,178 @@ export default function Page() {
   }, [connectionStatus.is_active, selectedChallenge]);
 
   return (
-    <div>
-      <ZECHeader />
+    <>
+      <div>
+        <ZECHeader />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 mb-4 gap-6">
-        <SelectionCard<Challenge>
-          title="Challenge"
-          items={challenges}
-          selectedItem={selectedChallenge}
-          onSelect={setSelectedChallenge}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-3 mb-4 gap-6">
+          <SelectionCard<Challenge>
+            title="Challenge"
+            items={challenges}
+            selectedItem={selectedChallenge}
+            onSelect={setSelectedChallenge}
+          />
 
-        <SelectionCard<Penalty>
-          title="Penalty"
-          items={penalties}
-          selectedItem={selectedPenalty}
-          onSelect={setSelectedPenalty}
-          getDisplayName={(p) => `${p.type ?? 'Penalty'} (${p.amount}s)`}
-        />
+          <SelectionCard<Penalty>
+            title="Penalty"
+            items={penalties}
+            selectedItem={selectedPenalty}
+            onSelect={setSelectedPenalty}
+            getDisplayName={(p) => `${p.type ?? 'Penalty'} (${p.amount}s)`}
+          />
 
-        <ConnectionStatusCard
-          status={connectionStatus}
-          setStatus={setConnectionStatus}
-        />
-      </div>
+          <ConnectionStatusCard
+            status={connectionStatus}
+            setStatus={setConnectionStatus}
+          />
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 mb-4 gap-6">
-        <SelectionCard<Team>
-          title="Team"
-          items={teams}
-          selectedItem={selectedTeam}
-          onSelect={(team) => {
-            setSelectedTeam(team)
-            fetchDriversForTeam(team?.id)
-          }}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 mb-4 gap-6">
+          <SelectionCard<Team>
+            title="Team"
+            items={teams}
+            selectedItem={selectedTeam}
+            onSelect={(team) => {
+              setSelectedTeam(team)
+              fetchDriversForTeam(team?.id)
+            }}
+            searchable
+          />
 
-        <SelectionCard<Driver>
-          title="Drivers"
-          items={drivers}
-          selectedItem={selectedDriver}
-          onSelect={setSelectedDriver}
-        />
+          <SelectionCard<Driver>
+            title="Drivers"
+            items={drivers}
+            selectedItem={selectedDriver}
+            onSelect={setSelectedDriver}
+          />
 
-        <Card className="md:row-span-2">
-          <CardHeader>
-            <CardTitle>Pairing</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <MacInputRow
-              label="Update Start 1"
-              value={espStart1Input}
-              placeholder={selectedChallenge?.esp_mac_start1}
-              onChange={setEspStart1Input}
-              onUpdate={() => {
-                if (selectedChallenge) {
-                  setSelectedChallenge({ ...selectedChallenge, esp_mac_start1: espStart1Input })
-                  setEspStart1Input("")
-                }
-              }}
-            />
-
-            <MacInputRow
-              label="Update Start 2"
-              value={espStart2Input}
-              placeholder={selectedChallenge?.esp_mac_start2}
-              onChange={setEspStart2Input}
-              onUpdate={() => {
-                if (selectedChallenge) {
-                  setSelectedChallenge({ ...selectedChallenge, esp_mac_start2: espStart2Input })
-                  setEspStart2Input("")
-                }
-              }}
-            />
-
-            <MacInputRow
-              label="Update Finish 1"
-              value={espFinish1Input}
-              placeholder={selectedChallenge?.esp_mac_finish1}
-              onChange={setEspFinish1Input}
-              onUpdate={() => {
-                if (selectedChallenge) {
-                  setSelectedChallenge({ ...selectedChallenge, esp_mac_finish1: espFinish1Input })
-                  setEspFinish1Input("")
-                }
-              }}
-            />
-
-            <MacInputRow
-              label="Update Finish 2"
-              value={espFinish2Input}
-              placeholder={selectedChallenge?.esp_mac_finish2}
-              onChange={setEspFinish2Input}
-              onUpdate={() => {
-                if (selectedChallenge) {
-                  setSelectedChallenge({ ...selectedChallenge, esp_mac_finish2: espFinish2Input })
-                  setEspFinish2Input("")
-                }
-              }}
-            />
-          </CardContent>
-        </Card>
-
-        <NumberInputCard
-          title="Penalty Count"
-          value={penaltyCount}
-          onChange={(value) => SetPenaltyCount(value ?? 0)}
-          placeholder="Amount of Penalties"
-          kind="int"
-        />
-
-        <NumberInputCard
-          title="Energy Consumption"
-          value={energyConsumption}
-          onChange={(value) => setEnergyConsumption(value ?? 0)}
-          placeholder="Energy Consumption"
-          kind="float"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 mb-4 gap-6">
-        <Card className="md:col-span-1">
-          <CardHeader>
-            <CardTitle>Timestamps</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <TimestampSelector
-              label="Start timestamp"
-              timestamps={startTimestamps}
-              selectedTimestamps={selectedStartTimestamps ?? []}
-              setSelectedTimestamps={setSelectedStartTimestamps}
-            />
-
-            <TimestampSelector
-              label="End timestamp"
-              timestamps={endTimestamps}
-              selectedTimestamps={selectedEndTimestamps ?? []}
-              setSelectedTimestamps={setSelectedEndTimestamps}
-            />
-
-            <div className="flex flex-col gap-2 mt-4">
-              <ManualAttemptTimeInput
-                value={manualAttemptTime}
-                onChange={setManualAttemptTime}
+          <Card className="md:row-span-2">
+            <CardHeader>
+              <CardTitle>Pairing</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <MacInputRow
+                label="Update Start 1"
+                value={espStart1Input}
+                placeholder={selectedChallenge?.esp_mac_start1}
+                onChange={setEspStart1Input}
+                onUpdate={() => {
+                  if (selectedChallenge) {
+                    setSelectedChallenge({ ...selectedChallenge, esp_mac_start1: espStart1Input })
+                    setEspStart1Input("")
+                  }
+                }}
               />
-            </div>
-          </CardContent>
-        </Card>
 
-        <FormulaCard
-          medianStartTimestamp={medianStartTimestamp}
-          medianEndTimestamp={medianEndTimestamp}
-          manualAttemptTime={manualAttemptTime}
-          penaltyCount={penaltyCount}
-          selectedPenaltyAmount={selectedPenalty?.amount ?? 0}
-        />
+              <MacInputRow
+                label="Update Start 2"
+                value={espStart2Input}
+                placeholder={selectedChallenge?.esp_mac_start2}
+                onChange={setEspStart2Input}
+                onUpdate={() => {
+                  if (selectedChallenge) {
+                    setSelectedChallenge({ ...selectedChallenge, esp_mac_start2: espStart2Input })
+                    setEspStart2Input("")
+                  }
+                }}
+              />
 
-        <AttemptResultCard
-          selectedTeam={selectedTeam}
-          selectedDriver={selectedDriver}
-          selectedChallenge={selectedChallenge}
-          medianStartTimestamp={medianStartTimestamp}
-          medianEndTimestamp={medianEndTimestamp}
-          manualAttemptTime={manualAttemptTime}
-          energyConsumption={energyConsumption}
-          selectedPenalty={selectedPenalty}
-          penaltyCount={penaltyCount}
-          onSubmitSuccess={resetForm}
-        />
+              <MacInputRow
+                label="Update Finish 1"
+                value={espFinish1Input}
+                placeholder={selectedChallenge?.esp_mac_finish1}
+                onChange={setEspFinish1Input}
+                onUpdate={() => {
+                  if (selectedChallenge) {
+                    setSelectedChallenge({ ...selectedChallenge, esp_mac_finish1: espFinish1Input })
+                    setEspFinish1Input("")
+                  }
+                }}
+              />
+
+              <MacInputRow
+                label="Update Finish 2"
+                value={espFinish2Input}
+                placeholder={selectedChallenge?.esp_mac_finish2}
+                onChange={setEspFinish2Input}
+                onUpdate={() => {
+                  if (selectedChallenge) {
+                    setSelectedChallenge({ ...selectedChallenge, esp_mac_finish2: espFinish2Input })
+                    setEspFinish2Input("")
+                  }
+                }}
+              />
+            </CardContent>
+          </Card>
+
+          <NumberInputCard
+            title="Penalty Count"
+            value={penaltyCount}
+            onChange={(value) => SetPenaltyCount(value ?? 0)}
+            placeholder="Amount of Penalties"
+            kind="int"
+          />
+
+          <NumberInputCard
+            title="Energy Consumption"
+            value={energyConsumption}
+            onChange={(value) => setEnergyConsumption(value ?? 0)}
+            placeholder="Energy Consumption"
+            kind="float"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 mb-4 gap-6">
+          <Card className="md:col-span-1">
+            <CardHeader>
+              <CardTitle>Timestamps</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <TimestampSelector
+                label="Start timestamp"
+                timestamps={startTimestamps}
+                selectedTimestamps={selectedStartTimestamps ?? []}
+                setSelectedTimestamps={setSelectedStartTimestamps}
+              />
+
+              <TimestampSelector
+                label="End timestamp"
+                timestamps={endTimestamps}
+                selectedTimestamps={selectedEndTimestamps ?? []}
+                setSelectedTimestamps={setSelectedEndTimestamps}
+              />
+
+              <div className="flex flex-col gap-2 mt-4">
+                <ManualAttemptTimeInput
+                  value={manualAttemptTime}
+                  onChange={setManualAttemptTime}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <FormulaCard
+            medianStartTimestamp={medianStartTimestamp}
+            medianEndTimestamp={medianEndTimestamp}
+            manualAttemptTime={manualAttemptTime}
+            penaltyCount={penaltyCount}
+            selectedPenaltyAmount={selectedPenalty?.amount ?? 0}
+          />
+
+          <AttemptResultCard
+            selectedTeam={selectedTeam}
+            selectedDriver={selectedDriver}
+            selectedChallenge={selectedChallenge}
+            medianStartTimestamp={medianStartTimestamp}
+            medianEndTimestamp={medianEndTimestamp}
+            manualAttemptTime={manualAttemptTime}
+            energyConsumption={energyConsumption}
+            selectedPenalty={selectedPenalty}
+            penaltyCount={penaltyCount}
+            onSubmitSuccess={resetForm}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
