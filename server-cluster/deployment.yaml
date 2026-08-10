@@ -112,9 +112,9 @@ spec:
             - name: KEYCLOAK_ADMIN_CLIENT_ID
               value: user-admin-client
             - name: KEYCLOAK_ADMIN_CLIENT_SECRET
-              value: bmZ05Jg7CrhrZqLKjMT7VOUlZV3X4g6m
+              value: OoGLKQYHo8IvmlLFvIUcRYVK8jXElicc
             - name: KEYCLOAK_CLIENT_SECRET
-              value: aXlg9HTmsVqh92wZc1FIFmYY1JNpxfHS
+              value: 73pCUerh5PRY0uvLrZuRtZNaOt6bdFBk
             - name: KEYCLOAK_TOKEN_URL
               value: http://keycloak-service:80/realms/zec-realm/protocol/openid-connect/token
             - name: KEYCLOAK_JWKS_URL
@@ -391,3 +391,37 @@ spec:
           image: ghcr.io/niklas-maderbacher/zec-timing:api-gateway
           ports:
             - containerPort: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-deployment
+  labels:
+    app: web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+        - name: auth-service
+          image: ghcr.io/niklas-maderbacher/zec-timing:web-app
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+          resources:
+            # todo
+            requests:
+              cpu: 250m
+              memory: 250Mi
+            limits:
+              cpu: 1
+              memory: 1000Mi
