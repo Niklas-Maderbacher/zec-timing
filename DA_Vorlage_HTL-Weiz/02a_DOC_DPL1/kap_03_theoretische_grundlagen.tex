@@ -5,9 +5,29 @@
 \section{Theoretische Grundlagen}
 
 % -------------------------------------------------------------------
-\subsection{Containerisierung}
+\subsection{Container}
 % Autor: Niklas | Umfang: 2–3 Seiten
 % TODO: Was Docker ist, wie es funktioniert und warum es Sinn macht es zu nutzen
+Ein Container bündelt sämtliche Abhängigkeiten, Konfigurationsdateien und Bibliotheken in einer isolierten und ausführbaren Einheit, wodurch eine zuverlässige und konsistente Ausführung unabhängig vom zugrunde liegenden Gerät ermöglicht wird \cite{google_containerisierung}.
+
+\subsubsection{Docker}
+Docker ist ein Open-Source-Tool für die Erstellung, Ausführung und Verwaltung von Containern. Anwendungen werden dabei gekapselt in Docker-Containern verpackt, wodurch sie auf jedem System einsetzbar sind \cite{opc_router_docker}.
+
+\subsubsection{Architektur von Docker}
+Docker basiert auf einer Client-Server Architektur, wobei die Kommunikation zwischen Docker Client und Docker deamon (dockerd) über eine REST API, über UNIX-Sockets oder eine Netzwerkschnittstelle stattfindet. Der Docker deamon übernimmt das Erstellen, Verwalten und Ausführen der Docker Containern \cite{docker_docker_architecture}.
+
+\includegraphics{docker-architecture.png}
+
+\subsubsection{Prinzip von Docker}
+Grundlage ist das Dockerfile, eine Text Datei die Befehle beinhaltet für die Erstellung eines Docker Images. Jeder Befehl beinhaltet einen Schritt für das Image, wie zum Beispiel auf welchem Image das neue aufbauen soll, welche Datein kopiert werden sollen oder welche Bibliotheken benötigt werden \cite{what_is_a_dockerfile_spacelift}. Dabei fügt jeder Befehl eine weitere read-only Schicht hinzu, um die Erstellengsgeschwindigkeit sowie den Speicherbedarf zu optimieren \cite{geeksforgeeks_dockerfile}.
+Ein Container ist das laufende Image, wobei Abhängigkeiten und Programmcode verpackt in einer isolierten Umgebung laufen. Dies ermöglicht die Ausführbarkeit auf unterschiedlichen Geräten \cite{geeksforgeeks_what_is_docker}.
+
+\subsubsection{Docker Compose}
+Docker Compose definiert Multi-Container-Applikationen in einer YAML Datei um sie einfach verwalten und starten zu können \cite{dev_to_docker_compose}. Zudem können noch flags angegeben werden, die somit nicht bei jedem Start mit angegeben werden müssen \cite{docker_what_is_docker_compose}. In dieser Diplomarbeit wird Docker Compose dafür verwendet, um die Zeitnehmer Applikation mit allen flags zu starten sowie alle Container die benötigt werden, um den Ablauf mit MQtt zu garantieren.
+
+
+\subsubsection{Vorteile von Docker}
+https://www.cantech.in/blog/what-is-docker/#how-docker-works
 
 % -------------------------------------------------------------------
 \subsection{Microservices}
