@@ -1,23 +1,3 @@
-export interface AppConfig {
-    serverApiUrl: string;
-    mqttWorkerApiUrl: string;
-    apiKey: string;
-}
-
-let config: AppConfig | null = null;
-
-export async function getConfig(): Promise<AppConfig> {
-    if (config) {
-        return config;
-    }
-
-    const response = await fetch("/api/config");
-
-    if (!response.ok) {
-        throw new Error("Failed to load application configuration");
-    }
-
-    config = await response.json();
-
-    return config;
-}
+export const SERVER_API_URL = process.env.NEXT_PUBLIC_DESKTOP_APP_API_URL!;
+export const MQTT_WORKER_API_URL = process.env.NEXT_PUBLIC_MQTT_WORKER_API_URL!;
+export const API_KEY = process.env.NEXT_PUBLIC_API_KEY!;

@@ -4,9 +4,7 @@ import React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import axios from "axios"
-import { getConfig } from "@/lib/env";
-
-const { serverApiUrl, apiKey } = await getConfig();
+import { SERVER_API_URL, API_KEY } from "@/lib/env"
 import { Attempt, Penalty, Driver, Team, Challenge } from "@/components/types"
 
 interface AttemptResultCardProps {
@@ -133,8 +131,8 @@ export function AttemptResultCard({
             penalty_count: penaltyCount ?? 0,
         }
 
-        axios.post(`${serverApiUrl}/attempts/`, attempt, {
-            headers: { "x-api-key": apiKey },
+        axios.post(`${SERVER_API_URL}/attempts/`, attempt, {
+            headers: { "x-api-key": API_KEY },
         })
             .then(() => {
                 alert("Attempt submitted successfully!")
