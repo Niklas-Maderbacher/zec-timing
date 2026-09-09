@@ -4,8 +4,9 @@ import React from "react";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useEffect, useState } from "react";
+import { getConfig } from "@/lib/env";
 
-import { SERVER_API_URL, MQTT_WORKER_API_URL, API_KEY } from "@/lib/env";
+const { serverApiUrl, mqttWorkerApiUrl, apiKey } = await getConfig();
 import { FormulaCard } from "@/components/FormulaCard";
 import { SelectionCard } from "@/components/SelectionCard";
 import { MacInputRow } from "@/components/MacInputRow";
@@ -74,10 +75,10 @@ export default function Page() {
   const fetchTeams = async () => {
     try {
       const response = await axios.get<Team[]>(
-        `${SERVER_API_URL}/teams/`,
+        `${serverApiUrl}/teams/`,
         {
           headers: {
-            "x-api-key": API_KEY
+            "x-api-key": apiKey
           }
         }
       );
@@ -93,7 +94,7 @@ export default function Page() {
   const fetchChallenges = async () => {
     try {
       const response = await axios.get<Challenge[]>(
-        `${SERVER_API_URL}/challenges/`
+        `${serverApiUrl}/challenges/`
       );
       setChallenges(response.data);
       if (response.data.length > 0) setSelectedChallenge(response.data[0]);
@@ -106,10 +107,10 @@ export default function Page() {
   const fetchPenalties = async () => {
     try {
       const response = await axios.get<Penalty[]>(
-        `${SERVER_API_URL}/penalties/types/`,
+        `${serverApiUrl}/penalties/types/`,
         {
           headers: {
-            "x-api-key": API_KEY
+            "x-api-key": apiKey
           }
         }
       );
@@ -125,10 +126,10 @@ export default function Page() {
     if (!teamId) return;
     try {
       const response = await axios.get<Driver[]>(
-        `${SERVER_API_URL}/drivers/team/${teamId}`,
+        `${serverApiUrl}/drivers/team/${teamId}`,
         {
           headers: {
-            "x-api-key": API_KEY
+            "x-api-key": apiKey
           }
         }
       );
@@ -143,8 +144,8 @@ export default function Page() {
   const fetchStartTimestamps = async () => {
     if (!selectedChallenge) return;
     try {
-      const start_1 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start1.replace(/:/g, '-')}`);
-      const start_2 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start2.replace(/:/g, '-')}`);
+      const start_1 = await axios.get<{ timestamp: string[] }>(`${mqttWorkerApiUrl}/timestamps/${selectedChallenge.esp_mac_start1.replace(/:/g, '-')}`);
+      const start_2 = await axios.get<{ timestamp: string[] }>(`${mqttWorkerApiUrl}/timestamps/${selectedChallenge.esp_mac_start2.replace(/:/g, '-')}`);
       const combined = [...(start_1.data.timestamp || []), ...(start_2.data.timestamp || [])];
       setStartTimestamps(combined);
     } catch (error) {
@@ -155,8 +156,8 @@ export default function Page() {
   const fetchEndTimestamps = async () => {
     if (!selectedChallenge) return;
     try {
-      const end_1 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_finish1.replace(/:/g, '-')}`);
-      const end_2 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_finish2.replace(/:/g, '-')}`); 3
+      const end_1 = await axios.get<{ timestamp: string[] }>(`${mqttWorkerApiUrl}/timestamps/${selectedChallenge.esp_mac_finish1.replace(/:/g, '-')}`);
+      const end_2 = await axios.get<{ timestamp: string[] }>(`${mqttWorkerApiUrl}/timestamps/${selectedChallenge.esp_mac_finish2.replace(/:/g, '-')}`); 3
       const combined = [...(end_1.data.timestamp || []), ...(end_2.data.timestamp || [])];
       setEndTimestamps(combined);
     } catch (error) {
