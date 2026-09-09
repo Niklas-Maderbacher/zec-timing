@@ -4,7 +4,7 @@ from app.exceptions.mac_not_found import MacNotFound
 
 def add_timestamp(mac: str, timestamp: str):
     redis_connection.rpush(f"timestamps:{mac}", timestamp)
-    redis_connection.expire(f"timestamps:{mac}", 600)
+    redis_connection.expire(f"timestamps:{mac}", settings.TIMESTAMP_EXPIRE_TIME)
 
 
 def get_timestamps(mac: str):

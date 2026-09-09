@@ -48,5 +48,7 @@ class Settings(BaseSettings):
     REDIS_HOST: str
     REDIS_PORT: int
 
+    TIMESTAMP_EXPIRE_TIME: int
+
 
 settings = Settings()  # type: ignore
