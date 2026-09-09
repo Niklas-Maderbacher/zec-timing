@@ -1,14 +1,27 @@
+import time
+
 from app.config.config import settings
-from app.redis.redis import redis_connection, redis_lock
+from app.redis.redis import redis_connection
 from app.exceptions.mac_not_found import MacNotFound
 
+
+
 def add_timestamp(mac: str, timestamp: str):
-    redis_connection.rpush(f"timestamps:{mac}", timestamp)
-    redis_connection.expire(f"timestamps:{mac}", settings.TIMESTAMP_EXPIRE_TIME)
+    key = f"timestamps:{mac}"
+    expires_at = time.time() + settings.TIMESTAMP_EXPIRE_TIME
+
+    redis_connection.zadd(
+        key,
+        {timestamp: expires_at}
+    )
 
 
 def get_timestamps(mac: str):
     key = f"timestamps:{mac}"
+    now = time.time()
+
+    # Remove timestamps that have expired
+    redis_connection.zremrangebyscore(key, 0, now)
 
     if not redis_connection.exists(key):
         raise MacNotFound(
@@ -19,7 +32,7 @@ def get_timestamps(mac: str):
             error_code=404,
         )
 
-    return redis_connection.lrange(key, 0, -1)
+    return redis_connection.zrange(key, 0, -1)
 
 
 def delete_timestamps(mac: str):
