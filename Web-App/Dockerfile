@@ -1,30 +1,44 @@
-# Stage 1: install dependencies
-FROM node:20-alpine AS deps
+# ---------- Base ----------
+FROM node:20-alpine AS base
 WORKDIR /app
 
-# copy package.json/lock first for caching
+# ---------- Dependencies ----------
+FROM base AS deps
 COPY package.json package-lock.json* ./
-RUN npm ci --silent
+RUN npm install
 
-# Stage 2: build the application
-FROM node:20-alpine AS builder
-WORKDIR /app
-
-COPY . .
+# ---------- Builder ----------
+FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Fixed placeholder values — same for every build, real values injected later
+ENV NEXT_PUBLIC_API_URL=RUNTIME_PLACEHOLDER_API_URL
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build
 
+# ---------- Runner ----------
 FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser  --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh && chown -R nextjs:nodejs /app
+
+USER nextjs
 EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-CMD ["npm","start"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["node", "server.js"]
