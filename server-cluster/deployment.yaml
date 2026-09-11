@@ -112,9 +112,9 @@ spec:
             - name: KEYCLOAK_ADMIN_CLIENT_ID
               value: user-admin-client
             - name: KEYCLOAK_ADMIN_CLIENT_SECRET
-              value: OoGLKQYHo8IvmlLFvIUcRYVK8jXElicc
+              value: XPx5AyZKxEWUY4MusLe6hMw0SrAIeo0s
             - name: KEYCLOAK_CLIENT_SECRET
-              value: 73pCUerh5PRY0uvLrZuRtZNaOt6bdFBk
+              value: P5j9fSps1H4Oh70Dws6ZSAzNau3WyuqS
             - name: KEYCLOAK_TOKEN_URL
               value: http://keycloak-service:80/realms/zec-realm/protocol/openid-connect/token
             - name: KEYCLOAK_JWKS_URL
@@ -412,6 +412,7 @@ spec:
       containers:
         - name: auth-service
           image: ghcr.io/niklas-maderbacher/zec-timing:web-app
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:

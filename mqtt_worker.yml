@@ -1,0 +1,57 @@
+services:
+  zec-mqtt-broker:
+    container_name: zec-mqtt-broker
+    image: ghcr.io/niklas-maderbacher/zec-timing:mqtt-broker
+    env_file:
+      - .env
+    ports:
+      - ${MQTT_PORT}:${MQTT_PORT}
+      - 8100:8080
+    healthcheck:
+      test: [ "CMD-SHELL", "pgrep mosquitto" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  zec-redis-db:
+    container_name: zec-redis-db
+    image: redis:alpine
+    env_file:
+      - .env
+    # --save = redis will not save data to disk
+    # --appendonly no = disables Append-Only files, no saves are persistant
+    command: [ "redis-server", "--save", "", "--appendonly", "no" ]
+    tmpfs:
+      - /data
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+
+  zec-mqtt-worker:
+    container_name: zec-mqtt-worker
+    image: ghcr.io/niklas-maderbacher/zec-timing:mqtt-worker
+    restart: always
+    depends_on:
+      zec-redis-db:
+        condition: service_healthy
+        restart: true
+      zec-mqtt-broker:
+        condition: service_healthy
+        restart: true
+
+    env_file:
+      - .env
+    ports:
+      - ${MQTT_WORKER_PORT}:8000
+    environment:
+      - MQTT_IP=${MQTT_IP}
+      - MQTT_PORT=${MQTT_PORT}
+      - MQTT_TOPIC=${MQTT_TOPIC}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - TIMESTAMP_EXPIRE_TIME=${TIMESTAMP_EXPIRE_TIME}
