@@ -1,6 +1,6 @@
 import { authenticatedFetch, publicFetch } from "@/lib/auth"
 
-import { API_BASE_URL } from "@/lib/api/api_url";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 export interface Challenge {
   id: number

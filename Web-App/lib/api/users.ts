@@ -1,6 +1,6 @@
 import { authenticatedFetch } from "@/lib/auth"
 
-import { API_BASE_URL } from "@/lib/api/api_url";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 export interface UserKC {
   id: string
@@ -113,13 +113,13 @@ export const usersApi = {
     }
     return response.json()
   },
-
+  
   async getCurrentUser(): Promise<any> {
     const response = await authenticatedFetch(`${API_BASE_URL}/users/me`)
     if (!response.ok) {
       const error = await response.json().catch(() => ({ detail: 'Failed to fetch current user' }))
       throw new Error(error.detail || 'Failed to fetch current user')
     }
-    return response.json()
+      return response.json()
   },
 }

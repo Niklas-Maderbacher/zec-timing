@@ -1,7 +1,7 @@
 import { authenticatedFetch } from "@/lib/auth"
 import { triggerDownload } from "@/lib/utils/export"
 
-import { API_BASE_URL } from "@/lib/api/api_url";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 export interface Attempt {
   id: number
