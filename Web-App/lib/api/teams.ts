@@ -1,6 +1,6 @@
 import { authenticatedFetch } from "@/lib/auth"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
+import { API_BASE_URL } from "@/lib/api/api_url";
 
 export enum TeamCategory {
   CLOSE_TO_SERIES = "close_to_series",
@@ -57,7 +57,7 @@ export const teamsApi = {
   async getTeamsByIds(teamIds: number[]): Promise<Team[]> {
     const params = new URLSearchParams()
     teamIds.forEach(id => params.append('team_ids', id.toString()))
-    
+
     const response = await authenticatedFetch(`${API_BASE_URL}/teams/by-ids/?${params}`)
     if (!response.ok) {
       const error = await response.json().catch(() => ({ detail: 'Failed to fetch teams' }))
