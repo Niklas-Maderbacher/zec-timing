@@ -1,27 +1,85 @@
 % ==============================================================
-% Kapitel 6: Systemarchitektur
+% Kapitel 4: Systemarchitektur
 % ==============================================================
 
 \section{Systemarchitektur}
 
 % -------------------------------------------------------------------
 \subsection{Überblick}
-% Autor: großteils David | Umfang: 2–3 Seiten
-% TODO: Alle Komponenten zusammen grafisch darstellen und kurz erklären
 
-% -------------------------------------------------------------------
-\subsection{Erklärung}
-% Autor: großteils David | Umfang: 1–2 Seiten
-% TODO: Wie alle Komponenten zusammenspielen
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{zec_systemarchitektur.png}
+    \caption{ZEC Systemarchitektur}
+    \label{fig:zec_systemarchitektur}
+\end{figure}
 
-% -------------------------------------------------------------------
-\subsection{Server}
-% Autor: David | Umfang: 8–10 Seiten
-% TODO: Alle Microservices der Reihe nach erklären
-%       + Datenbankschema (max. 3 Tabellen pro Service)
-%       + Web App
+Das Zeitmesssystem der Zero-Emission-Challenge (ZEC) besteht aus vier zentralen Komponenten: einer bereits bestehenden Lichtschranke, dem MQTT-Worker, der Zeitnehmerapplikation und dem von Diplomarbeitspartner Darnhofer David implementierten ZEC-Server. Die Lichtschranke erfasst beim Auslösen einen Zeitstempel und übermittelt diesen über das MQTT-Protokoll an den MQTT-Worker. Dieser empfängt die Zeitstempel und stellt sie über eine \gls{API} für die weiteren Komponenten des Systems bereit. Die Zeitnehmerapplikation wird von den Zeitnehmern verwendet, um die Versuche der teilnehmenden Teams zu erfassen. Der ZEC-Server nimmt die von der Zeitnehmerapplikation übermittelten Informationen entgegen und stellt zusätzlich Daten, beispielsweise zu Teams, deren Mitgliedern und Fahrern, über eine \gls{API} zur Verfügung.
 
-% -------------------------------------------------------------------
-\subsection{Desktop App}
-% Autor: Niklas | Umfang: 2–3 Seiten
-% TODO: Erklärung Kommunikation mit Server und MQTT (Zeitstempel)
+\newpage
+
+Um den Ablauf eines Versuches besser zu verstehen, wurde dieser im folgenden Sequenzdiagramm abgebildet:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{sequenzdiagram_zec.png}
+    \caption{Sequenzdiagramm Ablauf}
+    \label{fig:sequenzdiagram_ablauf}
+\end{figure}
+
+Hierbei ist zu beachten, dass der \textbf{MQTT-Worker} im Sequenzdiagramm in seine drei wesentlichen Komponenten MQTT-Broker, \gls{API} und Redis aufgeteilt dargestellt wird.
+
+Jedes Mal, wenn ein Fahrer eine Lichtschranke passiert und dadurch ein Versuch gestartet oder beendet wird, übermittelt die Lichtschranke den dabei erfassten Zeitstempel über das MQTT-Protokoll an den MQTT-Broker. Die Zeitstempel werden anschließend von der \gls{API} des \textit{MQTT-Workers} ausgelesen und für einen bestimmten Zeitraum in Redis zwischengespeichert.
+
+Beim Start der Zeitnehmerapplikation werden zunächst alle verfügbaren Challenges, Teams und Penalties vom \textit{ZEC-Server} geladen. Nachdem der Zeitnehmer die benötigten Einstellungen vorgenommen und die gewünschten Daten ausgewählt hat, werden zusätzlich die Fahrer des ausgewählten Teams vom \textit{ZEC-Server} geladen.
+
+Sofern das \textit{Activate}-Feld in der Zeitnehmerapplikation aktiviert wurde, werden während des weiteren Ablaufs fortlaufend die Zeitstempel der zur ausgewählten Station gehörenden Lichtschranken beim MQTT-Worker angefragt. Die vom MQTT-Worker zurückgegebenen Zeitstempel können anschließend vom Zeitnehmer ausgewählt und für die Zeitmessung des Versuches verwendet werden.
+
+Nachdem der Zeitnehmer das Formular vollständig ausgefüllt und die benötigten Zeitstempel ausgewählt hat, werden die daraus ermittelten Versuchsdaten an den \textit{ZEC-Server} übermittelt.
+
+\newpage
+
+\subsubsection{MQTT-Worker}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{mqtt_worker_architektur.png}
+    \caption{MQTT-Worker Architektur}
+    \label{fig:mqtt_worker_architektur}
+\end{figure}
+
+Der MQTT-Worker besteht aus einem MQTT-Broker und einer \gls{API}. Der MQTT-Broker empfängt die von der Lichtschranke über das MQTT-Protokoll übertragenen Zeitstempel. Diese werden von der \gls{API} automatisch verarbeitet und in der Redis-Datenbank (\gls{DB}) zwischengespeichert. Wird ein Zeitstempel über die \gls{API} abgefragt, werden die entsprechenden Daten aus der Redis-Datenbank geladen und dem anfragenden System zur Verfügung gestellt.
+
+Folgende \gls{API}-Endpunkte werden vom \textit{MQTT-Worker} zur Verfügung gestellt:
+
+\texttt{/timestamps/<mac-adresse>}
+
+Der Endpunkt ermöglicht das Abrufen der für die angegebene MAC-Adresse gespeicherten Zeitstempel. Das Response-Modell ist dabei wie folgt aufgebaut:
+
+\begin{lstlisting}
+{
+    "timestamp": [
+        "Timestamp_1",
+        "Timestamp_2",
+        "Timestamp_..."
+    ]
+}
+\end{lstlisting}
+
+\newpage
+
+\subsection{Zeitnehmerapplikation}
+
+Die Zeitnehmerapplikation wurde mit Next.js \cite{nextjs_docs} umgesetzt und ist für das Erstellen und Verwalten der Versuche verantwortlich. Sie wird von den Zeitnehmern verwendet und lädt die für die Zeitmessung benötigten Informationen, wie beispielsweise Challenges, Teams und deren zugehörige Fahrer. Jeder Challenge sind vier Lichtschranken mit jeweils einer eindeutigen MAC-Adresse zugeordnet. Sobald das Pairing aktiviert wurde, werden anhand dieser MAC-Adressen die zugehörigen Zeitstempel beim MQTT-Worker abgefragt. Der ZEC-Server erfordert für den Zugriff normalerweise eine Authentifizierung. Da für die Zeitnehmerapplikation jedoch keine Benutzeranmeldung vorgesehen ist, wird stattdessen ein API-Key zur Authentifizierung der Anfragen verwendet. Nach Abschluss eines Versuchs werden die erfassten Daten an den ZEC-Server übermittelt, wo sie zur weiteren Verarbeitung und Auswertung verwendet werden.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{zeitnehmerapplikation.png}
+    \caption{Zeitnehmerapplikation}
+    \label{fig:zeitnehmerapplikation}
+\end{figure}
+
+\subsection{ZEC-Server}
+
+Die Orchestrierung des von Diplomarbeitspartner Darnhofer David implementierten ZEC-Servers wurde mittels Kubernetes realisiert. Die dafür erforderliche Implementierung wurde vom Diplomarbeitspartner David Darnhofer durchgeführt.

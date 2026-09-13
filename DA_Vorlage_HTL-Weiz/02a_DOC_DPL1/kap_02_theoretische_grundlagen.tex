@@ -1,0 +1,114 @@
+% ==============================================================
+% Kapitel 5: Theoretische Grundlagen
+% ==============================================================
+
+\section{Theoretische Grundlagen}
+
+% -------------------------------------------------------------------
+\subsection{Container}
+% Autor: Niklas | Umfang: 2–3 Seiten
+% TODO: Was Docker ist, wie es funktioniert und warum es Sinn macht es zu nutzen
+Ein Container bündelt sämtliche Abhängigkeiten, Konfigurationsdateien und Bibliotheken in einer isolierten und ausführbaren Einheit, wodurch eine zuverlässige und konsistente Ausführung unabhängig vom zugrunde liegenden Gerät ermöglicht wird \cite{google_containerisierung}.
+
+\subsubsection{Docker}
+Docker ist eine Open-Source-Platform für die Erstellung, Ausführung und Verwaltung von Containern. Anwendungen werden dabei gekapselt in Docker-Containern verpackt, wodurch sie auf jedem System einsetzbar sind \cite{opc_router_docker}.
+
+\subsubsection{Architektur von Docker}
+Docker basiert auf einer Client-Server Architektur, wobei die Kommunikation zwischen Docker Client und Docker Deamon (dockerd) über eine REST API, über UNIX-Sockets oder eine Netzwerkschnittstelle stattfindet. Der Docker Deamon übernimmt das Erstellen, Verwalten und Ausführen der Docker-Containern \cite{docker_docker_architecture}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{docker-architecture.png}
+    \caption{Docker Architektur}
+    \label{fig:dockerarchitektur}
+\end{figure}
+
+\subsubsection{Prinzip von Docker}
+Grundlage ist das Dockerfile, eine Textdatei die Befehle beinhaltet für die Erstellung eines Docker Images. Jeder Befehl beinhaltet einen Schritt für das Image, wie zum Beispiel auf welchem Image das neue aufbauen soll, welche Dateien kopiert werden sollen oder welche Bibliotheken benötigt werden \cite{what_is_a_dockerfile_spacelift}. Dabei fügt jeder Befehl eine weitere read-only Schicht hinzu, um die Erstellungsgeschwindigkeit sowie den Speicherbedarf zu optimieren \cite{geeksforgeeks_dockerfile}.
+Ein Container ist das laufende Image, wobei Abhängigkeiten und Programmcode verpackt in einer isolierten Umgebung laufen. Dies ermöglicht die Ausführbarkeit auf unterschiedlichen Geräten \cite{geeksforgeeks_what_is_docker}.
+Im Gegensatz zu virtuellen Maschinen sind Docker-Container leichtgewichtig, da diese sich das Betriebsystem mit dem Host teilen und nicht wie bei virtuellen Maschinen ein eigenes benötigen. Dadurch können Container schnell starten und benötigen weniger Speicherplatz. \cite{geekflare_lightweight_container} 
+
+\subsubsection{Docker Compose}
+Docker Compose definiert Multi-Container-Applikationen in einer YAML Datei um sie einfach verwalten und starten zu können \cite{dev_to_docker_compose}. Zudem können noch Konfigurationsparameter angegeben werden, die somit nicht bei jedem Start mit angegeben werden müssen \cite{docker_what_is_docker_compose}. In dieser Diplomarbeit wird Docker Compose dafür verwendet, um die Zeitnehmer Applikation mit alle erforderlichen Konfigurationsparameter zu starten sowie alle Container die benötigt werden, um den Ablauf mit MQtt zu garantieren.
+
+
+\subsubsection{Vorteile von Containern}
+Mithilfe von Containern kann gewährleistet werden, dass die Applikation auf jedem Gerät läuft, egal ob auf einem Linux oder Windows Rechner, da alles, dass von der Applikation benötigt wird, in einem Container verpackt wird und dadurch unabhängig von der Umgebung ausgeführt werden kann \cite{advantages_of_docker_cantech}.
+Zudem wird mit Containern in dieser Diplomarbeit die einfache Aufsetzung garantiert, da dafür nur die benötigten Images geladen werden müssen und mit dem Befehl \texttt{docker compose up} jede Applikation gestartet werden kann und keine weiteren Konfigurationsschritte erforderlich sind.
+
+\newpage
+% -------------------------------------------------------------------
+\subsection{Microservices}
+Microservice ist eine Architektur in der die Applikation in kleine Teile aufgeteilt wird, die unabhängig voneinander ausgeführt werden können, ohne eine andere Komponente zu benötigen. Dadurch läuft das gesamte System weiter, sollte eine Komponente ausfallen.
+Jedem Service ist eine eigene Aufgabe zugeteilt und kann unabhängig von den anderen entwickelt, skaliert und deployt werden. Die Services kommunizieren untereinander über ein definiertes Protokoll wie HTTP oder Message Broker. \cite{geeksforgeeks_microservice}
+
+\subsubsection{Vorteile von Microservices}
+
+\begin{itemize}
+    \item \textbf{Skalierbarkeit: } Da jede Komponente voneinander unabhängig ist, können neue Komponenten ohne bedenken eingeführt werden. Dabei müssen die Komponenten nicht auf der selben Technologie basieren und die beste Technologie kann gewählt werden. 
+    \item \textbf{Fehlerisolierung: } Falls ein Fehler auftritt kann dieser schneller identifiziert und behebt werden.
+    \item \textbf{Produktivität: } Teams können sich auf eine Komponente spezialisieren und werden nicht durch die Komplexität des Gesamtsystems beeinflusst. 
+    \item \textbf{Deployment-Zeit: } Durch die strikte Trennung können Komponenten hinzugefügt beziehungsweise aktualisiert werden ohne Einfluss auf das Gesamtsystem \cite{atlassian_microservice}.
+\end{itemize}
+
+\subsubsection{Kubernetes}
+Kubernetes ist eine Open-Source-Platform zur Verwaltung containerisierter Applikationen. Es übernimmt Skalierung und automatische Wiederherstellung bei Ausfällen.
+Sollte eine Komponente ausfallen, wird er neu gestartet um ein funktionales System zu gewährleisten. Sollte auf einer Komponente eine hohe Last liegen, wird automatisch eine weitere Komponente dazugeschaltet \cite{kubernetes_overview}.
+
+\newpage
+
+\subsubsection{Architektur von Kubernetes}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{kubernetes_cluster_components.png}
+    \caption{Kubernetes Cluster Komponenten}
+    \label{fig:kubernetesclustercomponents}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Control plane: } Verwaltet den Zustand des Clusters und trifft Entscheidungen, um den gewünschten Zustand herzustellen.
+    \begin{itemize}
+        \item \textbf{kube-api-server: } Schnittstelle für die Kubernetes API.
+        \item \textbf{etcd: } Konsistenter und hochberfügbarer Speicher für die Cluster-Daten
+        \item \textbf{scheduler: } Weist neu erstellten Pods einer Node zu.
+        \item \textbf{controll-manager: } Führt verschiedene Controller Prozesse aus wie etwa das abgleichen des Soll- und Ist-Zustand. Weicht dieser ab, werden Maßnahmen eingeleitet, um den Zustand wiederherzustellen
+    \end{itemize}
+    \item \textbf{Node: } Stellt Rechenressourcen für die Ausführung von Pods bereit.
+    \begin{itemize}
+        \item \textbf{kubelet: } Stellt sicher, dass ein Container in einem Pods läuft.
+        \item \textbf{kube-proxy: } Verwaltet Netzwerkregeln auf Nodes, durch die Netzwerkkommunikation zu Services ermöglicht wird.
+        \item \textbf{Container runtime: } Verantwortlich für die Ausführung der Container \cite{kubernetes_architektur}.
+    \end{itemize}
+\end{itemize}
+
+\newpage
+
+\subsubsection{Ressourcen von Kubernetes}
+
+In Kubernetes werden Anwendungen über Ressourcen beschrieben, die den Soll-Zustand des Clusters definieren und von dessen Steuerungsebene kontinuierlich überwacht und durchgesetzt werden \cite{kubernetes_objects}.
+
+\begin{itemize}
+    \item \textbf{Pod: } Kleinste deploybare Einheit in Kubernetes. Enthält einen oder mehrere Container \cite{kubernetes_pods}.
+    \item \textbf{Deployment: } Definiert den gewünschten Zustand der Pods und die Anzahl der auszuführenden Instanzen. \cite{kubernetes_deployment}.
+    \item \textbf{Service: } Stellt eine Netzwerkadresse für Pods bereit und ermöglicht deren Erreichbarkeit innerhalb des Clusters \cite{kubernetes_service}.
+    \item \textbf{Ingress: } Ermöglicht den externen Zugriff auf Services und definiert Regeln für die Weiterleitung von HTTP-Anfragen \cite{kubernetes_ingress}.
+    \item \textbf{PersistentVolumeClaim: } Stellen persistenten Speicher für Pods bereit \cite{kubernetes_pvc}.
+    \item \textbf{StatefulSet: } Verwaltet zustandsbehaftete Anwendungen und gewährleistet eine stabile Identität sowie eine dauerhafte Speicherung der Daten \cite{kubernetes_stateful_set}
+\end{itemize}
+
+\newpage
+% -------------------------------------------------------------------
+\subsection{MQTT}
+% Autor: Niklas | Umfang: 1–2 Seiten
+% TODO: Wie MQTT funktioniert (Publish/Subscribe)
+MQTT (Message Queuing Telemetry Transport) ist ein leichtgewichtiges Nachrichten Protokoll für die Kommunikation zwischen verschiedenen Geräten. Verwendet dabei wird das Publish/Subscribe-Modell. Hierbei kommunizieren die Geräte nicht direkt untereinander, sondern senden ihre Daten an einen zentralen Broker. Ein Gerät veröffentlich eine Nachricht zu einem bestimmten Topic (Publish). Andere Geräte können dieses Topic abbonieren (Subscribe) und erhalten dadurch die Daten \cite{geeksforgeeks_mqtt}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{mqtt_pub_sub.png}
+    \caption{MQTT Publish Subscribe Grafik}
+    \label{fig:mqttpubsubgrafik}
+\end{figure}
+
+\newpage

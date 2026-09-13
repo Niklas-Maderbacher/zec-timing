@@ -1,0 +1,50 @@
+% ==============================================================
+% Kapitel 6: Testen
+% ==============================================================
+
+\section{Testen}
+
+Da eine vollständige Automatisierung der Tests für das Gesamtsystem nur mit erheblichem Aufwand möglich ist, wurde der Ablauf eines Versuchs manuell simuliert. Hierzu wurde ein Skript ausgeführt, das einen Zeitstempel an den MQTT-Broker übermittelte. Anschließend wurden in der Zeitnehmerapplikation die Teams und deren Fahrer erfolgreich von der im Kubernetes-Cluster betriebenen ZEC-API abgerufen. Nach dem Absenden des simulierten Versuchs wurde dieser erfolgreich verarbeitet und anschließend im Leaderboard der ebenfalls im Kubernetes-Cluster betriebenen Web-Applikation angezeigt.
+
+\section{Deployment}
+
+\subsection{Zeitnehmerapplikation}
+
+Die Zeitnehmerapplikation wird idealerweise auf demselben Gerät deployt, auf dem sie von den Zeitnehmern bedient wird. Hierfür kann die im Repository (unter dem Branch ZEC-Server) enthaltene \textbf{Docker-Compose-Datei} verwendet werden. Diese lädt das fertige Image aus der GitHub Container Registry und startet den Container mit den benötigten Umgebungsvariablen. Alternativ kann die Anwendung auch mit folgendem Befehl gestartet werden:
+
+\begin{CodeBox}
+docker run -d \
+  --name zec-desktop-app-frontend \
+  --restart unless-stopped \
+  -p 5173:3000 \
+  -e NEXT_PUBLIC_DESKTOP_APP_API_URL="<Adresse der ZEC-API>" \
+  -e NEXT_PUBLIC_MQTT_WORKER_API_URL="<Adresse des MQTT-Workers>" \
+  -e NEXT_PUBLIC_API_KEY="<API-Key>" \
+  ghcr.io/niklas-maderbacher/zec-timing:desktop-app
+\end{CodeBox}
+
+Nach dem Deployment ist die Zeitnehmerapplikation unter \textbf{localhost:5173} erreichbar.
+
+\subsection{MQTT-Worker}
+
+Die Multicontainer-Applikation MQTT-Worker wird idealerweise auf demselben Gerät bereitgestellt, auf dem auch die ZEC-API betrieben wird. Hierfür wird die im Repository im Branch \textit{ZEC-Server} enthaltene \textbf{Docker-Compose-Datei} empfohlen, da dadurch die einzelnen Container automatisiert gestartet und konfiguriert werden und kein komplexer \textbf{docker run}-Befehl manuell ausgeführt werden muss.
+
+\subsubsection{ZEC-Server mittels Kubernetes}
+
+Um die vom Diplomarbeitspartner Darnhofer David entwickelte ZEC-API und Web-App mittels Kubernetes zu deployen, werden die im Repository im Branch \textit{ZEC-Server} im Verzeichnis \textit{server-cluster} enthaltenen Dateien benötigt. Darunter befindet sich auch das Skript \textit{start-stop.sh}, mit dem der Kubernetes-Cluster einfach gestartet werden kann.
+
+Für die von Darnhofer David beschriebenen Schritte zur Konfiguration von Keycloak muss der entsprechende Microservice von außen erreichbar sein. Hierfür muss folgender Befehl ausgeführt werden:
+
+\begin{CodeBox}
+kubectl port-forward deployment/keycloak-deployment 8080:8080
+\end{CodeBox}
+
+Dadurch ist Keycloak von außen erreichbar und kann entsprechend der von Darnhofer David beschriebenen Vorgehensweise konfiguriert werden. Dazu zählen unter anderem das Hinzufügen des Realms sowie das Ändern der Admin- und Login-Zugangsdaten. Anschließend müssen die geänderten Zugangsdaten im Deployment in der Datei \textit{deployment.yaml} eingetragen und mit folgendem Befehl angewendet werden:
+
+\begin{CodeBox}
+kubectl apply -f deployment.yaml
+\end{CodeBox}
+
+Nach dem Anwenden der Konfiguration muss einige Zeit gewartet werden, bis alle Services gestartet und betriebsbereit sind. Anschließend ist die \textit{ZEC-API} unter \textit{zec.local} und die \textit{Web-App} unter \textit{zec-timing.local} erreichbar.
+
+Sollen diese Adressen geändert werden, müssen die entsprechenden Einträge in der Datei \textit{ingress.yaml} angepasst werden. Dabei ist zu beachten, dass die \textit{Web-App} derzeit mit \textit{zec.local} als Zieladresse der \textit{ZEC-API} gebaut wird. Soll eine andere Adresse verwendet werden, muss diese in der Datei \textit{.env.example} angepasst werden. Durch die Änderung wird automatisch ein GitHub-Actions-Workflow ausgelöst, der die Web-App mit der neuen Zieladresse erstellt.

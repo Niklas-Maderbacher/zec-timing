@@ -1,47 +1,216 @@
-% Zusammenfassung und Resumee der Diplomarbeit:
-\section{Zusammenfassung}
-
-Hier steht die Zusammenfassung und das Resumee der Diplomarbeit!
-\newpage
-
 % Anhang zur Diplomarbeit:
 \section{Anhang}
+\renewcommand{\arraystretch}{1.15}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{2.5cm}|>{\raggedright\arraybackslash}p{10.0cm}|>{\raggedleft\arraybackslash}p{2.2cm}|}
+\hline
+\textbf{Datum}  & \textbf{Tätigkeit} & \textbf{Zeitaufwand in h} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Datum}  & \textbf{Tätigkeit} & \textbf{Zeitaufwand in h} \\
+\hline
+\endhead
+\hline
+\endfoot
 
-Hier stehen zusätzliche Informationen zur Diplomarbeit!
-Zum Beispiel können hier Listings oder Teile des Programmes abgebildet sein:
+11.04.2025 & erste Besprechung - aktuellen Stand erklären & 1 \\
+30.06.2025 & altes Repository durchsehen & 1 \\
+30.06.2025 & zweite Besprechung - was gemacht werden muss & 1 \\
+30.06.2025 & Diplomarbeitsantrag anfangen & 1 \\
+02.07.2025 & dritte Besprechung - Einzelheiten klären + Fragen beantworten & 0.5 \\
+02.07.2025 & Raspi flashen + ssh aufsetzen & 2 \\
+12.07.2025 & Diplomarbeitsantrag weiterarbeiten & 2 \\
+18.07.2025 & erste Version des Diplomarbeitsantrag finalisieren & 2 \\
+29.07.2025 & Pseudo MQTT Client aufsetzen & 3 \\
+29.07.2025 & Google Drive aufsetzten + Besprechungsprotokoll & 1 \\
+30.07.2025 & Grundkonzept erstellen & 2 \\
+30.07.2025 & Informationsaustausch & 1 \\
+04.08.2025 & Docker Container erstellen & 2 \\
+05.08.2025 & Docker Container erstellen & 2 \\
+05.08.2025 & Standort des MQtt-Server hinterfragen & 1 \\
+05.08.2025 & Gescheiteter Migrationsversuch von Google Drive -> OneDrive & 1 \\
+12.08.2025 & MQtt Worker Container erstellen & 2 \\
+10.09.2025 & Besprechung über aktuellen Stand & 0.5 \\
+24.09.2025 & Diplomarbeitantrag überarbeiten & 0.5 \\
+25.09.2025 & Besprechung über Pflichtenheft & 0.5 \\
+27.09.2025 & Diplomarbeitsantrag überarbeiten & 2 \\
+07.10.2025 & Informieren über FastAPI-MQtt & 0.5 \\
+07.10.2025 & Informieren über Redis in-memory-db & 1 \\
+12.10.2025 & MQtt Worker Container überarbeiten nach Besprechung & 2 \\
+12.10.2025 & Besprechung mit Leitner Lukas über Coolify & 1 \\
+12.10.2025 & Testen des MQtt Worker Containers & 1 \\
+14.10.2025 & ``Verschönerung'' der Implementierung des MQtt Worker & 1 \\
+15.10.2025 & Meeting of Minutes vorbereiten & 0.5 \\
+06.11.2025 & Desktop App Backend & 4 \\
+07.11.2025 & Besprechung aktueller Stand & 0.5 \\
+12.11.2025 & Gedanken über Frontend der Desktop App machen & 1 \\
+13.11.2025 & Desktop App Aufbau überdenken & 2 \\
+14.11.2025 & Interne Besprechung über Datenbank Schema & 1 \\
+15.11.2025 & Desktop App Backend ändern & 2 \\
+19.11.2025 & Backend Routen + CRUD hinzufügen/finalisieren & 3 \\
+19.11.2025 & Besprechung über aktuellen Stand + Besprechungsnotizen bearbeiten & 1 \\
+06.12.2025 & Frontend anfagen & 7 \\
+08.12.2025 & Frontend weiterarbeiten & 5 \\
+13.12.2025 & Zwischenpräsentation vorbereiten & 4 \\
+14.12.2025 & Zwischenpräsentation Plakat erstellen & 2 \\
+15.12.2025 & Zwischenpräsentation Plakat + PowerPoint überarbeiten & 4 \\
+26.12.2025 & Frontend weiterarbeiten & 5 \\
+17.01.2026 & Frontend fast abschließen. Zeitzonen fehler muss noch fixed werden & 5 \\
+19.01.2026 & Frontend refactoring & 5 \\
+24.01.2026 & Frontend Fehlerbehebung (Zeitzonen gefixed) + Logbuch & 4 \\
+30.01.2026 & Frontend nach Besprechung anpassen und teilweise Zusammenführung mit ZEC-API & 5 \\
+02.02.2026 & Frontend weiterarbeiten. Manueller Start + Ende -> Manuelle Zeit & 4 \\
+06.02.2026 & Frontend fertigstellen & 6 \\
+12.02.2026 & MQtt Worker überarbeiten + Frontend Container ändern & 3 \\
+12.02.2026 & Metting aktueller Stand + Zusammenführung + Ablauf attempt creation & 0.5 \\
+12.02.2026 & Inhaltsverzeichnis für Dokumentation erstellen & 1 \\
+16.02.2026 & Versuch Lichtschranke zum laufen zu bringen & 3 \\
+18.02.2026 & MQtt Broker Auth hinzufügen + Automatischen builden und uploaden von Container Images zu ghcr + Kubernetes initiales Setup & 6 \\
+19.02.2026 & Über Kubernetes informieren. Tutorials schauen & 3 \\
+20.02.2026 & Kubernetes weiterarbeiten. Deployment + Service fertig, Ingress eventuell anpassen & 6 \\
+03.03.2026 & Frontend Layout ändern & 4 \\
+03.03.2026 & Inhaltsverzeichnis überarbeiten + neue DA Vorlage aufsetzen & 3 \\
+04.03.2026 & Automatischs builden und uploaden (in ghcr) von jedem Container außer Frontends. Kubernetes überarbeitet & 3 \\
+09.03.2026 & Kubernetes fixen, deployment namen fixen, startups fixen & 3 \\
+11.03.2026 & Datenbanken in Kubernetes Cluster verschieben & 5 \\
+19.03.2026 & Ingres fixen, startups überarbeiten & 4 \\
+20.03.2026 & Versuch, mit Desktop App auf Cluster zugreifen & 4 \\
+23.06.2026 & Finalisierung der Desktop-App mit automatischen builden von Image + an Kubernetes Cluster weiterarbeiten & 2 \\
+07.07.2026 & Finalisierung des Kubernetes Clusters & 3 \\
+31.08.2026 & Schreiben der Diplomarbeit & 2 \\
+01.09.2026 & Schreiben der Diplomarbeit & 5.5 \\
+09.09.2026 & Schreiben der Diplomarbeit & 5 \\
+11.09.2026 & Schreiben der Diplomarbeit & 7 \\
+12.09.2026 & Schreiben der Diplomarbeit & 3 \\
+13.09.2026 & Schreiben der Diplomarbeit & 3 \\
 
-\begin{lstlisting}
-// create new document
-string path = @"C:\Data\sample.xlsx";
-// add title row 
-List<string> titleRow = new List<string>();
-titleRow.Add("This is the 1st cell");
-titleRow.Add("This is the 2nd cell");
-openXmlExcel.addTitleRow(titleRow);
-// add scatter chart
-List<double[]> xValues = new List<double[]>();
-List<double[]> yValues = new List<double[]>();
-List<string> lineNames = new List<string>();
-// first line
-xValues.Add(new double[5] { -2, -1, 0, 1, 2 });
-yValues.Add(new double[5] { -2, -1, 0, 1, 2 });
-lineNames.Add("Line 1");
-// second line
-xValues.Add(new double[5] { -2, -1, 0, 1, 2 });
-yValues.Add(new double[5] { -3, -1, 0, 1, 3 });
-lineNames.Add("Line 2");
-// save document 
-openXmlExcel.saveFile();
-\end{lstlisting}
-
+\hline
+\textbf{Gesamt} & & \textbf{185.5} \\
+\hline
+\end{longtable}
 \newpage
 
 \section{Verzeichnisse}
 % Tabellenverzeichnis:
-\listoffigures 
-%
-% Abkürzungsverzeichnis:
-\input{./../02_DOC_Main/DA_04_ACR.tex}
-%
-% Literaturverzeichnis:
-\input{./../02_DOC_Main/DA_05_LIT.tex}
+\subsection{Abbildungsverzeichnis}
+{%
+\makeatletter
+\@starttoc{lof}
+\makeatother
+}
+
+\newpage
+\subsection{Abkürzungsverzeichnis}
+{%
+\renewcommand*{\glossarysection}[2][]{}
+\printnoidxglossary[type=\acronymtype, sort=letter]
+}
+\newpage
+\subsection{Literaturverzeichnis}
+\printbibliography[heading=none]
+
+\newpage
+\section{Code Beispiele}
+\subsection{MQTT-Worker - Erhalt der Nachricht Code Beispiel}
+
+\begin{CodeBox}
+def extract_payload(payload):
+    mac_address = payload.get("esp_id")
+    timestamp = payload.get("timestamp")
+
+    # Clean values
+    mac_address = mac_address.split("-", 1)[1]
+
+    add_timestamp(mac_address, timestamp)
+
+    return mac_address, timestamp
+
+def on_connect(client, userdata, flags, rc):
+    print(f"Connect with result code {rc}")
+
+def on_message(client, userdata, msg):
+    try:
+        mac, timestamp = extract_payload(json.loads(msg.payload.decode("utf-8")))
+        print(f"Received mac-address: {mac} and timestamp: {timestamp}")
+    except json.JSONDecodeError:
+        print("Received message is not valid JSON", file=sys.stdout)
+\end{CodeBox}
+
+\newpage
+
+\subsection{MQTT-Worker - API Endpoint Code Beispiel}
+
+\begin{CodeBox}
+def get_timestamps(mac: str):
+    key = f"timestamps:{mac}"
+    now = time.time()
+
+    redis_connection.zremrangebyscore(key, 0, now)
+
+    if not redis_connection.exists(key):
+        raise MacNotFound(
+            message=(
+                "No ESP with this MAC address exists or no timestamps yet exist. "
+                "If you think it should exist, please send new MQTT data."
+            ),
+            error_code=404,
+        )
+    return redis_connection.zrange(key, 0, -1)
+
+@router.get("/{esp_mac}", response_model=Timestamp, status_code=status.HTTP_200_OK)
+def get_timestamp_from_esp(esp_mac: str):
+    clean_mac = esp_mac.replace("-", ":")
+    try:
+        timestamps = get_timestamps(clean_mac)
+    except MacNotFound as e:
+        raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=(
+                    "No ESP with this MAC address exists or no timestamps yet exist. "
+                    "If you think it should exist, please send new MQTT data."
+                )
+            )
+    return Timestamp(timestamp=timestamps)
+\end{CodeBox}
+
+\newpage
+
+\subsection{Zeitnehmerapplikation - API-Key Authentifizierung}
+
+\begin{CodeBox}
+const fetchTeams = async () => {
+    try {
+      const response = await axios.get<Team[]>(
+        `${SERVER_API_URL}/teams/`,
+        {
+          headers: {
+            "x-api-key": API_KEY
+          }
+        }
+      );
+
+      setTeams(response.data);
+      if (response.data.length > 0) setSelectedTeam(response.data[0]);
+    } catch (error) {
+      console.error("Failed to fetch teams", error);
+    }
+};
+\end{CodeBox}
+
+\newpage
+
+\subsection{Zeitnehmerapplikation - Kommunikation mit MQTT-Worker}
+
+\begin{CodeBox}
+const fetchStartTimestamps = async () => {
+    if (!selectedChallenge) return;
+        try {
+        const start_1 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start1.replace(/:/g, '-')}`);
+        const start_2 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start2.replace(/:/g, '-')}`);
+        const combined = [...(start_1.data.timestamp || []), ...(start_2.data.timestamp || [])];
+        setStartTimestamps(combined);
+    } catch (error) {
+      console.error("Failed to fetch start timestamps", error);
+    }
+};
+\end{CodeBox}

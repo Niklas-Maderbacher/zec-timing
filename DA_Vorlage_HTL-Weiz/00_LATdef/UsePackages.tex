@@ -17,13 +17,6 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc, shapes.multipart, tikzmark}
 %\usepackage{plantuml}
-\usepackage[
-    backend=biber,
-    style=numeric,
-    sorting=none
-]{biblatex}
-
-\addbibresource{quellen.bib}
 
 \usepackage{calc}
 \usepackage{graphicx}
@@ -39,6 +32,7 @@
 \usepackage{array,longtable,calc,amsmath}
 \usepackage{xspace}
 \usepackage{pdfpages}
+\usepackage{hyperref}
 \usepackage{textfit}
 \usepackage{setspace}
 \usepackage{listings}
@@ -49,6 +43,10 @@
 \usepackage[acronym,toc]{glossaries}
 \usepackage{docmute}					% includes parts of files just within the Begin and End Document
 \usepackage[most]{tcolorbox}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{./../02_DOC_Main/literatur.bib}
+
+\newcommand{\source}[1]{\par\small\textit{Quelle: }#1}
 %---------------------Switch modulare Printversionen
 %
 \newboolean{UseWm} 		%Korrektur Wasserzeichen in das PDF drucken

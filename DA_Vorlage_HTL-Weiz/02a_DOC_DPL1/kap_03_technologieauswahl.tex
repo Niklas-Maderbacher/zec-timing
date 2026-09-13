@@ -1,0 +1,32 @@
+% ==============================================================
+% Kapitel 3: Technologieauswahl
+% ==============================================================
+
+\section{Technologieauswahl}
+
+\subsection{GitHub}
+Für die Versionskontrolle des Projekts wurde GitHub ausgewählt. GitHub ist eine webbasierte Plattform zur Verwaltung und Zusammenarbeit an Softwareprojekten, die auf dem Versionsverwaltungssystem Git basiert \cite{what_is_github}. Durch die Verwendung von Git können Änderungen am Quellcode nachvollziehbar dokumentiert und verschiedene Versionen des Projekts verwaltet werden. Dadurch ist es beispielsweise möglich, Änderungen nachzuverfolgen, frühere Versionen wiederherzustellen und unabhängig voneinander an verschiedenen Entwicklungsständen zu arbeiten \cite{git_version_control} \cite{git_branching}.
+
+Ein weiterer Grund für die Wahl von GitHub ist die umfangreiche Integration zusätzlicher Entwicklungs- und Deployment-Werkzeuge. Insbesondere ermöglicht GitHub Actions die Automatisierung von Arbeitsabläufen wie dem Ausführen von Tests, dem Erstellen von Anwendungen und dem automatisierten Deployment. Dadurch können bestimmte Schritte des Entwicklungsprozesses bei Änderungen am Quellcode automatisch ausgeführt werden \cite{github_actions}.
+
+Zusätzlich wird die GitHub Container Registry (GHCR) verwendet. Diese ermöglicht die Speicherung und Verwaltung der im Projekt erstellten Docker-Container-Images direkt innerhalb von GitHub. Dadurch können die erstellten Images zentral verwaltet und beispielsweise für die Bereitstellung der Anwendung in einer Kubernetes-Umgebung verwendet werden \cite{github_container_registry}.
+
+\subsection{Docker}
+Zur Containerisierung wurde Docker gewählt, da dadurch die einzelnen Services plattformunabhängig bereitgestellt werden können. Die benötigten Abhängigkeiten und Laufzeitumgebungen werden dabei gemeinsam mit den Services definiert, wodurch eine einheitliche Ausführungsumgebung entsteht \cite{opc_router_docker}. Aufgrund der weiten Verbreitung und umfangreichen Dokumentation eignet sich Docker besonders für die Umsetzung und den Betrieb der Anwendung auf unterschiedlichen Systemen, beispielsweise einem Raspberry Pi oder einem Server.
+
+\subsection{Kubernetes}
+Für die Orchestrierung der Microservices wurde Kubernetes gewählt, da es eine automatisierte Verwaltung und zuverlässige Bereitstellung der einzelnen Services ermöglicht. Kubernetes übernimmt dabei unter anderem die Überwachung der Container, deren Neustart bei Fehlern sowie die Skalierung der Services. Dadurch eignet es sich besonders für eine Architektur, bei der mehrere voneinander unabhängige Microservices betrieben werden \cite{kubernetes_overview}.
+
+Alternativ wären beispielsweise Docker Compose oder Docker Swarm möglich gewesen. Docker Compose ist jedoch hauptsächlich für die Verwaltung von Containern in kleineren und weniger komplexen Umgebungen ausgelegt und bietet im Vergleich zu Kubernetes weniger Möglichkeiten zur Skalierung und Ausfallsicherheit. Docker Swarm bietet zwar ähnliche Funktionen wie Kubernetes, verfügt jedoch über weniger umfangreiche Funktionen \cite{docker_swarm_vs_kubernetes}. Aufgrund der hohen Verbreitung, der umfangreichen Funktionalitäten und der guten Unterstützung für Microservice-Architekturen wurde daher Kubernetes als Orchestrierungsplattform ausgewählt.
+
+\subsection{Redis}
+Für die Zwischenspeicherung der zeitkritischen Zeitstempel wurde Redis gewählt, da diese nur für einen kurzen Zeitraum benötigt werden und eine schnelle Verarbeitung erforderlich ist. Durch die Speicherung im Arbeitsspeicher ermöglicht Redis sehr kurze Zugriffszeiten und eignet sich daher besonders für temporäre Daten. Zusätzlich können die gespeicherten Daten mithilfe einer Ablaufzeit (TTL) automatisch nach einem definierten Zeitraum gelöscht werden. Dadurch wird verhindert, dass nicht mehr benötigte Zeitstempel dauerhaft gespeichert werden \cite{redis_key_expiration}.
+
+\subsection{Eclipse Mosquitto}
+Für die Umsetzung des MQTT-Brokers wurde Eclipse Mosquitto gewählt, da es sich um einen leichtgewichtigen und Open-Source-MQTT-Broker handelt, der speziell für die Kommunikation über das MQTT-Protokoll entwickelt wurde. Dadurch eignet sich Mosquitto besonders für die Verarbeitung der von den Lichtschranken gesendeten Nachrichten und lässt sich zudem einfach in die bestehende Docker-Infrastruktur integrieren \cite{eclipse_mosquitto}.
+
+\subsection{NextJs}
+Für die Entwicklung der Zeitnehmer Applikation wurde Next.js gewählt, da es eine moderne und leistungsfähige Grundlage für die Entwicklung von Webanwendungen bietet. Durch die auf React basierende Architektur ermöglicht Next.js eine strukturierte Entwicklung wiederverwendbarer Komponenten. Zudem bietet das Framework Funktionen wie serverseitiges Rendering, Routing und eine optimierte Auslieferung der Anwendung. Dadurch konnte eine übersichtliche, performante und gut erweiterbare Benutzeroberfläche für das Projekt umgesetzt werden \cite{nextjs_docs}.
+
+\subsection{shadcn/ui}
+Für die Gestaltung der Benutzeroberfläche wurde shadcn/ui gewählt, da es eine Sammlung wiederverwendbarer und anpassbarer UI-Komponenten für React-Anwendungen bereitstellt. Die Komponenten lassen sich flexibel an das bestehende Design anpassen und ermöglichen dadurch eine einheitliche und übersichtliche Benutzeroberfläche. Zudem basiert shadcn/ui auf etablierten Technologien wie Tailwind CSS und Radix UI, wodurch sich die Komponenten gut in die bestehende Next.js-Anwendung integrieren lassen \cite{shadcn_ui_docs}.

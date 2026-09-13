@@ -1,35 +1,326 @@
-% ==============================================================
-% Kapitel 7: Implementation
+﻿% ==============================================================
+% Kapitel 05: Implementation
 % ==============================================================
 
 \section{Implementation}
 
-% -------------------------------------------------------------------
-\subsection{Server}
-% Autor: David | Umfang: 8–9 Seiten (inkl. Screenshots)
-% TODO: Screenshot von Web App
-%       API Gateway mit Beispielscode erklären
-%       CRUD Operationen mit Beispielscode erklären
-%       Authentifikation mit Keycloak
-%       API mit Beispielscode erklären
-%       Kommunikation zwischen den einzelnen Services mit Beispielcode erklären
-%       Zugriffsberechtigungen je Rolle
+\subsection{Github Actions}
 
-% -------------------------------------------------------------------
-\subsection{Desktop App}
-% Autor: Niklas | Umfang: 2–3 Seiten (inkl. Screenshots)
-% TODO: Screenshot von Desktop App
-%       Für einfachere Bereitstellung der Daten -> MQTT Zeitstempel über API zur Verfügung stellen
-%       Zugriff auf Server mit Beispielscode erklären
+Nach jeder Änderung am Quellcode der auf GitHub gepusht wird, wird automatisch ein GitHub-Actions-Workflow ausgelöst, der die Anwendung erstellt und als Docker-Image verpackt \cite{github_actions}. Dieses Image wird anschließend in der GitHub Container Registry veröffentlicht und steht dort für das Deployment zur Verfügung \cite{github_container_registry}. Dadurch wird beim Deployment lediglich das bereits fertig erstellte Image benötigt und nicht mehr der Quellcode selbst. Zusätzlich verkürzt sich die Deployment-Zeit, da der aufwendige Build-Prozess bereits im Rahmen des GitHub-Actions-Workflows durchgeführt wird und auf dem Zielsystem nicht erneut ausgeführt werden muss.
+Hier ein Beispielscode, bei dem die Zeitnehmerapplikation gebaut wird:
 
-% -------------------------------------------------------------------
-\subsection{GitHub Workflows}
-% Autor: Niklas | Umfang: 2–3 Seiten
-% TODO: GitHub Workflows für automatisches Builden der Container
-%       und Hochladen in GitHub Container Registry
-%       + automatisches Testen
+\begin{CodeBox}
+name: Desktop App CI Job
+on:
+  push:
+    branches: ["<Auf welchen Branch er hoert>"]
+jobs:
+  build-desktop-app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build desktop app
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          push: true
+          tags: <Name des Docker-Images>
+          context: <Verzeichnis der Anwendung>
+\end{CodeBox}
 
-% -------------------------------------------------------------------
+Der Workflow wird durch einen Push auf den definierten Branch ausgelöst. Zunächst wird mit der Aktion \texttt{actions/checkout} der aktuelle Quellcode des Projekts aus dem Repository geladen. Anschließend erfolgt die Anmeldung an der GitHub Container Registry, damit das erstellte Docker-Image dort veröffentlicht werden kann. Für die Anmeldung wird das von GitHub Actions bereitgestellte \texttt{GITHUB\_TOKEN} verwendet. Im letzten Schritt wird mit der \texttt{docker/build-push-action} das Docker-Image aus dem angegebenen Verzeichnis erstellt und anschließend in die Container Registry hochgeladen. Durch die Angabe der Plattform \texttt{linux/amd64} wird sichergestellt, dass das Image für die Zielumgebung geeignet ist \cite{docker_build_push_action}.
+
+Dieser Prozess ermöglicht es, den Build der Anwendung vollständig zu automatisieren. Änderungen am Quellcode werden dadurch direkt in ein aktualisiertes Docker-Image überführt, welches anschließend für das Deployment verwendet werden kann. Dadurch wird der Build-Prozess von der eigentlichen Deployment-Umgebung getrennt.
+
+\subsection{MQTT-Worker}
+
+\subsubsection{MQTT-Broker}
+
+Der MQTT-Broker wird als eigener Docker-Container auf Basis des offiziellen Eclipse-Mosquitto-Images betrieben. Über das Dockerfile werden zusätzlich benötigte Dateien in den Container kopiert und ein eigenes Entrypoint-Skript als Startpunkt definiert. Dadurch kann die Konfiguration des Brokers beim Start des Containers automatisiert vorbereitet werden.
+
+\begin{CodeBox}
+FROM eclipse-mosquitto:latest
+
+RUN apk add --no-cache bash
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+COPY mosquitto.conf /mosquitto/config/mosquitto.conf
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["/usr/sbin/mosquitto", "-c", "/mosquitto/config/mosquitto.conf"]
+\end{CodeBox}
+
+Das Entrypoint-Skript legt anhand der über Umgebungsvariablen bereitgestellten Zugangsdaten einen MQTT-Benutzer an. Werden keine Zugangsdaten angegeben, werden Standardwerte verwendet. Die erzeugte Passwortdatei wird anschließend mit den notwendigen Dateiberechtigungen versehen, bevor der MQTT-Broker gestartet wird.
+
+\begin{CodeBox}
+\#\!/bin/bash
+set -e
+
+MQTT_USER="${MQTT_USER:-admin}"
+MQTT_PASSWORD="${MQTT_PASSWORD:-password}"
+
+echo "Creating MQTT user: $MQTT_USER"
+
+mosquitto_passwd -c -b /mosquitto/config/passwd "$MQTT_USER" "$MQTT_PASSWORD"
+chown mosquitto:mosquitto /mosquitto/config/passwd
+chmod 600 /mosquitto/config/passwd
+
+exec "$@" 
+\end{CodeBox}
+
+Die eigentliche Konfiguration des Brokers erfolgt über die Datei \texttt{mosquitto.conf}. Der Broker lauscht auf Port 1883 und erlaubt keine anonymen Verbindungen. Stattdessen müssen sich Clients mit den in der Passwortdatei hinterlegten Zugangsdaten authentifizieren. Zudem werden die Log-Ausgaben nicht dauerhaft in einer Datei gespeichert, sondern an die Standardausgabe des Containers weitergeleitet. Dadurch werden unnötige Schreibvorgänge auf der SD-Karte vermieden und deren Verschleiß reduziert.
+
+\begin{CodeBox}
+listener 1883
+allow_anonymous false
+password_file /mosquitto/config/passwd
+log_dest stdout
+\end{CodeBox}
+
+\newpage
+
+\subsubsection{API}
+
+Beim Empfang einer MQTT-Nachricht wird zunächst die übermittelte JSON-Nachricht verarbeitet und die darin enthaltene MAC-Adresse sowie der Zeitstempel ausgelesen. Da die MAC-Adresse im Feld \texttt{esp\_id} zusammen mit dem Präfix \texttt{ESP32-} übertragen wird, wird dieses Präfix vor der weiteren Verarbeitung entfernt. Anschließend wird der Zeitstempel anhand der MAC-Adresse in Redis gespeichert. Ein entsprechendes Codebeispiel ist im Anhang zu finden.
+
+Für die Speicherung wird pro Lichtschranke ein eigener Redis-Key nach dem Schema \texttt{timestamps:{mac}} verwendet. Da die Zeitstempel nur für einen begrenzten Zeitraum benötigt werden und nach ihrer Verarbeitung nicht dauerhaft gespeichert werden müssen, wird für jeden Zeitstempel ein Ablaufzeitpunkt festgelegt. Dieser wird aus der aktuellen Zeit und dem in \texttt{TIMESTAMP\_EXPIRE\_TIME} festgelegten Zeitraum berechnet. Nach Ablauf dieses Zeitraums wird der Zeitstempel aus der Zwischenspeicherung entfernt und steht nicht mehr zur Verfügung.
+
+Der Wert von \texttt{TIMESTAMP\_EXPIRE\_TIME} wird über die Konfiguration des Containers festgelegt und muss beim Start des Containers als Umgebungsvariable angegeben werden. Dadurch kann die Speicherdauer der Zeitstempel flexibel angepasst werden, ohne Änderungen am Quellcode vornehmen zu müssen.
+Die Umsetzung dieser Funktion ist im folgenden Code umgesetzt:
+
+\begin{CodeBox}
+def add_timestamp(mac: str, timestamp: str):
+    key = f"timestamps:{mac}"
+    expires_at = time.time() + settings.TIMESTAMP_EXPIRE_TIME
+
+    redis_connection.zadd(
+        key,
+        {timestamp: expires_at}
+    )
+\end{CodeBox}
+
+Für den Abruf der gespeicherten Zeitstempel stellt der MQTT-Worker einen \gls{API}-Endpunkt unter bereit, der über die MAC-Adresse der jeweiligen Lichtschranke aufgerufen wird. Da die MAC-Adresse bei der Anfrage mit Bindestrichen übergeben werden muss, werden diese zunächst durch Doppelpunkte ersetzt, um das Format des zugehörigen Redis-Keys herzustellen. Anschließend werden die gespeicherten Zeitstempel aus Redis abgefragt.
+
+Vor der Rückgabe werden zunächst alle Zeitstempel entfernt, deren Ablaufzeitpunkt bereits erreicht wurde. Hierfür werden die aktuell abgelaufenen Einträge aus der Redis Sorted Set entfernt. Befinden sich danach keine gültigen Zeitstempel mehr unter dem entsprechenden Key, wird eine HTTP-404-Fehlermeldung zurückgegeben. Andernfalls werden die noch gültigen Zeitstempel aus Redis geladen und über die API an die anfragende Anwendung zurückgegeben. Die Umsetzung des API-Endpunkts sowie die Bereinigung der abgelaufenen Zeitstempel sind im Anhang zu finden.
+
+\newpage
+
+\subsection{Zeitnehmerapplikation}
+
+Um die Bedienung der Zeitnehmerapplikation zu erleichtern, wurden Auswahlmöglichkeiten, die im selben Arbeitsschritt getroffen werden, zu Gruppen zusammengefasst. Dadurch wird außerdem eine intuitive Bedienung von oben nach unten ermöglicht. Die einzelnen Auswahlmöglichkeiten sind entsprechend dem Ablauf eines Versuchs angeordnet, sodass die Anwendung schrittweise von oben nach unten abgearbeitet werden kann. Der Aufbau und die Anordnung der einzelnen Elemente können im nachfolgenden Wireframe-Diagramm nachvollzogen werden:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=14cm]{wireframe-zeitnehmerapplikation-erklaerung.png}
+    \caption{Wireframe Zeitnehmerapplikation mit Erklärung}
+    \label{fig:wireframe_zeitnehmerapplikation_erklaerung}
+\end{figure}
+
+Dabei basiert die Zeitnehmerapplikation auf wiederverwendbaren Komponenten, wodurch das Layout der Zeitnehmerapplikation schnell angepasst werden kann, ohne die grundlegende Funktionsweise der Anwendung zu beeinflussen. Die Wiederverwendbarkeit der Komponenten verkürzt zudem die Entwicklungszeit und reduziert die Fehleranfälligkeit, da bereits implementierte und getestete Komponenten mehrfach verwendet werden können.
+
+\newpage
+
+\subsubsection{Kommunikation mit ZEC-Server}
+
+Die Zeitnehmerapplikation benötigt für ihre Verwendung verschiedene Daten vom ZEC-Server. Die dafür bereitgestellten Endpunkte sind durch eine Authentifizierung geschützt. Da für die Zeitnehmerapplikation keine Anmeldung mittels Benutzername und Passwort vorgesehen ist, wird für Anfragen, die eine Authentifizierung erfordern, stattdessen ein API-Key verwendet. Dieser wird beim Start des Containers als Umgebungsvariable hinterlegt und von der Anwendung für die Authentifizierung der Anfragen verwendet.
+
+Ein entsprechendes Codebeispiel ist im Anhang zu finden.
+
+\subsubsection{Kommunikation mit MQTT-Worker}
+
+Durch den Einsatz des MQTT-Workers muss die Zeitnehmerapplikation nicht direkt über das MQTT-Protokoll mit den Lichtschranken kommunizieren. Stattdessen stellt der MQTT-Worker die empfangenen Zeitstempel über eine HTTP-\gls{API} bereit. Dadurch kann die Zeitnehmerapplikation, analog zur Kommunikation mit dem ZEC-Server, HTTP für die Kommunikation verwenden.
+
+Dadurch wird für die Kommunikation der Zeitnehmerapplikation mit den angebundenen Diensten ein einheitliches Protokoll verwendet. Dies vereinfacht die Implementierung, da die Anwendung lediglich HTTP-Anfragen verarbeiten muss und keine zusätzliche MQTT-Kommunikation benötigt.
+
+Ein entsprechendes Codebeispiel ist im Anhang zu finden.
+
+\newpage
+
 \subsection{Kubernetes Cluster}
-% Autor: Niklas | Umfang: 4–5 Seiten
-% TODO: Deployment, Service, Ingress von k3s mit Beispielscode erklären
+
+Wie bereits in 5.2.4 beschrieben, werden Kubernetes Anwendung über Ressourcen beschrieben
+
+\subsubsection{Deployment}
+
+Ein Deployment beschreibt in Kubernetes, wie eine Anwendung innerhalb des Clusters bereitgestellt und verwaltet werden soll. Dabei wird unter anderem festgelegt, welches Container-Image verwendet wird, wie viele Instanzen der Anwendung ausgeführt werden und welche Ressourcen dafür zur Verfügung stehen.
+
+Das folgende Beispiel zeigt die grundlegende Struktur eines Deployments:
+
+\begin{CodeBox}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <name>-deployment
+  labels:
+    app: <name>
+spec:
+  replicas: <Anzahl der Pod-Instanzen>
+  selector:
+    matchLabels:
+      app: <name>
+  template:
+    metadata:
+      labels:
+        app: <name>
+    spec:
+      containers:
+        - name: <name>
+          image: <Zu verwendendes Container-Image>
+          ports:
+            - containerPort: <Port, auf dem die Anwendung im Container erreichbar ist>
+          env:
+            - name: <Name der Umgebungsvariable>
+              value: <Wert der Umgebungsvariable>
+          resources:
+            requests:
+              cpu: <Minimal benoetigte CPU-Ressourcen>
+              memory: <Minimal benoetigter Arbeitsspeicher>
+            limits:
+              cpu: <Maximal verwendbare CPU-Ressourcen>
+              memory: <Maximal verwendbarer Arbeitsspeicher>
+\end{CodeBox}
+
+Über \texttt{replicas} wird die gewünschte Anzahl an Pod-Instanzen festgelegt. Der \texttt{selector} definiert anhand von Labels, welche Pods zu dem Deployment gehören. Im \texttt{template} wird anschließend die Konfiguration der zu erstellenden Pods beschrieben. Dazu gehören unter anderem der Name des Containers, das zu verwendende Container-Image und der Port, auf dem die Anwendung innerhalb des Containers erreichbar ist.
+
+Über den Abschnitt \texttt{env} können Umgebungsvariablen an den Container übergeben werden. Diese werden beispielsweise für die Konfiguration der Anwendung oder für die Verbindung zu anderen Services verwendet \cite{kubernetes_deployment_deployment}. Mit \texttt{resources} werden zusätzlich Ressourcenanforderungen und -begrenzungen definiert. Die \texttt{requests} geben an, welche Ressourcen für den Container mindestens benötigt werden, während die \texttt{limits} die maximal verwendbaren CPU- und Arbeitsspeicherressourcen festlegen \cite{kubernetes_deployment_ressource}.
+
+\newpage
+
+\subsubsection{Service}
+
+Ein Kubernetes-Service stellt eine feste Zugriffsmöglichkeit auf die Pods einer Anwendung innerhalb des Clusters bereit. Über den \texttt{selector} wird anhand des Labels festgelegt, an welche Pods eingehende Anfragen weitergeleitet werden. Dadurch können andere Services innerhalb des Clusters über den Namen des Kubernetes-Services auf die Anwendung zugreifen, ohne die IP-Adresse eines einzelnen Pods kennen zu müssen.
+
+Über \texttt{port} wird festgelegt, auf welchem Port der Service erreichbar ist, während \texttt{targetPort} den Port des Containers angibt, an den die Anfragen weitergeleitet werden. Im folgenden Beispiel wird der Service als interner \texttt{ClusterIP}-Service betrieben. Dadurch ist der zugehörige Pod nicht direkt von außerhalb des Kubernetes-Clusters erreichbar. Der Zugriff auf den Service ist somit auf andere Komponenten innerhalb des Clusters beschränkt:
+
+\begin{CodeBox}
+apiVersion: v1
+kind: Service
+metadata:
+  name: <name>-service
+spec:
+  selector:
+    app: <name>
+  ports:
+   - protocol: TCP
+     port: <Port des Services>
+     targetPort: <Port des Containers>
+\end{CodeBox}
+
+Da kein anderer Service-Typ wie \texttt{NodePort} oder \texttt{LoadBalancer} angegeben wird, verwendet Kubernetes standardmäßig \texttt{ClusterIP}. Dadurch bleibt der Service innerhalb des Clusters erreichbar und wird nicht direkt nach außen veröffentlicht \cite{kubernetes_service}.
+
+\newpage
+
+\subsubsection{Persistance Volume Claim}
+
+Ein PersistentVolumeClaim (PVC) wird in Kubernetes verwendet, um dauerhaften Speicher für einen Pod anzufordern. Dadurch können Daten unabhängig vom Lebenszyklus eines Pods gespeichert werden und bleiben beispielsweise auch nach einem Neustart oder einer Neuerstellung des Pods erhalten.
+
+\begin{CodeBox}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: <Name der Datenbank>
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: <Wie viel Speicher zur Verfuegung gestellt wird>
+\end{CodeBox}
+
+Über \texttt{accessModes} wird festgelegt, wie auf den Speicher zugegriffen werden darf. Im vorliegenden System wird \texttt{ReadWriteOnce} verwendet, da jede Datenbank über einen eigenen persistenten Speicher verfügt und jeweils nur von einer Datenbankinstanz darauf zugegriffen wird. Auch wenn ein Microservice durch mehrere Pod-Instanzen skaliert wird, greifen diese nicht direkt auf das Datenbank-Volume zu, sondern kommunizieren über den zugehörigen Kubernetes-Service mit der Datenbank.
+
+Unter \texttt{resources.requests.storage} wird die benötigte Speicherkapazität angegeben. Kubernetes versucht daraufhin, ein passendes Persistent Volume (PV) für diese Anforderung bereitzustellen \cite{kubernetes_pvc}.
+
+\newpage
+
+\subsubsection{Stateful Set}
+
+Ein StatefulSet wird in Kubernetes für Anwendungen verwendet, die einen dauerhaften Zustand und eine feste Identität benötigen. In dieser Diplomarbeit wird es für die PostgreSQL-Datenbank eingesetzt.
+
+\begin{CodeBox}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: <name>-db
+spec:
+  serviceName: "<name>-db"
+  replicas: <Anzahl der Datenbank-Instanzen>
+  selector:
+    matchLabels:
+      app: <name>-db
+  template:
+    metadata:
+      labels:
+        app: <name>-db
+    spec:
+      containers:
+        - name: postgres
+          image: <Zu verwendendes Container-Image>
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: <Datenbank-Benutzer>
+            - name: POSTGRES_PASSWORD
+              value: <Datenbank-Passwort>
+            - name: POSTGRES_DB
+              value: <Datenbankname>
+          volumeMounts:
+            - name: <Name des Speichers>
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              cpu: <Minimal benoetigte CPU-Ressourcen>
+              memory: <Minimal benoetigter Arbeitsspeicher>
+            limits:
+              cpu: <Maximal verwendbare CPU-Ressourcen>
+              memory: <Maximal verwendbarer Arbeitsspeicher>
+      volumes:
+        - name: <Name des Speichers>
+          persistentVolumeClaim:
+            claimName: <Name des PersistentVolumeClaims>
+\end{CodeBox}
+
+Das StatefulSet erstellt eine PostgreSQL-Instanz und stellt über die Umgebungsvariablen deren Benutzer, Passwort und Datenbank fest. Über \texttt{volumeMounts} wird der zuvor definierte persistente Speicher in den Container eingebunden. Dadurch bleiben die Daten auch bei einer Neuerstellung des Pods erhalten.
+
+Durch \texttt{resources} werden außerdem die minimal benötigten und maximal verwendbaren CPU- und Speicherressourcen festgelegt \cite{kubernetes_stateful_set}.
+
+\newpage
+
+\subsubsection{Ingress}
+
+Ein Ingress definiert Regeln für eingehende HTTP-Anfragen und stellt den externen Einstiegspunkt in das Kubernetes-Cluster dar. In dieser Diplomarbeit wird der Ingress ausschließlich zur Weiterleitung der Anfragen an das von Diplomarbeitspartner Darnhofer David implementierte API-Gateway verwendet. Die Weiterleitung an die einzelnen Microservices erfolgt anschließend durch das API-Gateway.
+
+\begin{CodeBox}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: <Name des Ingress>
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: <Verwendeter Traefik-Einstiegspunkt>
+    traefik.ingress.kubernetes.io/service.passhostheader: "<Weitergabe des Host-Headers>"
+spec:
+  rules:
+    - host: <Verwendeter Hostname>
+      http:
+        paths:
+          - path: <Weiterleitungspfad>
+            pathType: Prefix
+            backend:
+              service:
+                name: <Name des API-Gateway-Services>
+                port:
+                  number: <Port des API-Gateways>
+\end{CodeBox}
+
+Über \textbf{host} und \textbf{path} wird festgelegt, für welche eingehenden Anfragen die Weiterleitungsregel gilt. In diesem Fall werden alle Anfragen an den angegebenen Host und Pfad an den Kubernetes-Service des API-Gateways weitergeleitet. Der Ingress selbst übernimmt somit keine direkte Kommunikation mit den einzelnen Microservices.
+
+Durch die Verwendung von Traefik als Ingress-Controller wird der eingehende HTTP-Verkehr entgegengenommen und entsprechend der definierten Regeln an das API-Gateway weitergeleitet. Dadurch bildet der Ingress eine klare Trennung zwischen dem externen Zugriff auf das System und der internen Kommunikation zwischen API-Gateway und Microservices.

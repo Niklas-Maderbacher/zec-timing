@@ -1,0 +1,79 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.0.6 Chrome/138.0.7204.100 Electron/37.2.3 Safari/537.36" scale="1" border="0">
+  <diagram name="Page-1" id="AF7b1xUSeE640G4pH2kr">
+    <mxGraphModel dx="1414" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bKwY21hPuEaygFMlcLZm-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="540" width="960" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="ZEC Header" vertex="1">
+          <mxGeometry height="60" width="960" x="20" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Challenge&lt;div&gt;wird nur einmal bei beim Start ausgewählt&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="320" x="20" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SelectionCard" vertex="1">
+          <mxGeometry height="100" width="320" x="340" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SelectionCard" vertex="1">
+          <mxGeometry height="100" width="320" x="20" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="SelectionCard" vertex="1">
+          <mxGeometry height="100" width="320" x="340" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="ConnectionStatusCard" vertex="1">
+          <mxGeometry height="100" width="320" x="660" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="200" width="320" x="660" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="NumberInputCard" vertex="1">
+          <mxGeometry height="100" width="320" x="20" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-17" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="NumberInputCard" vertex="1">
+          <mxGeometry height="100" width="320" x="340" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-18" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="180" width="320" x="20" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-15" parent="bKwY21hPuEaygFMlcLZm-18" style="rounded=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="180" width="320" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-14" connectable="0" parent="bKwY21hPuEaygFMlcLZm-18" style="group" value="" vertex="1">
+          <mxGeometry height="170" width="310" x="10" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-11" parent="bKwY21hPuEaygFMlcLZm-14" style="rounded=0;whiteSpace=wrap;html=1;" value="TimestampSelector" vertex="1">
+          <mxGeometry height="53.33333333333333" width="300" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-12" parent="bKwY21hPuEaygFMlcLZm-14" style="rounded=0;whiteSpace=wrap;html=1;" value="TimestampSelector" vertex="1">
+          <mxGeometry height="53.33333333333333" width="300" y="53.33333333333333" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-13" parent="bKwY21hPuEaygFMlcLZm-14" style="rounded=0;whiteSpace=wrap;html=1;" value="ManualAttemptTimeInput" vertex="1">
+          <mxGeometry height="53.33333333333333" width="300" y="106.66666666666666" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="FormulaCard" vertex="1">
+          <mxGeometry height="180" width="320" x="340" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="AttemptResultCard" vertex="1">
+          <mxGeometry height="180" width="320" x="660" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-25" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="180" width="300" x="670" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-21" parent="bKwY21hPuEaygFMlcLZm-25" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;MacInputRow&lt;/div&gt;" vertex="1">
+          <mxGeometry height="45" width="300" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-22" parent="bKwY21hPuEaygFMlcLZm-25" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;MacInputRow&lt;/div&gt;" vertex="1">
+          <mxGeometry height="45" width="300" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-23" parent="bKwY21hPuEaygFMlcLZm-25" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;MacInputRow&lt;/div&gt;" vertex="1">
+          <mxGeometry height="45" width="300" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="bKwY21hPuEaygFMlcLZm-24" parent="bKwY21hPuEaygFMlcLZm-25" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;MacInputRow&lt;/div&gt;" vertex="1">
+          <mxGeometry height="45" width="300" y="135" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

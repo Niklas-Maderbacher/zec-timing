@@ -6,6 +6,7 @@
 \thispagestyle{ErsteSeite}
 $~$
 \vspace{0.5cm}
+% !TeX root = DA_ZEC-Timing.tex
 
 \begin{center}
 \textcolor{dred} {\resizebox{10cm}{1.0cm}{\textbf{DIPLOMARBEIT}}}
@@ -43,19 +44,26 @@ Datum: & Unterschrift:& \\
 %============================= B E G I N   2.    P A G E ==============================
 %****************************************************************************************************
 %
-\setlength{\headsep }{2.4cm}
+\setlength{\headsep }{1.2cm}
 \thispagestyle{ErsteSeite}
-\addsec{Eidesstattliche Erklärung}
+\section{Eidesstattliche Erklärung}
 
 \begin{quote}
-Ich erkläre an Eides statt, dass ich die vorliegende Diplomarbeit selbst\-ständig und ohne fremde Hilfe verfasst, andere als die angegebenen Quellen und
-Hilfsmittel nicht benutzt und die den benutzten Quellen wörtlich und inhaltlich entnommenen Stellen als solche erkenntlich gemacht habe.
+Ich erkläre an Eides statt, dass ich die vorliegende 
+Diplomarbeit selbstständig und ohne fremde Hilfe 
+verfasst, andere als die angegebenen Quellen und 
+Hilfsmittel nicht benutzt und die den benutzten 
+Quellen wörtlich und inhaltlich entnommenen 
+Stellen als solche erkenntlich gemacht habe.
+ 
+KI wurde ausschließlich unterstützend eingesetzt, zum Beispiel zur Recherche, zur sprachlichen Überarbeitung,
+zur Strukturierung oder zur Ideenfindung. Alle daraus entstandenen Inhalte wurden von mir selbst geprüft, überarbeitet und fachlich nachvollzogen.
 \\[4\baselineskip]
 \end{quote}
 
 \begin{center}
 \begin{tabular}{p{10cm} p{4cm}}
-Weiz, am \ADatum$~$\DPLNameOne:  & \dotfill \\ 
+Weiz, am \ADatum$~$\DPLNameOne:  & \dotfill \\
 \end{tabular} 
 \end{center}
 \newpage
@@ -66,16 +74,29 @@ Weiz, am \ADatum$~$\DPLNameOne:  & \dotfill \\
 %****************************************************************************************************
 %
 \thispagestyle{ErsteSeite}
-\addsec{Kurzbeschreibung}
-Diese Diplomarbeit befasst sich mit der Konzeption und Implementierung eines Zeitmesssystem für die \textit{Zero Emission Challenge} (ZEC), einem Kart Wetbewerb der HTL-Weiz. 
-Die bestehende Umsetzung war schlecht wartbar, nicht erweiterbar und hatte einen aufwendigen Setup Prozess, daher wurde die Entscheidung getroffen eine das System
-vollständig neu zu entwickeln. Ziel der Neuentwicklung war ein erweiterbares sowie einfach aufsetzbares System, welches den gesamten Ablauf von der Zeitmessung über die 
-Punkteauswertung bis zur Anzeige der Ergebnisse beinhaltet. Die Kernkomponenten umfassen einen Backend-Server (realisiert mit Python und FastAPI), eine mit Next.js umgesetzte Webanwendung welche Zeitstempel per MQTT-Protokoll 
-von den Lichtschranken empfängt und dann an den Server weiterleitet, sowie eine weitere Next.js basierte Webanwendung zur Anzeige der Ergebnisse und Verwaltung der Teams und Benutzer. 
-Die Authentifizierung und rollenbasierte Zugriffskontrolle wird über Keycloak umgesetzt, die Datenhaltung über eine PostgreSQL-Datenbank.
-Das System basiert auf einer microservice Architektur und kann in einem Kubernetes-Cluster betrieben werden, was Deployment und Hosting erheblich vereinfacht.
-Zur Sicherstellung der Softwarequalität wurden automatisierte CI/CD-Pipelines, welche das Testen, Bauen und Veröffentlichen der Container-Images übernehmen. 
+\section{Kurzbeschreibung}
+Diese Diplomarbeit befasst sich mit dem Konzept und der Implementierung eines Zeitmesssystems für die Zero Emission Challenge (ZEC), einem Kartwettbewerb der HTL Weiz.
+Ausgangspunkt war ein bestehendes System, welches allerdings schwer wartbar, kaum erweiterbar und mit einem aufwendigen Setup-Prozess verbunden war. Deshalb wurde eine 
+komplette Neuentwicklung des Systems angestrebt. Das Ziel war eine Lösung, die den gesamten Ablauf von der Zeitmessung über die Punkteauswertung bis zur Anzeige der Ergebnisse 
+sowie die Team- und Benutzerverwaltung abdeckt. Weiters sollte das System eine hohe Erweiterbarkeit, unkomplizierte Wartbarkeit und eine einfache Inbetriebnahme gewährleisten.
+Die Hauptkomponenten dieses Systems umfassen einen Backend-Server zur Datenverwaltung und -verarbeitung, eine Webanwendung zur Erfassung von Zeitstempeln, 
+welche diese per MQTT-Protokoll von Lichtschranken empfängt und an den Server weiterleitet, sowie eine weitere Webanwendung zur Darstellung der Ergebnisse und 
+zur Verwaltung von Teams und Benutzern. Die Authentifizierung und Zugriffskontrolle werden mit Keycloak umgesetzt, während die Datenspeicherung in einer PostgreSQL-Datenbank erfolgt. 
+Das System basiert auf einer Microservice-Architektur und kann in einem Kubernetes-Cluster betrieben werden.
+Zur Sicherstellung der Softwarequalität wurden automatisierte \gls{CICD}-Pipelines erstellt, welche das Testen, Bauen und Veröffentlichen der Container-Images übernehmen.
 \vspace{3.0cm}
+\newpage
+
+\section*{Abstract}
+This diploma thesis deals with the concept and implementation of a timing system for the Zero Emission Challenge (ZEC), a karting competition organized by HTL Weiz.
+The starting point was an existing system that was difficult to maintain, hardly expandable, and required a complex setup process.
+Therefore, a complete redevelopment of the system was pursued.
+The goal was a solution that covers the entire workflow, from time measurement and score calculation to result presentation, as well as team and user management.
+In addition, the system was designed to provide high extensibility, simple maintenance, and easy deployment.
+The main components of this system include a backend server for data management and processing, a web application for capturing timestamps, which receives them from light barriers via the MQTT protocol and forwards them to the server, and another web application for displaying results and managing teams and users.
+Authentication and access control are implemented with Keycloak, while data is stored in a PostgreSQL database.
+The system is based on a microservice architecture and can be operated in a Kubernetes cluster.
+To ensure software quality, automated \gls{CICD} pipelines were created to handle testing, building, and publishing container images.
 \newpage
 
 %
@@ -84,17 +105,19 @@ Zur Sicherstellung der Softwarequalität wurden automatisierte CI/CD-Pipelines, 
 %****************************************************************************************************
 %
 \thispagestyle{ErsteSeite}
-\addsec{Vorwort}
-Im Vorwort soll eine kurze Beschreibung des schulischen Umfeldes stehen; per\-sön\-liche Vorstellungen können ebenfalls enthalten sein. Im Vorwort können auch Gründe für die Wahl des Themas, Angaben zu einem persönlichen Bezug und ähnliches aufgeführt werden. Das Vorwort ist auch der Platz für Danksagungen.
-Das Vorwort endet mit dem Datum und dem Namen des Autors bzw. der Autorin.\\
-Um die Diplomarbeit möglichst reibungsfrei und effektiv bearbeiten zu können, sollten Sie die nachfolgenden Punkte schon zu Beginn beachten.
+\section{Vorwort}
+Das Thema der \gls{DA} wurde von der HTL Weiz ausgegeben. Ich wurde von Herrn Prof. Mock auf diese 
+Arbeit aufmerksam gemacht und er vermittelte mir diese Aufgabe. An dieser Stelle möchte ich mich herzlich bei ihm für die 
+Betreuung und Unterstützung während der gesamten Diplomarbeit bedanken. Durch seine fachliche Expertise und seine Unterstützung konnte
+ich die Arbeit zielgerichtet und erfolgreich durchführen. Ebenso möchte ich meinen Freunden danken, die mich vor allem mit ihrer Faszination am Namen 
+der \gls{DA} (ZEC-Timing) immer wieder motiviert haben, weiterzumachen. Abschließend gilt der größte Dank meiner Familie. Sie hat mich mein ganzes Leben 
+hinweg stets unterstützt und begleitet, wofür ich sehr dankbar bin. Ohne ihre Unterstützung wäre diese Arbeit nicht möglich gewesen.
 \vspace{2.0cm}
 
 \begin{center}
 \begin{tabular}{p{10cm} p{6.5cm}}
-Ort, am \ADatum$~$\DPLNameOne\\ 
+Weiz, am \ADatum$~$\DPLNameOne\\ 
  &  \\ 
-Ort, am \ADatum$~$\DPLNameTwo\\ 
 \end{tabular} 
 \end{center}
 \newpage
@@ -107,6 +130,6 @@ Ort, am \ADatum$~$\DPLNameTwo\\
 %
 %
 \setlength{\headsep }{1.2cm}
-\setlength{\voffset}{1.0cm}
+\setlength{\voffset}{0.0cm}
 \tableofcontents
 %

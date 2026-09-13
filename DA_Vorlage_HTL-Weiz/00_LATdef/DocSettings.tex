@@ -36,12 +36,13 @@
 \setlength{\topmargin }{-1.5cm}
 \setlength{\marginparsep }{0pt}
 \setlength{\headsep }{1.2cm}
+\setlength{\headheight}{65pt}
 \setlength{\oddsidemargin}{0.4cm}
 \setlength{\evensidemargin}{0.4cm}
 \setlength{\marginparwidth}{0pt}
 \setlength{\hoffset}{-12pt}
 \setlength{\headwidth}{16.0cm}
-\setlength{\footskip}{30pt}
+\setlength{\footskip}{38pt}
 \setlength{\parindent}{0pt}
 %
 %
@@ -60,7 +61,7 @@
 \lhead{\begin{tabular}{p{14.0cm}} 
 		\small{\sffamily\bfseries\textcolor{black!30}{\DAName}}
 	\end{tabular} \vspace{0.1cm}}
-\lfoot{\small{\sffamily\bfseries\textcolor{black!30}{\SYear - \SClass - \DPLNameOne, \DPLNameTwo}}} 
+\lfoot{\small{\sffamily\bfseries\textcolor{black!30}{\SYear - \SClass - \DPLNameOne}}}
 \cfoot{}
 \rfoot{\small{\sffamily\bfseries\textcolor{black!30}{\thepage\ \textbf{\textcolor{itblue}I} \pageref{LastPage}}}}
 %s
@@ -84,6 +85,7 @@
 \fancypagestyle{ErsteSeite}{%
 	\fancyhf{} 
 	\renewcommand{\headrulewidth}{0.4pt}
+	\renewcommand{\footrulewidth}{0.4pt}
 	
 	\fancyhead[C]{%
 		\begin{minipage}[b]{0.2\textwidth}
@@ -107,10 +109,12 @@
 		\vspace{2mm} 
 	}
 	
-	% Fußzeile für ErsteSeite
+	\fancyfoot[L]{\small{\sffamily\bfseries\textcolor{black!30}{\SYear - \SClass - \DPLNameOne}}}
+	\fancyfoot[C]{}
+	\fancyfoot[R]{\small{\sffamily\bfseries\textcolor{black!30}{\thepage\ \textbf{\textcolor{itblue}I} \pageref{LastPage}}}}
 	
 }
-%\makenoidxglossaries
+\makenoidxglossaries
 \renewcommand*\acronymname{Vokabelverzeichnis}
 \renewcommand*\glossaryname{Vokabelverzeichnis}
 
@@ -150,7 +154,36 @@
 	keywordstyle=\color{blue}
 }
 
+\newtcblisting{CodeBox}[1][] {
+	enhanced,
+	breakable,
+	colback=black!2,
+	colframe=itblue!70!black,
+	boxrule=0.8pt,
+	arc=2mm,
+	left=1.5mm,
+	right=1.5mm,
+	top=1mm,
+	bottom=1mm,
+	listing only,
+	listing options={
+		basicstyle=\ttfamily\small,
+		columns=fullflexible,
+		keepspaces=true,
+		breaklines=true,
+		showstringspaces=false,
+		tabsize=2,
+		#1
+	}
+}
+
 \setcounter{footnote}{0}
+
+% Abschnittsnummern als X darstellen (z.B. 1, 2)
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+\RedeclareSectionCommand[runin=false,beforeskip=0.5\baselineskip,afterskip=0.1\baselineskip]{paragraph}
 
 % \changefont{pag}{m}{n}
 

@@ -1,0 +1,17 @@
+% ==============================================================
+% Kapitel 07: Fazit und Ausblick
+% ==============================================================
+\section{Fazit und Ausblick}
+
+\subsection{Zusammenfassung}
+
+In dieser Diplomarbeit wurde ein Zeitmesssystem für die Zero-Emission-Challenge entwickelt. Das System umfasst eine Zeitnehmerapplikation, mit der Versuche eines Teams erstellt werden können, eine Schnittstelle zur Lichtschranke, über die Zeitstempel mittels HTTP abgerufen werden können, sowie eine mittels Kubernetes orchestrierte \textit{ZEC-API}.
+
+Die Umsetzung des MQTT-Workers hat sich als sinnvolle Entscheidung erwiesen, da dadurch die Verantwortlichkeiten innerhalb des Systems klar voneinander getrennt werden konnten. Der MQTT-Worker übernimmt die Kommunikation mit dem MQTT-Broker und stellt die empfangenen Zeitstempel über eine HTTP-Schnittstelle bereit. Dadurch muss die Zeitnehmerapplikation nicht direkt mit MQTT kommunizieren, sondern kann die benötigten Daten über die für sie leichter nutzbare HTTP-Schnittstelle abrufen.
+
+\subsection{Zukunftsausblick}
+
+\begin{itemize}
+    \item \textbf{Synchronisation der Lichtschranken: } Die Synchronisation stellt bei verteilten Systemen eine besondere Herausforderung dar. Als mögliche Lösung wurde in Betracht gezogen, den Synchronisationsstatus in der Zeitnehmerapplikation abrufen zu können und bei Bedarf eine erneute Synchronisation der Lichtschranken auszulösen.
+    \item \textbf{Verteilung des Clusters auf mehrere Geräte: } Aktuell ist der Kubernetes-Cluster so ausgelegt, dass sämtliche Komponenten auf einem einzelnen Gerät betrieben werden. Eine mögliche Weiterentwicklung wäre die Verteilung des Clusters auf mehrere Geräte beziehungsweise Nodes. Dadurch könnten einzelne Services auf unterschiedliche Geräte verteilt und die verfügbaren Ressourcen besser genutzt werden. Zusätzlich würde die Ausfallsicherheit des Systems erhöht, da der Ausfall eines einzelnen Geräts nicht zwangsläufig zum Ausfall des gesamten Clusters führen würde
+\end{itemize}
