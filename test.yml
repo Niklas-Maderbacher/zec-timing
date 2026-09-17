@@ -1,0 +1,16 @@
+services:
+  zec-mqtt-worker:
+    container_name: zec-mqtt-worker
+    build:
+      context: ./mqtt-worker
+    command: pytest
+
+    env_file:
+      - .env
+    environment:
+      - MQTT_IP=${MQTT_IP}
+      - MQTT_PORT=${MQTT_PORT}
+      - MQTT_TOPIC=${MQTT_TOPIC}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - TIMESTAMP_EXPIRE_TIME=${TIMESTAMP_EXPIRE_TIME}
