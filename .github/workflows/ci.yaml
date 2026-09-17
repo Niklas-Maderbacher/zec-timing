@@ -37,6 +37,7 @@ jobs:
       - name: Run tests
         working-directory: ./mqtt-worker
         env:
+          ENV_FILE: .env.test
           PYTHONPATH: .
         run: uv run pytest
   # This workflow contains a single job called "build"
