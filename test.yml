@@ -6,7 +6,7 @@ services:
     command: pytest
 
     env_file:
-      - .env
+      - .env.example
     environment:
       - MQTT_IP=${MQTT_IP}
       - MQTT_PORT=${MQTT_PORT}
