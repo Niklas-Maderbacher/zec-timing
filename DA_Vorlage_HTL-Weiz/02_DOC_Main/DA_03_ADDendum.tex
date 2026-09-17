@@ -83,9 +83,11 @@
 11.09.2026 & Schreiben der Diplomarbeit & 7 \\
 12.09.2026 & Schreiben der Diplomarbeit & 3 \\
 13.09.2026 & Schreiben der Diplomarbeit & 3 \\
+15.09.2026 & Testen des Systems & 4 \\
+17.09.2026 & Abschließen der Diplomarbeit & 7 \\
 
 \hline
-\textbf{Gesamt} & & \textbf{185.5} \\
+\textbf{Gesamt} & & \textbf{196.5} \\
 \hline
 \end{longtable}
 \newpage
@@ -213,4 +215,31 @@ const fetchStartTimestamps = async () => {
       console.error("Failed to fetch start timestamps", error);
     }
 };
+\end{CodeBox}
+
+\newpage
+
+\subsection{MQTT-Worker - Unit Test}
+
+\begin{CodeBox}
+def test_score_is_now_plus_expire_time(mock_redis, frozen_time, fixed_expire):
+  add_timestamp("AA:BB:CC:DD:EE:FF", "2025-10-12T15:30:00")
+
+  mock_redis.zadd.assert_called_once_with(
+    "timestamps:AA:BB:CC:DD:EE:FF",
+    {"2025-10-12T15:30:00": 1_000_000.0 + 3600},
+)
+\end{CodeBox}
+
+\subsection{MQTT-Worker - Integrationstests}
+
+\begin{CodeBox}
+def test_get_returns_200_and_timestamp_on_success(client, mock_get_timestamps):
+  mock_get_timestamps.return_value = ["2025-10-12T15:30:00"]
+
+  response = client.get("/timestamps/AA:BB:CC:DD:EE:FF")
+
+  assert response.status_code == 200
+  assert response.json() == {"timestamp": ["2025-10-12T15:30:00"]}
+  mock_get_timestamps.assert_called_once_with("AA:BB:CC:DD:EE:FF")
 \end{CodeBox}

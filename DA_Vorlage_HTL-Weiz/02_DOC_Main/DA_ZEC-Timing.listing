@@ -1,11 +1,8 @@
-const fetchStartTimestamps = async () => {
-    if (!selectedChallenge) return;
-        try {
-        const start_1 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start1.replace(/:/g, '-')}`);
-        const start_2 = await axios.get<{ timestamp: string[] }>(`${MQTT_WORKER_API_URL}/timestamps/${selectedChallenge.esp_mac_start2.replace(/:/g, '-')}`);
-        const combined = [...(start_1.data.timestamp || []), ...(start_2.data.timestamp || [])];
-        setStartTimestamps(combined);
-    } catch (error) {
-      console.error("Failed to fetch start timestamps", error);
-    }
-};
+def test_get_returns_200_and_timestamp_on_success(client, mock_get_timestamps):
+  mock_get_timestamps.return_value = ["2025-10-12T15:30:00"]
+
+  response = client.get("/timestamps/AA:BB:CC:DD:EE:FF")
+
+  assert response.status_code == 200
+  assert response.json() == {"timestamp": ["2025-10-12T15:30:00"]}
+  mock_get_timestamps.assert_called_once_with("AA:BB:CC:DD:EE:FF")
