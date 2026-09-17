@@ -1,0 +1,24 @@
+services:
+  playwright:
+    build:
+      context: ./frontend/zeitnehmerapplikation
+      dockerfile: Dockerfile.playwright
+    command: npx playwright test
+    volumes:
+      - playwright-report:/app/playwright-report
+      - test-results:/app/test-results
+
+  report:
+    build:
+      context: ./frontend/zeitnehmerapplikation
+      dockerfile: Dockerfile.playwright
+    ports:
+      - "9323:9323"
+    volumes:
+      - playwright-report:/app/playwright-report
+      - test-results:/app/test-results
+    command: npx playwright show-report --host 0.0.0.0
+
+volumes:
+  playwright-report:
+  test-results:

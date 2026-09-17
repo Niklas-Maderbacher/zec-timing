@@ -16,9 +16,10 @@ export function MacInputRow({ label, value, placeholder, onChange, onUpdate }: M
     return (
         <div className="flex items-center gap-2 mt-4">
             <Input
+                aria-label={`${label} ESP32 MAC`}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder={placeholder}
+                placeholder={placeholder ?? "ESP32 MAC"}
             />
             <Button onClick={onUpdate}>{label}</Button>
         </div>

@@ -139,7 +139,10 @@ interface ManualAttemptTimeInputProps {
 
 export function ManualAttemptTimeInput({ value, onChange }: ManualAttemptTimeInputProps) {
     return (
-        <div className="flex flex-col gap-2">
+        <div
+            data-testid="manual-attempt-time"
+            className="flex flex-col gap-2"
+        >
             <p>Manual Attempt Time:</p>
             <TimeSplitInput
                 key={value?.toString()}
