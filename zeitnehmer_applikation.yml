@@ -1,0 +1,30 @@
+services:
+  zec-desktop-app-frontend:
+    container_name: zec-desktop-app-frontend
+    image: ghcr.io/niklas-maderbacher/zec-timing:desktop-app
+
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      # Expose port 3000 from container (Bun preview server default)
+      - "${FRONTEND_PORT_DESKTOP_APP:-5173}:3000"
+    environment:
+      # Runtime environment variables (fixed syntax - was using : instead of =)
+      - NEXT_PUBLIC_DESKTOP_APP_API_URL=${NEXT_PUBLIC_DESKTOP_APP_API_URL}
+      - NEXT_PUBLIC_MQTT_WORKER_API_URL=${NEXT_PUBLIC_MQTT_WORKER_API_URL}
+      - NEXT_PUBLIC_API_KEY=${NEXT_PUBLIC_API_KEY}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
