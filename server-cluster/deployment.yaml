@@ -112,9 +112,9 @@ spec:
             - name: KEYCLOAK_ADMIN_CLIENT_ID
               value: user-admin-client
             - name: KEYCLOAK_ADMIN_CLIENT_SECRET
-              value: XPx5AyZKxEWUY4MusLe6hMw0SrAIeo0s
+              value: xo6zbeBZAUnzlRTlmMGLloekxqrVKGht
             - name: KEYCLOAK_CLIENT_SECRET
-              value: P5j9fSps1H4Oh70Dws6ZSAzNau3WyuqS
+              value: TH01sGKfvuZDJHLgbrn1GcSD5Htxdrzm
             - name: KEYCLOAK_TOKEN_URL
               value: http://keycloak-service:80/realms/zec-realm/protocol/openid-connect/token
             - name: KEYCLOAK_JWKS_URL
