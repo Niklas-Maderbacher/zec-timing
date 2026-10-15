@@ -2,7 +2,8 @@ services:
   zec-desktop-app-frontend:
     container_name: zec-desktop-app-frontend
     image: ghcr.io/niklas-maderbacher/zec-timing:desktop-app
-
+    entrypoint: ["/entrypoint.sh"]
+    command: ["node", "server.js"]
     restart: unless-stopped
     env_file:
       - .env

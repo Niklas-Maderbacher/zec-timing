@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BROKER="192.168.1.113"
+BROKER="172.31.180.245"
 PORT="1883"
 TOPIC="esp32/timestamp"
 CLIENT_ID="raspi"
